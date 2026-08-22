@@ -2,7 +2,7 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>3D Booth Mockup — T&T VINA × MURRPLASTIK (VEC 2026)</title>
   <!-- Three.js & OrbitControls -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -15,11 +15,13 @@
       --primary: #C8442A;
       --primary-hover: #b03820;
       --bg-dark: #121316;
-      --panel-bg: rgba(24, 26, 31, 0.9);
+      --panel-bg: rgba(22, 24, 29, 0.92);
       --border: rgba(255, 255, 255, 0.12);
       --text: #f0f2f5;
       --text-muted: #9ba1ad;
       --accent: #2563eb;
+      --safe-bottom: max(16px, env(safe-area-inset-bottom));
+      --safe-top: max(12px, env(safe-area-inset-top));
     }
 
     * {
@@ -27,6 +29,7 @@
       margin: 0;
       padding: 0;
       user-select: none;
+      -webkit-tap-highlight-color: transparent;
     }
 
     body {
@@ -36,6 +39,7 @@
       overflow: hidden;
       width: 100vw;
       height: 100vh;
+      touch-action: none;
     }
 
     #canvas-container {
@@ -50,26 +54,28 @@
     /* Top Bar Header */
     .top-bar {
       position: absolute;
-      top: 16px;
-      left: 20px;
-      right: 20px;
+      top: var(--safe-top);
+      left: 16px;
+      right: 16px;
       z-index: 10;
       display: flex;
       justify-content: space-between;
       align-items: center;
       pointer-events: none;
+      gap: 10px;
     }
 
     .brand-badge {
       pointer-events: auto;
       background: var(--panel-bg);
-      backdrop-filter: blur(12px);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
       border: 1px solid var(--border);
       border-radius: 12px;
-      padding: 10px 18px;
+      padding: 8px 16px;
       display: flex;
       align-items: center;
-      gap: 14px;
+      gap: 12px;
       box-shadow: 0 10px 25px rgba(0,0,0,0.5);
     }
 
@@ -77,53 +83,114 @@
       background: var(--primary);
       color: white;
       font-weight: 800;
-      font-size: 13px;
-      letter-spacing: 1px;
-      padding: 4px 10px;
+      font-size: 12px;
+      letter-spacing: 0.8px;
+      padding: 4px 8px;
       border-radius: 6px;
+      flex-shrink: 0;
+    }
+
+    .brand-info {
+      display: flex;
+      flex-direction: column;
     }
 
     .brand-title {
-      font-size: 14px;
+      font-size: 13px;
       font-weight: 700;
       color: #fff;
+      white-space: nowrap;
     }
 
     .brand-subtitle {
-      font-size: 11px;
+      font-size: 10px;
       color: var(--text-muted);
-      margin-top: 2px;
+      margin-top: 1px;
+      white-space: nowrap;
     }
 
     .booth-tag {
-      background: rgba(255,255,255,0.08);
-      padding: 3px 8px;
-      border-radius: 6px;
+      pointer-events: auto;
+      background: rgba(37, 99, 235, 0.15);
+      border: 1px solid rgba(96, 165, 250, 0.3);
+      padding: 5px 10px;
+      border-radius: 8px;
       font-size: 11px;
-      color: #60a5fa;
+      color: #93c5fd;
       font-weight: 600;
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      gap: 4px;
     }
 
-    /* Control HUD Panels */
+    /* Horizontal Camera Quick-Bar (Always visible on all screens) */
+    .camera-quickbar {
+      position: absolute;
+      top: 66px;
+      left: 16px;
+      right: 16px;
+      z-index: 10;
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+      pointer-events: auto;
+      scrollbar-width: none;
+    }
+    .camera-quickbar::-webkit-scrollbar {
+      display: none;
+    }
+
+    .cam-chip {
+      background: var(--panel-bg);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 7px 12px;
+      border-radius: 20px;
+      font-size: 11.5px;
+      font-weight: 600;
+      white-space: nowrap;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      transition: all 0.15s ease;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    }
+    .cam-chip:active {
+      transform: scale(0.95);
+    }
+    .cam-chip.active {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #fff;
+      box-shadow: 0 3px 12px rgba(200, 68, 42, 0.5);
+    }
+
+    /* Control Drawer HUD Panel (Desktop sidebar / Mobile bottom sheet) */
     .hud-panel {
       position: absolute;
-      z-index: 10;
+      z-index: 20;
       background: var(--panel-bg);
-      backdrop-filter: blur(14px);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
       border: 1px solid var(--border);
-      border-radius: 14px;
+      border-radius: 16px;
       padding: 16px;
-      box-shadow: 0 12px 30px rgba(0,0,0,0.55);
+      box-shadow: 0 16px 36px rgba(0,0,0,0.6);
       pointer-events: auto;
-      transition: all 0.2s ease;
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s ease;
     }
 
-    /* Left Control Sidebar */
+    /* Desktop Left Sidebar Position */
     .left-controls {
-      top: 90px;
-      left: 20px;
+      top: 112px;
+      left: 16px;
       width: 290px;
-      max-height: calc(100vh - 120px);
+      max-height: calc(100vh - 180px);
       overflow-y: auto;
     }
 
@@ -135,9 +202,38 @@
       border-radius: 4px;
     }
 
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    .panel-header-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn-close-drawer {
+      display: none; /* hidden on desktop */
+      background: rgba(255,255,255,0.1);
+      border: none;
+      color: #aaa;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 16px;
+      line-height: 1;
+    }
+
     .panel-section {
-      margin-bottom: 16px;
-      padding-bottom: 14px;
+      margin-bottom: 14px;
+      padding-bottom: 12px;
       border-bottom: 1px solid rgba(255,255,255,0.06);
     }
     .panel-section:last-child {
@@ -152,10 +248,7 @@
       letter-spacing: 0.8px;
       font-weight: 700;
       color: var(--text-muted);
-      margin-bottom: 10px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
+      margin-bottom: 8px;
     }
 
     .btn-group {
@@ -178,7 +271,8 @@
       color: var(--text);
       font-size: 12px;
       font-weight: 500;
-      padding: 8px 12px;
+      padding: 9px 12px;
+      min-height: 40px;
       border-radius: 8px;
       transition: all 0.15s ease;
       display: flex;
@@ -187,13 +281,14 @@
       gap: 6px;
       text-align: left;
     }
-
+    button:active {
+      transform: scale(0.97);
+    }
     button:hover {
       background: rgba(255,255,255,0.12);
       border-color: rgba(255,255,255,0.25);
       color: #fff;
     }
-
     button.active {
       background: var(--primary);
       border-color: var(--primary);
@@ -210,75 +305,75 @@
       padding: 6px 0;
       font-size: 12px;
       color: #d1d5db;
+      min-height: 36px;
     }
 
     .toggle-switch {
       position: relative;
-      width: 38px;
-      height: 20px;
+      width: 40px;
+      height: 22px;
+      flex-shrink: 0;
     }
-
     .toggle-switch input {
       opacity: 0;
       width: 0;
       height: 0;
     }
-
     .slider {
       position: absolute;
       cursor: pointer;
       top: 0; left: 0; right: 0; bottom: 0;
-      background-color: rgba(255,255,255,0.15);
+      background-color: rgba(255,255,255,0.18);
       transition: .2s;
-      border-radius: 20px;
+      border-radius: 22px;
     }
-
     .slider:before {
       position: absolute;
       content: "";
-      height: 14px;
-      width: 14px;
+      height: 16px;
+      width: 16px;
       left: 3px;
       bottom: 3px;
       background-color: white;
       transition: .2s;
       border-radius: 50%;
     }
-
     input:checked + .slider {
       background-color: var(--primary);
     }
-
     input:checked + .slider:before {
       transform: translateX(18px);
     }
 
-    /* Bottom Quick Action Bar */
+    /* Bottom Action Bar (Floating Bar) */
     .bottom-bar {
       position: absolute;
-      bottom: 20px;
+      bottom: var(--safe-bottom);
       left: 50%;
       transform: translateX(-50%);
-      z-index: 10;
+      z-index: 15;
       display: flex;
       align-items: center;
       gap: 10px;
       background: var(--panel-bg);
       backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
       border: 1px solid var(--border);
       border-radius: 40px;
-      padding: 8px 16px;
+      padding: 6px 14px;
       box-shadow: 0 10px 30px rgba(0,0,0,0.6);
       pointer-events: auto;
+      max-width: calc(100vw - 32px);
     }
 
     .action-btn {
       padding: 8px 16px;
       border-radius: 20px;
-      font-size: 13px;
+      font-size: 12.5px;
       font-weight: 600;
+      white-space: nowrap;
+      min-height: 40px;
     }
-
     .action-btn.screenshot {
       background: linear-gradient(135deg, #C8442A, #e05338);
       border: none;
@@ -290,24 +385,30 @@
       box-shadow: 0 6px 20px rgba(200, 68, 42, 0.6);
     }
 
+    /* Mobile Floating Menu Button */
+    .btn-mobile-menu {
+      display: none; /* Desktop default */
+    }
+
     /* Dimension Label in 3D View */
     .dimension-badge {
       position: absolute;
-      bottom: 20px;
-      right: 20px;
+      bottom: var(--safe-bottom);
+      right: 16px;
       z-index: 10;
       background: var(--panel-bg);
       backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
       border: 1px solid var(--border);
       border-radius: 10px;
-      padding: 10px 14px;
-      font-size: 11px;
+      padding: 8px 12px;
+      font-size: 10.5px;
       color: var(--text-muted);
       pointer-events: none;
     }
     .dimension-badge strong {
       color: #fff;
-      font-size: 13px;
+      font-size: 12px;
       display: block;
       margin-bottom: 2px;
     }
@@ -322,8 +423,8 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 16px;
-      transition: opacity 0.5s ease;
+      gap: 14px;
+      transition: opacity 0.4s ease;
     }
     .spinner {
       width: 44px;
@@ -340,25 +441,118 @@
     /* Toast Notification */
     #toast {
       position: absolute;
-      top: 80px;
+      top: 20px;
       left: 50%;
       transform: translateX(-50%) translateY(-20px);
       background: rgba(16, 185, 129, 0.95);
       color: white;
-      padding: 10px 22px;
+      padding: 10px 20px;
       border-radius: 30px;
       font-size: 13px;
       font-weight: 600;
       backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
       box-shadow: 0 10px 25px rgba(0,0,0,0.4);
       opacity: 0;
       pointer-events: none;
       transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
       z-index: 150;
+      white-space: nowrap;
     }
     #toast.show {
       opacity: 1;
       transform: translateX(-50%) translateY(0);
+    }
+
+    /* --- MOBILE RESPONSIVE MEDIA QUERIES (UI/UX PRO MAX) --- */
+    @media (max-width: 768px) {
+      .top-bar {
+        left: 12px;
+        right: 12px;
+      }
+      .brand-badge {
+        padding: 6px 10px;
+        gap: 8px;
+      }
+      .brand-title {
+        font-size: 11.5px;
+      }
+      .brand-subtitle {
+        display: none; /* Hide subtitle on small mobile to save space */
+      }
+      .booth-tag {
+        font-size: 10px;
+        padding: 4px 8px;
+      }
+
+      .camera-quickbar {
+        top: 56px;
+        left: 12px;
+        right: 12px;
+      }
+      .cam-chip {
+        padding: 6px 10px;
+        font-size: 11px;
+        min-height: 34px;
+      }
+
+      /* Transform Left Sidebar into Mobile Bottom Sheet Drawer */
+      .left-controls {
+        position: fixed;
+        top: auto;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        width: 100%;
+        max-height: 80vh;
+        border-radius: 20px 20px 0 0;
+        padding: 18px 18px max(24px, env(safe-area-inset-bottom)) 18px;
+        transform: translateY(110%);
+        transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+        z-index: 100;
+        background: rgba(18, 20, 24, 0.98);
+        box-shadow: 0 -10px 40px rgba(0,0,0,0.8);
+      }
+      .left-controls.open {
+        transform: translateY(0%);
+      }
+      .btn-close-drawer {
+        display: block;
+      }
+
+      .dimension-badge {
+        display: none; /* Hide dimension box on mobile screen to prevent view occlusion */
+      }
+
+      /* Mobile Bottom Floating Buttons */
+      .bottom-bar {
+        bottom: var(--safe-bottom);
+        width: calc(100% - 24px);
+        left: 12px;
+        transform: none;
+        justify-content: space-between;
+        padding: 6px 10px;
+      }
+
+      .btn-mobile-menu {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        background: rgba(255,255,255,0.08);
+        border: 1px solid var(--border);
+        color: #fff;
+        border-radius: 20px;
+        padding: 8px 14px;
+        font-size: 12px;
+        font-weight: 600;
+        min-height: 40px;
+      }
+
+      .action-btn.screenshot {
+        flex: 1;
+        text-align: center;
+        justify-content: center;
+      }
     }
   </style>
 </head>
@@ -367,8 +561,8 @@
   <!-- Loading Screen -->
   <div id="loading-overlay">
     <div class="spinner"></div>
-    <div style="font-weight: 600; font-size: 14px; letter-spacing: 0.5px;">ĐANG TẢI MOCKUP 3D GIAN HÀNG VEC 2026...</div>
-    <div style="font-size: 12px; color: #888;">Đang nạp texture hình ảnh độ phân giải cao 2048px</div>
+    <div style="font-weight: 600; font-size: 13.5px; letter-spacing: 0.5px;">ĐANG TẢI GIAN HÀNG 3D VEC 2026...</div>
+    <div style="font-size: 11px; color: #888;">Tối ưu hiển thị đa thiết bị (Mobile & Desktop)</div>
   </div>
 
   <!-- Toast -->
@@ -378,15 +572,24 @@
   <div class="top-bar">
     <div class="brand-badge">
       <div class="brand-logo-pill">MURRPLASTIK</div>
-      <div>
-        <div class="brand-title">T&T VINA INDUSTRIAL — GIAN HÀNG TRIỂN LÃM 3D</div>
-        <div class="brand-subtitle">Tuần lễ Công nghiệp & Công nghệ Việt Nam (VITW 2026 @ VEC)</div>
+      <div class="brand-info">
+        <div class="brand-title">T&T VINA — GIAN HÀNG 3D</div>
+        <div class="brand-subtitle">VITW 2026 @ Trung tâm Triển lãm Việt Nam (VEC)</div>
       </div>
-      <div class="booth-tag">📍 Gian góc H1-15 (3m × 3m × 2.5m)</div>
     </div>
+    <div class="booth-tag">📍 Gian góc H1-15 (3×3×2.5m)</div>
   </div>
 
-  <!-- Dimension Badge -->
+  <!-- Quick Horizontal Camera Chips (Accessible everywhere) -->
+  <div class="camera-quickbar">
+    <div class="cam-chip active" id="chip-corner" onclick="setCameraView('corner')">🎯 Phối cảnh 45°</div>
+    <div class="cam-chip" id="chip-front" onclick="setCameraView('front')">🖼️ Vách Hậu (Robotics)</div>
+    <div class="cam-chip" id="chip-side" onclick="setCameraView('side')">🖼️ Vách Bên (Solar/Rail)</div>
+    <div class="cam-chip" id="chip-eye" onclick="setCameraView('eye')">👤 Tầm Mắt (1.6m)</div>
+    <div class="cam-chip" id="chip-top" onclick="setCameraView('top')">📐 Mặt Bằng (Top-down)</div>
+  </div>
+
+  <!-- Dimension Badge (Desktop only) -->
   <div class="dimension-badge">
     <strong>📐 Kích thước gian hàng</strong>
     Mặt bằng: 3.000 × 3.000 mm<br>
@@ -394,8 +597,13 @@
     02 Biển trán: 2.950 × 400 mm
   </div>
 
-  <!-- Left Sidebar Controls -->
-  <div class="hud-panel left-controls">
+  <!-- HUD Controls Panel (Sidebar on desktop / Drawer on mobile) -->
+  <div class="hud-panel left-controls" id="controls-drawer">
+    <div class="panel-header">
+      <div class="panel-header-title">⚙️ Tùy Chỉnh Gian Hàng</div>
+      <button class="btn-close-drawer" onclick="toggleMobileDrawer(false)">✕</button>
+    </div>
+
     <!-- Version Preset -->
     <div class="panel-section">
       <div class="section-title">🎨 Phiên bản Thiết kế</div>
@@ -412,21 +620,9 @@
       </div>
     </div>
 
-    <!-- Camera Angles -->
-    <div class="panel-section">
-      <div class="section-title">🎥 Góc Nhìn Sếp Duyệt</div>
-      <div class="btn-group-2">
-        <button onclick="setCameraView('corner')" class="active" id="cam-corner">🎯 Góc 45°</button>
-        <button onclick="setCameraView('front')" id="cam-front">🖼️ Vách Hậu</button>
-        <button onclick="setCameraView('side')" id="cam-side">🖼️ Vách Bên</button>
-        <button onclick="setCameraView('eye')" id="cam-eye">👤 Tầm Mắt</button>
-        <button onclick="setCameraView('top')" id="cam-top" style="grid-column: span 2;">📐 Mặt Bằng (Top-down)</button>
-      </div>
-    </div>
-
     <!-- Display Options -->
     <div class="panel-section">
-      <div class="section-title">⚙️ Tùy Chọn Hiển Thị</div>
+      <div class="section-title">📦 Vật thể & Trang thiết bị</div>
       <div class="toggle-row">
         <span>Khung nhôm tiêu chuẩn (Octanorm)</span>
         <label class="toggle-switch">
@@ -474,10 +670,11 @@
     </div>
   </div>
 
-  <!-- Bottom Action Bar -->
+  <!-- Bottom Floating Action Bar -->
   <div class="bottom-bar">
-    <button class="action-btn" onclick="resetCamera()">🔄 Đặt lại góc nhìn</button>
-    <button class="action-btn screenshot" onclick="takeScreenshot()">📸 Xuất Ảnh Mockup HD (Gửi Sếp)</button>
+    <button class="btn-mobile-menu" onclick="toggleMobileDrawer(true)">⚙️ Tùy chỉnh</button>
+    <button class="action-btn" onclick="resetCamera()">🔄 Đặt lại</button>
+    <button class="action-btn screenshot" onclick="takeScreenshot()">📸 Xuất Ảnh Mockup HD</button>
   </div>
 
   <!-- 3D Canvas -->
@@ -489,7 +686,7 @@
     const BOOTH_D = 3.0; // 3m
     const BOOTH_H = 2.5; // 2.5m
     const VALANCE_H = 0.4; // 40cm
-    const POST_RADIUS = 0.025; // 50mm diameter aluminum upright
+    const POST_RADIUS = 0.025; // 50mm diameter
 
     let scene, camera, renderer, controls;
     let boothGroup, frameGroup, deskGroup, binGroup, lightsGroup;
@@ -497,7 +694,7 @@
     let spotLight1, spotLight2, spotLight3, ambientLight, dirLight;
     let currentVersion = 'v2';
 
-    // Texture sources with Base64 fallback & direct relative paths
+    // Texture sources: Base64 first, relative path fallback
     function getTextureSource(key) {
       if (window.TEXTURE_DATA && window.TEXTURE_DATA[key]) {
         return window.TEXTURE_DATA[key];
@@ -528,23 +725,31 @@
 
     const textureLoader = new THREE.TextureLoader();
 
-    // App Initializer
+    // Initialize Application
     window.addEventListener('DOMContentLoaded', init);
 
     function init() {
       const container = document.getElementById('canvas-container');
 
-      // Scene
+      // 1. Scene
       scene = new THREE.Scene();
-      scene.background = new THREE.Color(0x16181d);
-      scene.fog = new THREE.FogExp2(0x16181d, 0.035);
+      scene.background = new THREE.Color(0x14161a);
+      scene.fog = new THREE.FogExp2(0x14161a, 0.035);
 
-      // Camera
-      camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 100);
-      camera.position.set(4.5, 2.2, 5.0);
+      // 2. Camera (Adaptive FOV for Mobile vs Desktop)
+      const isMobile = window.innerWidth <= 768;
+      const initialFov = isMobile ? 55 : 45;
+      camera = new THREE.PerspectiveCamera(initialFov, window.innerWidth / window.innerHeight, 0.1, 100);
+      
+      // Position camera further back on mobile for optimal framing
+      if (isMobile) {
+        camera.position.set(4.8, 2.3, 5.4);
+      } else {
+        camera.position.set(4.2, 2.0, 4.6);
+      }
 
-      // Renderer
-      renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
+      // 3. WebGL Renderer with High-DPI support
+      renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true, powerPreference: "high-performance" });
       renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
       renderer.setSize(window.innerWidth, window.innerHeight);
       renderer.shadowMap.enabled = true;
@@ -553,16 +758,16 @@
       renderer.toneMappingExposure = 1.1;
       container.appendChild(renderer.domElement);
 
-      // OrbitControls
+      // 4. OrbitControls (Smooth Touch & Mouse Gestures)
       controls = new THREE.OrbitControls(camera, renderer.domElement);
       controls.enableDamping = true;
-      controls.dampingFactor = 0.05;
-      controls.maxPolarAngle = Math.PI / 2 - 0.02;
+      controls.dampingFactor = 0.06;
+      controls.maxPolarAngle = Math.PI / 2 - 0.015; // Don't clip through floor
       controls.minDistance = 1.2;
-      controls.maxDistance = 15;
-      controls.target.set(0, 1.2, 0);
+      controls.maxDistance = 14;
+      controls.target.set(0, 1.15, 0);
 
-      // Groups
+      // 5. Scene Groups
       boothGroup = new THREE.Group();
       frameGroup = new THREE.Group();
       deskGroup = new THREE.Group();
@@ -572,7 +777,7 @@
       boothGroup.add(deskGroup);
       boothGroup.add(binGroup);
 
-      // Setup models & scene
+      // 6. Build Models
       setupLighting();
       buildEnvironment();
       buildBoothWalls();
@@ -580,13 +785,13 @@
       buildReceptionDesk();
       buildTrashBin();
 
-      // Load initial textures
+      // 7. Load Textures
       loadBoothTextures(currentVersion);
 
-      // Resize listener
+      // 8. Event Listeners
       window.addEventListener('resize', onWindowResize);
 
-      // Loop
+      // 9. Animation Loop
       animate();
 
       // Fade out loading screen
@@ -594,7 +799,7 @@
         const loader = document.getElementById('loading-overlay');
         loader.style.opacity = '0';
         setTimeout(() => loader.style.display = 'none', 400);
-      }, 500);
+      }, 450);
     }
 
     // --- LIGHTING ---
@@ -602,10 +807,10 @@
       lightsGroup = new THREE.Group();
       scene.add(lightsGroup);
 
-      ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
+      ambientLight = new THREE.AmbientLight(0xffffff, 0.72);
       lightsGroup.add(ambientLight);
 
-      dirLight = new THREE.DirectionalLight(0xfff5ea, 0.95);
+      dirLight = new THREE.DirectionalLight(0xfff6ec, 0.95);
       dirLight.position.set(5, 8, 5);
       dirLight.castShadow = true;
       dirLight.shadow.mapSize.width = 2048;
@@ -623,7 +828,7 @@
       fillLight.position.set(-5, 4, -4);
       lightsGroup.add(fillLight);
 
-      // Spotlights mounted on booth overhead structure
+      // Overhead Spotlights
       spotLight1 = createSpotlight(-0.6, BOOTH_H + 0.1, 1.2, -0.6, 1.4, -BOOTH_D/2);
       spotLight2 = createSpotlight(0.8, BOOTH_H + 0.1, 1.2, 0.8, 1.4, -BOOTH_D/2);
       spotLight3 = createSpotlight(1.2, BOOTH_H + 0.1, -0.6, -BOOTH_W/2, 1.4, -0.6);
@@ -694,7 +899,7 @@
       boothGroup.add(trimSide);
     }
 
-    // --- WALLS & 2 VALANCE BOARDS ---
+    // --- WALLS & 02 VALANCE BOARDS ---
     function buildBoothWalls() {
       const wallMatDefault = new THREE.MeshStandardMaterial({
         color: 0xffffff,
@@ -710,7 +915,6 @@
       backwallMesh.receiveShadow = true;
       boothGroup.add(backwallMesh);
 
-      // Back of the backwall (grey board)
       const backBackGeo = new THREE.PlaneGeometry(BOOTH_W, BOOTH_H);
       const backBackMat = new THREE.MeshStandardMaterial({ color: 0xd6d8db, roughness: 0.9 });
       const backBackMesh = new THREE.Mesh(backBackGeo, backBackMat);
@@ -742,7 +946,7 @@
       const valanceSideGeo = new THREE.PlaneGeometry(BOOTH_D, VALANCE_H);
       valanceSideMesh = new THREE.Mesh(valanceSideGeo, wallMatDefault.clone());
       valanceSideMesh.position.set(BOOTH_W / 2 + 0.005, BOOTH_H - VALANCE_H / 2, 0);
-      valanceSideMesh.rotation.y = Math.PI / 2; // Faces OUTWARD to the right aisle (+X)
+      valanceSideMesh.rotation.y = Math.PI / 2; // Faces OUTWARD to right aisle
       valanceSideMesh.castShadow = true;
       boothGroup.add(valanceSideMesh);
     }
@@ -792,11 +996,11 @@
 
     // --- RECEPTION DESK (SQUARED / ORTHOGONAL) & STOOLS ---
     function buildReceptionDesk() {
-      // Desk Body (1.1m W x 0.5m D x 0.98m H), placed squarely parallel to front facade (rotation = 0)
+      // Desk Body (1.1m W x 0.5m D x 0.98m H) - orthogonal
       const deskGeo = new THREE.BoxGeometry(1.1, 0.96, 0.5);
       const deskMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.2, metalness: 0.1 });
       const desk = new THREE.Mesh(deskGeo, deskMat);
-      desk.position.set(0.5, 0.48, 0.85); // Squared up, perpendicular to side wall, parallel to front
+      desk.position.set(0.5, 0.48, 0.85);
       desk.rotation.y = 0; // Pure orthogonal alignment
       desk.castShadow = true;
       desk.receiveShadow = true;
@@ -810,14 +1014,14 @@
       countertop.castShadow = true;
       desk.add(countertop);
 
-      // Front Murrplastik / T&T Brand Accent Stripe
+      // Brand Accent Stripe
       const stripeGeo = new THREE.PlaneGeometry(1.0, 0.22);
       const stripeMat = new THREE.MeshBasicMaterial({ color: 0xC8442A });
       const stripe = new THREE.Mesh(stripeGeo, stripeMat);
       stripe.position.set(0, 0.18, 0.251);
       desk.add(stripe);
 
-      // 2 Bar Stools placed behind the counter
+      // 2 Bar Stools behind the counter
       const stool1 = createBarStool();
       stool1.position.set(0.25, 0, 0.42);
       deskGroup.add(stool1);
@@ -850,13 +1054,12 @@
       return stool;
     }
 
-    // --- TRASH BIN IN INTERIOR CORNER ---
+    // --- TRASH BIN IN CORNER ---
     function buildTrashBin() {
       const binMeshGroup = new THREE.Group();
       const binBodyMat = new THREE.MeshStandardMaterial({ color: 0x24272d, metalness: 0.6, roughness: 0.4 });
       const chromeRingMat = new THREE.MeshStandardMaterial({ color: 0xcccccc, metalness: 0.95, roughness: 0.1 });
 
-      // Cylinder Body (Height 0.35m, Radius 0.12m)
       const binGeo = new THREE.CylinderGeometry(0.12, 0.10, 0.35, 24);
       const bin = new THREE.Mesh(binGeo, binBodyMat);
       bin.position.y = 0.175;
@@ -864,14 +1067,12 @@
       bin.receiveShadow = true;
       binMeshGroup.add(bin);
 
-      // Top Chrome Rim
       const topRimGeo = new THREE.TorusGeometry(0.12, 0.012, 16, 32);
       const topRim = new THREE.Mesh(topRimGeo, chromeRingMat);
       topRim.position.y = 0.35;
       topRim.rotation.x = Math.PI / 2;
       binMeshGroup.add(topRim);
 
-      // Position in the interior corner between Back Wall (Z = -1.5m) and Side Wall (X = -1.5m)
       binMeshGroup.position.set(-1.25, 0, -1.25);
       binGroup.add(binMeshGroup);
     }
@@ -927,25 +1128,28 @@
     }
 
     function setCameraView(view) {
-      document.querySelectorAll('.panel-section .btn-group-2 button').forEach(b => b.classList.remove('active'));
-      const activeBtn = document.getElementById('cam-' + view);
-      if (activeBtn) activeBtn.classList.add('active');
+      document.querySelectorAll('.cam-chip').forEach(b => b.classList.remove('active'));
+      const activeChip = document.getElementById('chip-' + view);
+      if (activeChip) activeChip.classList.add('active');
+
+      const isMobile = window.innerWidth <= 768;
+      const zoomFactor = isMobile ? 1.15 : 1.0;
 
       switch (view) {
         case 'corner':
-          animateCamera(new THREE.Vector3(4.2, 2.0, 4.6), new THREE.Vector3(0, 1.2, 0));
+          animateCamera(new THREE.Vector3(4.2 * zoomFactor, 2.0 * zoomFactor, 4.6 * zoomFactor), new THREE.Vector3(0, 1.15, 0));
           break;
         case 'front':
-          animateCamera(new THREE.Vector3(0, 1.35, 3.8), new THREE.Vector3(0, 1.25, -BOOTH_D/2));
+          animateCamera(new THREE.Vector3(0, 1.35, 3.8 * zoomFactor), new THREE.Vector3(0, 1.25, -BOOTH_D/2));
           break;
         case 'side':
-          animateCamera(new THREE.Vector3(3.8, 1.35, 0), new THREE.Vector3(-BOOTH_W/2, 1.25, 0));
+          animateCamera(new THREE.Vector3(3.8 * zoomFactor, 1.35, 0), new THREE.Vector3(-BOOTH_W/2, 1.25, 0));
           break;
         case 'eye':
           animateCamera(new THREE.Vector3(1.8, 1.6, 2.2), new THREE.Vector3(-0.4, 1.4, -0.4));
           break;
         case 'top':
-          animateCamera(new THREE.Vector3(0.01, 7.5, 0.01), new THREE.Vector3(0, 0, 0));
+          animateCamera(new THREE.Vector3(0.01, 7.5 * zoomFactor, 0.01), new THREE.Vector3(0, 0, 0));
           break;
       }
     }
@@ -1002,13 +1206,22 @@
       document.getElementById('env-studio').classList.toggle('active', mode === 'studio');
 
       if (mode === 'hall') {
-        ambientLight.intensity = 0.7;
+        ambientLight.intensity = 0.72;
         dirLight.intensity = 0.95;
-        scene.background.setHex(0x16181d);
+        scene.background.setHex(0x14161a);
       } else {
         ambientLight.intensity = 0.95;
         dirLight.intensity = 1.25;
         scene.background.setHex(0x282c34);
+      }
+    }
+
+    function toggleMobileDrawer(open) {
+      const drawer = document.getElementById('controls-drawer');
+      if (open) {
+        drawer.classList.add('open');
+      } else {
+        drawer.classList.remove('open');
       }
     }
 
