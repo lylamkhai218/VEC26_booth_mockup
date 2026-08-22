@@ -15,13 +15,13 @@
       --primary: #C8442A;
       --primary-hover: #b03820;
       --bg-dark: #121316;
-      --panel-bg: rgba(22, 24, 29, 0.92);
+      --panel-bg: rgba(20, 22, 27, 0.94);
       --border: rgba(255, 255, 255, 0.12);
       --text: #f0f2f5;
       --text-muted: #9ba1ad;
       --accent: #2563eb;
-      --safe-bottom: max(16px, env(safe-area-inset-bottom));
-      --safe-top: max(12px, env(safe-area-inset-top));
+      --safe-bottom: max(14px, env(safe-area-inset-bottom));
+      --safe-top: max(10px, env(safe-area-inset-top));
     }
 
     * {
@@ -55,14 +55,14 @@
     .top-bar {
       position: absolute;
       top: var(--safe-top);
-      left: 16px;
-      right: 16px;
+      left: 12px;
+      right: 12px;
       z-index: 10;
       display: flex;
       justify-content: space-between;
       align-items: center;
       pointer-events: none;
-      gap: 10px;
+      gap: 8px;
     }
 
     .brand-badge {
@@ -71,72 +71,77 @@
       backdrop-filter: blur(14px);
       -webkit-backdrop-filter: blur(14px);
       border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 8px 16px;
+      border-radius: 10px;
+      padding: 6px 12px;
       display: flex;
       align-items: center;
-      gap: 12px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+      gap: 8px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+      min-width: 0;
     }
 
     .brand-logo-pill {
       background: var(--primary);
       color: white;
       font-weight: 800;
-      font-size: 12px;
+      font-size: 11px;
       letter-spacing: 0.8px;
-      padding: 4px 8px;
-      border-radius: 6px;
+      padding: 3px 6px;
+      border-radius: 5px;
       flex-shrink: 0;
     }
 
     .brand-info {
       display: flex;
       flex-direction: column;
+      min-width: 0;
     }
 
     .brand-title {
-      font-size: 13px;
+      font-size: 12px;
       font-weight: 700;
       color: #fff;
       white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     .brand-subtitle {
-      font-size: 10px;
+      font-size: 9.5px;
       color: var(--text-muted);
       margin-top: 1px;
       white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     .booth-tag {
       pointer-events: auto;
-      background: rgba(37, 99, 235, 0.15);
-      border: 1px solid rgba(96, 165, 250, 0.3);
-      padding: 5px 10px;
+      background: rgba(37, 99, 235, 0.2);
+      border: 1px solid rgba(96, 165, 250, 0.35);
+      padding: 5px 8px;
       border-radius: 8px;
-      font-size: 11px;
+      font-size: 10.5px;
       color: #93c5fd;
-      font-weight: 600;
+      font-weight: 700;
       white-space: nowrap;
-      display: flex;
-      align-items: center;
-      gap: 4px;
+      flex-shrink: 0;
     }
 
-    /* Horizontal Camera Quick-Bar (Always visible on all screens) */
+    /* Horizontal Camera Quick-Bar (Always accessible) */
     .camera-quickbar {
       position: absolute;
-      top: 66px;
-      left: 16px;
-      right: 16px;
+      top: 54px;
+      left: 12px;
+      right: 12px;
       z-index: 10;
       display: flex;
       gap: 6px;
       overflow-x: auto;
-      padding-bottom: 4px;
+      padding: 2px 0 6px 0;
       pointer-events: auto;
       scrollbar-width: none;
+      -webkit-overflow-scrolling: touch;
     }
     .camera-quickbar::-webkit-scrollbar {
       display: none;
@@ -148,17 +153,18 @@
       -webkit-backdrop-filter: blur(12px);
       border: 1px solid var(--border);
       color: var(--text);
-      padding: 7px 12px;
-      border-radius: 20px;
-      font-size: 11.5px;
+      padding: 6px 12px;
+      border-radius: 18px;
+      font-size: 11px;
       font-weight: 600;
       white-space: nowrap;
       cursor: pointer;
       display: flex;
       align-items: center;
-      gap: 5px;
+      gap: 4px;
       transition: all 0.15s ease;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+      flex-shrink: 0;
     }
     .cam-chip:active {
       transform: scale(0.95);
@@ -167,10 +173,10 @@
       background: var(--primary);
       border-color: var(--primary);
       color: #fff;
-      box-shadow: 0 3px 12px rgba(200, 68, 42, 0.5);
+      box-shadow: 0 2px 10px rgba(200, 68, 42, 0.5);
     }
 
-    /* Control Drawer HUD Panel (Desktop sidebar / Mobile bottom sheet) */
+    /* HUD Controls Panel (Desktop sidebar / Mobile bottom sheet) */
     .hud-panel {
       position: absolute;
       z-index: 20;
@@ -182,15 +188,15 @@
       padding: 16px;
       box-shadow: 0 16px 36px rgba(0,0,0,0.6);
       pointer-events: auto;
-      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s ease;
+      transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s ease;
     }
 
-    /* Desktop Left Sidebar Position */
+    /* Desktop Sidebar */
     .left-controls {
-      top: 112px;
+      top: 104px;
       left: 16px;
       width: 290px;
-      max-height: calc(100vh - 180px);
+      max-height: calc(100vh - 170px);
       overflow-y: auto;
     }
 
@@ -218,17 +224,26 @@
       align-items: center;
       gap: 6px;
     }
+    .drawer-handle {
+      display: none;
+      width: 40px;
+      height: 4px;
+      background: rgba(255,255,255,0.25);
+      border-radius: 4px;
+      margin: 0 auto 10px auto;
+    }
     .btn-close-drawer {
-      display: none; /* hidden on desktop */
+      display: none;
       background: rgba(255,255,255,0.1);
       border: none;
-      color: #aaa;
+      color: #ccc;
       width: 28px;
       height: 28px;
       border-radius: 50%;
       cursor: pointer;
-      font-size: 16px;
-      line-height: 1;
+      font-size: 14px;
+      align-items: center;
+      justify-content: center;
     }
 
     .panel-section {
@@ -271,8 +286,8 @@
       color: var(--text);
       font-size: 12px;
       font-weight: 500;
-      padding: 9px 12px;
-      min-height: 40px;
+      padding: 8px 12px;
+      min-height: 38px;
       border-radius: 8px;
       transition: all 0.15s ease;
       display: flex;
@@ -302,10 +317,10 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 6px 0;
+      padding: 5px 0;
       font-size: 12px;
       color: #d1d5db;
-      min-height: 36px;
+      min-height: 34px;
     }
 
     .toggle-switch {
@@ -354,25 +369,25 @@
       z-index: 15;
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
       background: var(--panel-bg);
       backdrop-filter: blur(14px);
       -webkit-backdrop-filter: blur(14px);
       border: 1px solid var(--border);
-      border-radius: 40px;
-      padding: 6px 14px;
+      border-radius: 30px;
+      padding: 6px 12px;
       box-shadow: 0 10px 30px rgba(0,0,0,0.6);
       pointer-events: auto;
-      max-width: calc(100vw - 32px);
+      max-width: calc(100vw - 24px);
     }
 
     .action-btn {
-      padding: 8px 16px;
+      padding: 8px 14px;
       border-radius: 20px;
-      font-size: 12.5px;
+      font-size: 12px;
       font-weight: 600;
       white-space: nowrap;
-      min-height: 40px;
+      min-height: 38px;
     }
     .action-btn.screenshot {
       background: linear-gradient(135deg, #C8442A, #e05338);
@@ -385,9 +400,8 @@
       box-shadow: 0 6px 20px rgba(200, 68, 42, 0.6);
     }
 
-    /* Mobile Floating Menu Button */
     .btn-mobile-menu {
-      display: none; /* Desktop default */
+      display: none;
     }
 
     /* Dimension Label in 3D View */
@@ -427,8 +441,8 @@
       transition: opacity 0.4s ease;
     }
     .spinner {
-      width: 44px;
-      height: 44px;
+      width: 42px;
+      height: 42px;
       border: 3px solid rgba(200, 68, 42, 0.2);
       border-top-color: var(--primary);
       border-radius: 50%;
@@ -446,9 +460,9 @@
       transform: translateX(-50%) translateY(-20px);
       background: rgba(16, 185, 129, 0.95);
       color: white;
-      padding: 10px 20px;
+      padding: 9px 18px;
       border-radius: 30px;
-      font-size: 13px;
+      font-size: 12.5px;
       font-weight: 600;
       backdrop-filter: blur(8px);
       -webkit-backdrop-filter: blur(8px);
@@ -464,36 +478,53 @@
       transform: translateX(-50%) translateY(0);
     }
 
-    /* --- MOBILE RESPONSIVE MEDIA QUERIES (UI/UX PRO MAX) --- */
+    /* Drawer Backdrop for Mobile */
+    #drawer-backdrop {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.6);
+      backdrop-filter: blur(4px);
+      z-index: 80;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    #drawer-backdrop.active {
+      display: block;
+      opacity: 1;
+    }
+
+    /* --- MOBILE RESPONSIVE TWEAKS (< 768px) --- */
     @media (max-width: 768px) {
       .top-bar {
-        left: 12px;
-        right: 12px;
+        top: var(--safe-top);
+        left: 8px;
+        right: 8px;
       }
       .brand-badge {
-        padding: 6px 10px;
-        gap: 8px;
+        padding: 5px 8px;
+        gap: 6px;
       }
       .brand-title {
-        font-size: 11.5px;
+        font-size: 11px;
       }
       .brand-subtitle {
-        display: none; /* Hide subtitle on small mobile to save space */
+        display: none;
       }
       .booth-tag {
-        font-size: 10px;
-        padding: 4px 8px;
+        font-size: 9.5px;
+        padding: 4px 6px;
       }
 
       .camera-quickbar {
-        top: 56px;
-        left: 12px;
-        right: 12px;
+        top: 48px;
+        left: 8px;
+        right: 8px;
       }
       .cam-chip {
-        padding: 6px 10px;
-        font-size: 11px;
-        min-height: 34px;
+        padding: 5px 10px;
+        font-size: 10.5px;
+        min-height: 32px;
       }
 
       /* Transform Left Sidebar into Mobile Bottom Sheet Drawer */
@@ -504,10 +535,10 @@
         left: 0;
         right: 0;
         width: 100%;
-        max-height: 80vh;
+        max-height: 75vh;
         border-radius: 20px 20px 0 0;
-        padding: 18px 18px max(24px, env(safe-area-inset-bottom)) 18px;
-        transform: translateY(110%);
+        padding: 12px 16px max(20px, env(safe-area-inset-bottom)) 16px;
+        transform: translateY(115%);
         transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
         z-index: 100;
         background: rgba(18, 20, 24, 0.98);
@@ -516,36 +547,47 @@
       .left-controls.open {
         transform: translateY(0%);
       }
-      .btn-close-drawer {
+      .drawer-handle {
         display: block;
+      }
+      .btn-close-drawer {
+        display: flex;
       }
 
       .dimension-badge {
-        display: none; /* Hide dimension box on mobile screen to prevent view occlusion */
+        display: none;
       }
 
-      /* Mobile Bottom Floating Buttons */
+      /* Mobile Bottom Bar Layout */
       .bottom-bar {
         bottom: var(--safe-bottom);
-        width: calc(100% - 24px);
-        left: 12px;
+        width: calc(100% - 16px);
+        left: 8px;
         transform: none;
-        justify-content: space-between;
-        padding: 6px 10px;
+        padding: 5px 8px;
+        gap: 6px;
       }
 
       .btn-mobile-menu {
         display: flex;
         align-items: center;
-        gap: 6px;
+        gap: 4px;
         background: rgba(255,255,255,0.08);
         border: 1px solid var(--border);
         color: #fff;
         border-radius: 20px;
-        padding: 8px 14px;
-        font-size: 12px;
+        padding: 7px 10px;
+        font-size: 11px;
         font-weight: 600;
-        min-height: 40px;
+        min-height: 36px;
+        flex-shrink: 0;
+      }
+
+      .action-btn {
+        padding: 7px 10px;
+        font-size: 11px;
+        min-height: 36px;
+        flex-shrink: 0;
       }
 
       .action-btn.screenshot {
@@ -568,25 +610,28 @@
   <!-- Toast -->
   <div id="toast">📸 Đã xuất ảnh mockup HD thành công!</div>
 
+  <!-- Drawer Backdrop (Mobile) -->
+  <div id="drawer-backdrop" onclick="toggleMobileDrawer(false)"></div>
+
   <!-- Top Bar -->
   <div class="top-bar">
     <div class="brand-badge">
       <div class="brand-logo-pill">MURRPLASTIK</div>
       <div class="brand-info">
         <div class="brand-title">T&T VINA — GIAN HÀNG 3D</div>
-        <div class="brand-subtitle">VITW 2026 @ Trung tâm Triển lãm Việt Nam (VEC)</div>
+        <div class="brand-subtitle">VITW 2026 @ VEC Hà Nội</div>
       </div>
     </div>
-    <div class="booth-tag">📍 Gian góc H1-15 (3×3×2.5m)</div>
+    <div class="booth-tag">📍 Gian góc H1-15 (3×3m)</div>
   </div>
 
-  <!-- Quick Horizontal Camera Chips (Accessible everywhere) -->
+  <!-- Quick Horizontal Camera Chips (Always visible) -->
   <div class="camera-quickbar">
     <div class="cam-chip active" id="chip-corner" onclick="setCameraView('corner')">🎯 Phối cảnh 45°</div>
-    <div class="cam-chip" id="chip-front" onclick="setCameraView('front')">🖼️ Vách Hậu (Robotics)</div>
-    <div class="cam-chip" id="chip-side" onclick="setCameraView('side')">🖼️ Vách Bên (Solar/Rail)</div>
+    <div class="cam-chip" id="chip-front" onclick="setCameraView('front')">🖼️ Vách Hậu</div>
+    <div class="cam-chip" id="chip-side" onclick="setCameraView('side')">🖼️ Vách Bên</div>
     <div class="cam-chip" id="chip-eye" onclick="setCameraView('eye')">👤 Tầm Mắt (1.6m)</div>
-    <div class="cam-chip" id="chip-top" onclick="setCameraView('top')">📐 Mặt Bằng (Top-down)</div>
+    <div class="cam-chip" id="chip-top" onclick="setCameraView('top')">📐 Mặt Bằng (Top)</div>
   </div>
 
   <!-- Dimension Badge (Desktop only) -->
@@ -599,6 +644,7 @@
 
   <!-- HUD Controls Panel (Sidebar on desktop / Drawer on mobile) -->
   <div class="hud-panel left-controls" id="controls-drawer">
+    <div class="drawer-handle"></div>
     <div class="panel-header">
       <div class="panel-header-title">⚙️ Tùy Chỉnh Gian Hàng</div>
       <button class="btn-close-drawer" onclick="toggleMobileDrawer(false)">✕</button>
@@ -622,7 +668,7 @@
 
     <!-- Display Options -->
     <div class="panel-section">
-      <div class="section-title">📦 Vật thể & Trang thiết bị</div>
+      <div class="section-title">📦 Trang thiết bị gian hàng</div>
       <div class="toggle-row">
         <span>Khung nhôm tiêu chuẩn (Octanorm)</span>
         <label class="toggle-switch">
@@ -672,7 +718,7 @@
 
   <!-- Bottom Floating Action Bar -->
   <div class="bottom-bar">
-    <button class="btn-mobile-menu" onclick="toggleMobileDrawer(true)">⚙️ Tùy chỉnh</button>
+    <button class="btn-mobile-menu" onclick="toggleMobileDrawer(true)">⚙️ Menu</button>
     <button class="action-btn" onclick="resetCamera()">🔄 Đặt lại</button>
     <button class="action-btn screenshot" onclick="takeScreenshot()">📸 Xuất Ảnh Mockup HD</button>
   </div>
@@ -725,6 +771,23 @@
 
     const textureLoader = new THREE.TextureLoader();
 
+    // Helper: Compute Adaptive Camera Distance based on screen aspect ratio
+    function getAdaptiveDistance(baseDist) {
+      const aspect = window.innerWidth / window.innerHeight;
+      if (aspect < 1.0) {
+        // Portrait mobile screen: scale distance inversely to aspect ratio so the 3m booth fits horizontally
+        return baseDist * Math.min(2.1, 1.45 / Math.max(aspect, 0.42));
+      }
+      return baseDist;
+    }
+
+    // Helper: Compute Adaptive Camera Target
+    function getAdaptiveTarget() {
+      const isMobile = window.innerWidth <= 768;
+      // On mobile, raise target slightly to center booth between top chips and bottom bar
+      return isMobile ? new THREE.Vector3(0, 1.25, 0) : new THREE.Vector3(0, 1.15, 0);
+    }
+
     // Initialize Application
     window.addEventListener('DOMContentLoaded', init);
 
@@ -736,17 +799,13 @@
       scene.background = new THREE.Color(0x14161a);
       scene.fog = new THREE.FogExp2(0x14161a, 0.035);
 
-      // 2. Camera (Adaptive FOV for Mobile vs Desktop)
-      const isMobile = window.innerWidth <= 768;
-      const initialFov = isMobile ? 55 : 45;
-      camera = new THREE.PerspectiveCamera(initialFov, window.innerWidth / window.innerHeight, 0.1, 100);
+      // 2. Camera Setup (Adaptive FOV and Distance)
+      const aspect = window.innerWidth / window.innerHeight;
+      camera = new THREE.PerspectiveCamera(45, aspect, 0.1, 100);
       
-      // Position camera further back on mobile for optimal framing
-      if (isMobile) {
-        camera.position.set(4.8, 2.3, 5.4);
-      } else {
-        camera.position.set(4.2, 2.0, 4.6);
-      }
+      const initDist = getAdaptiveDistance(4.3);
+      const initHeight = window.innerWidth <= 768 ? 2.3 : 2.0;
+      camera.position.set(initDist * 0.72, initHeight, initDist * 0.78);
 
       // 3. WebGL Renderer with High-DPI support
       renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true, powerPreference: "high-performance" });
@@ -758,14 +817,15 @@
       renderer.toneMappingExposure = 1.1;
       container.appendChild(renderer.domElement);
 
-      // 4. OrbitControls (Smooth Touch & Mouse Gestures)
+      // 4. OrbitControls
       controls = new THREE.OrbitControls(camera, renderer.domElement);
       controls.enableDamping = true;
       controls.dampingFactor = 0.06;
-      controls.maxPolarAngle = Math.PI / 2 - 0.015; // Don't clip through floor
+      controls.maxPolarAngle = Math.PI / 2 - 0.015;
       controls.minDistance = 1.2;
-      controls.maxDistance = 14;
-      controls.target.set(0, 1.15, 0);
+      controls.maxDistance = 18;
+      const target = getAdaptiveTarget();
+      controls.target.copy(target);
 
       // 5. Scene Groups
       boothGroup = new THREE.Group();
@@ -946,7 +1006,7 @@
       const valanceSideGeo = new THREE.PlaneGeometry(BOOTH_D, VALANCE_H);
       valanceSideMesh = new THREE.Mesh(valanceSideGeo, wallMatDefault.clone());
       valanceSideMesh.position.set(BOOTH_W / 2 + 0.005, BOOTH_H - VALANCE_H / 2, 0);
-      valanceSideMesh.rotation.y = Math.PI / 2; // Faces OUTWARD to right aisle
+      valanceSideMesh.rotation.y = Math.PI / 2;
       valanceSideMesh.castShadow = true;
       boothGroup.add(valanceSideMesh);
     }
@@ -994,19 +1054,17 @@
       frameGroup.add(topLeftBeam);
     }
 
-    // --- RECEPTION DESK (SQUARED / ORTHOGONAL) & STOOLS ---
+    // --- RECEPTION DESK (ORTHOGONAL) & STOOLS ---
     function buildReceptionDesk() {
-      // Desk Body (1.1m W x 0.5m D x 0.98m H) - orthogonal
       const deskGeo = new THREE.BoxGeometry(1.1, 0.96, 0.5);
       const deskMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.2, metalness: 0.1 });
       const desk = new THREE.Mesh(deskGeo, deskMat);
       desk.position.set(0.5, 0.48, 0.85);
-      desk.rotation.y = 0; // Pure orthogonal alignment
+      desk.rotation.y = 0;
       desk.castShadow = true;
       desk.receiveShadow = true;
       deskGroup.add(desk);
 
-      // Dark Wood Countertop
       const topGeo = new THREE.BoxGeometry(1.16, 0.04, 0.56);
       const topMat = new THREE.MeshStandardMaterial({ color: 0x1c1f26, roughness: 0.3, metalness: 0.4 });
       const countertop = new THREE.Mesh(topGeo, topMat);
@@ -1014,14 +1072,12 @@
       countertop.castShadow = true;
       desk.add(countertop);
 
-      // Brand Accent Stripe
       const stripeGeo = new THREE.PlaneGeometry(1.0, 0.22);
       const stripeMat = new THREE.MeshBasicMaterial({ color: 0xC8442A });
       const stripe = new THREE.Mesh(stripeGeo, stripeMat);
       stripe.position.set(0, 0.18, 0.251);
       desk.add(stripe);
 
-      // 2 Bar Stools behind the counter
       const stool1 = createBarStool();
       stool1.position.set(0.25, 0, 0.42);
       deskGroup.add(stool1);
@@ -1133,31 +1189,43 @@
       if (activeChip) activeChip.classList.add('active');
 
       const isMobile = window.innerWidth <= 768;
-      const zoomFactor = isMobile ? 1.15 : 1.0;
+      const targetLookAt = getAdaptiveTarget();
 
       switch (view) {
-        case 'corner':
-          animateCamera(new THREE.Vector3(4.2 * zoomFactor, 2.0 * zoomFactor, 4.6 * zoomFactor), new THREE.Vector3(0, 1.15, 0));
+        case 'corner': {
+          const d = getAdaptiveDistance(4.3);
+          const h = isMobile ? 2.3 : 2.0;
+          animateCamera(new THREE.Vector3(d * 0.72, h, d * 0.78), targetLookAt);
           break;
-        case 'front':
-          animateCamera(new THREE.Vector3(0, 1.35, 3.8 * zoomFactor), new THREE.Vector3(0, 1.25, -BOOTH_D/2));
+        }
+        case 'front': {
+          const d = getAdaptiveDistance(3.7);
+          const h = isMobile ? 1.45 : 1.35;
+          animateCamera(new THREE.Vector3(0, h, d), new THREE.Vector3(0, 1.25, -BOOTH_D/2));
           break;
-        case 'side':
-          animateCamera(new THREE.Vector3(3.8 * zoomFactor, 1.35, 0), new THREE.Vector3(-BOOTH_W/2, 1.25, 0));
+        }
+        case 'side': {
+          const d = getAdaptiveDistance(3.7);
+          const h = isMobile ? 1.45 : 1.35;
+          animateCamera(new THREE.Vector3(d, h, 0), new THREE.Vector3(-BOOTH_W/2, 1.25, 0));
           break;
-        case 'eye':
-          animateCamera(new THREE.Vector3(1.8, 1.6, 2.2), new THREE.Vector3(-0.4, 1.4, -0.4));
+        }
+        case 'eye': {
+          animateCamera(new THREE.Vector3(1.6, 1.55, 2.0), new THREE.Vector3(-0.3, 1.35, -0.3));
           break;
-        case 'top':
-          animateCamera(new THREE.Vector3(0.01, 7.5 * zoomFactor, 0.01), new THREE.Vector3(0, 0, 0));
+        }
+        case 'top': {
+          const d = getAdaptiveDistance(7.2);
+          animateCamera(new THREE.Vector3(0.01, d, 0.01), new THREE.Vector3(0, 0, 0));
           break;
+        }
       }
     }
 
     function animateCamera(targetPos, targetLookAt) {
       const startPos = camera.position.clone();
       const startTarget = controls.target.clone();
-      const duration = 600;
+      const duration = 550;
       const startTime = performance.now();
 
       function update() {
@@ -1218,10 +1286,13 @@
 
     function toggleMobileDrawer(open) {
       const drawer = document.getElementById('controls-drawer');
+      const backdrop = document.getElementById('drawer-backdrop');
       if (open) {
         drawer.classList.add('open');
+        backdrop.classList.add('active');
       } else {
         drawer.classList.remove('open');
+        backdrop.classList.remove('active');
       }
     }
 
@@ -1240,9 +1311,15 @@
     }
 
     function onWindowResize() {
-      camera.aspect = window.innerWidth / window.innerHeight;
+      const aspect = window.innerWidth / window.innerHeight;
+      camera.aspect = aspect;
       camera.updateProjectionMatrix();
       renderer.setSize(window.innerWidth, window.innerHeight);
+
+      // Re-align camera distance on resize to keep booth perfectly framed
+      const currentActiveChip = document.querySelector('.cam-chip.active');
+      const view = currentActiveChip ? currentActiveChip.id.replace('chip-', '') : 'corner';
+      setCameraView(view);
     }
 
     function animate() {
