@@ -1,0 +1,1042 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>3D Booth Mockup — T&T VINA × MURRPLASTIK (VEC 2026)</title>
+  <!-- Three.js & OrbitControls -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+  <!-- Base64 Texture Data for 100% Offline / Local file:// compatibility -->
+  <script src="textures_data.js"></script>
+
+  <style>
+    :root {
+      --primary: #C8442A;
+      --primary-hover: #b03820;
+      --bg-dark: #121316;
+      --panel-bg: rgba(24, 26, 31, 0.9);
+      --border: rgba(255, 255, 255, 0.12);
+      --text: #f0f2f5;
+      --text-muted: #9ba1ad;
+      --accent: #2563eb;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: var(--bg-dark);
+      color: var(--text);
+      overflow: hidden;
+      width: 100vw;
+      height: 100vh;
+    }
+
+    #canvas-container {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+    }
+
+    /* Top Bar Header */
+    .top-bar {
+      position: absolute;
+      top: 16px;
+      left: 20px;
+      right: 20px;
+      z-index: 10;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      pointer-events: none;
+    }
+
+    .brand-badge {
+      pointer-events: auto;
+      background: var(--panel-bg);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 10px 18px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+    }
+
+    .brand-logo-pill {
+      background: var(--primary);
+      color: white;
+      font-weight: 800;
+      font-size: 13px;
+      letter-spacing: 1px;
+      padding: 4px 10px;
+      border-radius: 6px;
+    }
+
+    .brand-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .brand-subtitle {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .booth-tag {
+      background: rgba(255,255,255,0.08);
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-size: 11px;
+      color: #60a5fa;
+      font-weight: 600;
+    }
+
+    /* Control HUD Panels */
+    .hud-panel {
+      position: absolute;
+      z-index: 10;
+      background: var(--panel-bg);
+      backdrop-filter: blur(14px);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 16px;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.55);
+      pointer-events: auto;
+      transition: all 0.2s ease;
+    }
+
+    /* Left Control Sidebar */
+    .left-controls {
+      top: 90px;
+      left: 20px;
+      width: 290px;
+      max-height: calc(100vh - 120px);
+      overflow-y: auto;
+    }
+
+    .left-controls::-webkit-scrollbar {
+      width: 4px;
+    }
+    .left-controls::-webkit-scrollbar-thumb {
+      background: rgba(255,255,255,0.2);
+      border-radius: 4px;
+    }
+
+    .panel-section {
+      margin-bottom: 16px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .panel-section:last-child {
+      margin-bottom: 0;
+      padding-bottom: 0;
+      border-bottom: none;
+    }
+
+    .section-title {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      font-weight: 700;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn-group {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 6px;
+    }
+
+    .btn-group-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+    }
+
+    button {
+      cursor: pointer;
+      font-family: inherit;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.05);
+      color: var(--text);
+      font-size: 12px;
+      font-weight: 500;
+      padding: 8px 12px;
+      border-radius: 8px;
+      transition: all 0.15s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      text-align: left;
+    }
+
+    button:hover {
+      background: rgba(255,255,255,0.12);
+      border-color: rgba(255,255,255,0.25);
+      color: #fff;
+    }
+
+    button.active {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #fff;
+      font-weight: 600;
+      box-shadow: 0 2px 10px rgba(200, 68, 42, 0.4);
+    }
+
+    /* Toggle switches */
+    .toggle-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 6px 0;
+      font-size: 12px;
+      color: #d1d5db;
+    }
+
+    .toggle-switch {
+      position: relative;
+      width: 38px;
+      height: 20px;
+    }
+
+    .toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: rgba(255,255,255,0.15);
+      transition: .2s;
+      border-radius: 20px;
+    }
+
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 14px;
+      width: 14px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: .2s;
+      border-radius: 50%;
+    }
+
+    input:checked + .slider {
+      background-color: var(--primary);
+    }
+
+    input:checked + .slider:before {
+      transform: translateX(18px);
+    }
+
+    /* Bottom Quick Action Bar */
+    .bottom-bar {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--panel-bg);
+      backdrop-filter: blur(14px);
+      border: 1px solid var(--border);
+      border-radius: 40px;
+      padding: 8px 16px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+      pointer-events: auto;
+    }
+
+    .action-btn {
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .action-btn.screenshot {
+      background: linear-gradient(135deg, #C8442A, #e05338);
+      border: none;
+      color: #fff;
+      box-shadow: 0 4px 15px rgba(200, 68, 42, 0.4);
+    }
+    .action-btn.screenshot:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(200, 68, 42, 0.6);
+    }
+
+    /* Dimension Label in 3D View */
+    .dimension-badge {
+      position: absolute;
+      bottom: 20px;
+      right: 20px;
+      z-index: 10;
+      background: var(--panel-bg);
+      backdrop-filter: blur(10px);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-size: 11px;
+      color: var(--text-muted);
+      pointer-events: none;
+    }
+    .dimension-badge strong {
+      color: #fff;
+      font-size: 13px;
+      display: block;
+      margin-bottom: 2px;
+    }
+
+    /* Loading Overlay */
+    #loading-overlay {
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: #0f1013;
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      transition: opacity 0.5s ease;
+    }
+    .spinner {
+      width: 44px;
+      height: 44px;
+      border: 3px solid rgba(200, 68, 42, 0.2);
+      border-top-color: var(--primary);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Toast Notification */
+    #toast {
+      position: absolute;
+      top: 80px;
+      left: 50%;
+      transform: translateX(-50%) translateY(-20px);
+      background: rgba(16, 185, 129, 0.95);
+      color: white;
+      padding: 10px 22px;
+      border-radius: 30px;
+      font-size: 13px;
+      font-weight: 600;
+      backdrop-filter: blur(8px);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 150;
+    }
+    #toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Loading Screen -->
+  <div id="loading-overlay">
+    <div class="spinner"></div>
+    <div style="font-weight: 600; font-size: 14px; letter-spacing: 0.5px;">ĐANG TẢI MOCKUP 3D GIAN HÀNG VEC 2026...</div>
+    <div style="font-size: 12px; color: #888;">Đang nạp texture hình ảnh độ phân giải cao 2048px</div>
+  </div>
+
+  <!-- Toast -->
+  <div id="toast">📸 Đã xuất ảnh mockup HD thành công!</div>
+
+  <!-- Top Bar -->
+  <div class="top-bar">
+    <div class="brand-badge">
+      <div class="brand-logo-pill">MURRPLASTIK</div>
+      <div>
+        <div class="brand-title">T&T VINA INDUSTRIAL — GIAN HÀNG TRIỂN LÃM 3D</div>
+        <div class="brand-subtitle">Tuần lễ Công nghiệp & Công nghệ Việt Nam (VITW 2026 @ VEC)</div>
+      </div>
+      <div class="booth-tag">📍 Gian góc H1-15 (3m × 3m × 2.5m)</div>
+    </div>
+  </div>
+
+  <!-- Dimension Badge -->
+  <div class="dimension-badge">
+    <strong>📐 Kích thước gian hàng</strong>
+    Mặt bằng: 3.000 × 3.000 mm<br>
+    Chiều cao vách: 2.500 mm<br>
+    02 Biển trán: 2.950 × 400 mm
+  </div>
+
+  <!-- Left Sidebar Controls -->
+  <div class="hud-panel left-controls">
+    <!-- Version Preset -->
+    <div class="panel-section">
+      <div class="section-title">🎨 Phiên bản Thiết kế</div>
+      <div class="btn-group">
+        <button class="active" id="btn-ver-v2" onclick="switchVersion('v2')">
+          <span>✨ Bản V2 Visual-First (Mới nhất)</span>
+        </button>
+        <button id="btn-ver-v1" onclick="switchVersion('v1')">
+          <span>📄 Bản V1 Production (Chuẩn in ấn)</span>
+        </button>
+        <button id="btn-ver-root" onclick="switchVersion('root')">
+          <span>🏷️ Bản Backdrop 295×210cm</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Camera Angles -->
+    <div class="panel-section">
+      <div class="section-title">🎥 Góc Nhìn Sếp Duyệt</div>
+      <div class="btn-group-2">
+        <button onclick="setCameraView('corner')" class="active" id="cam-corner">🎯 Góc 45°</button>
+        <button onclick="setCameraView('front')" id="cam-front">🖼️ Vách Hậu</button>
+        <button onclick="setCameraView('side')" id="cam-side">🖼️ Vách Bên</button>
+        <button onclick="setCameraView('eye')" id="cam-eye">👤 Tầm Mắt</button>
+        <button onclick="setCameraView('top')" id="cam-top" style="grid-column: span 2;">📐 Mặt Bằng (Top-down)</button>
+      </div>
+    </div>
+
+    <!-- Display Options -->
+    <div class="panel-section">
+      <div class="section-title">⚙️ Tùy Chọn Hiển Thị</div>
+      <div class="toggle-row">
+        <span>Khung nhôm tiêu chuẩn (Octanorm)</span>
+        <label class="toggle-switch">
+          <input type="checkbox" id="toggle-frame" checked onchange="toggleFrame(this.checked)">
+          <span class="slider"></span>
+        </label>
+      </div>
+      <div class="toggle-row">
+        <span>Bàn lễ tân vuông góc & ghế</span>
+        <label class="toggle-switch">
+          <input type="checkbox" id="toggle-desk" checked onchange="toggleDesk(this.checked)">
+          <span class="slider"></span>
+        </label>
+      </div>
+      <div class="toggle-row">
+        <span>Sọt rác góc gian hàng</span>
+        <label class="toggle-switch">
+          <input type="checkbox" id="toggle-bin" checked onchange="toggleBin(this.checked)">
+          <span class="slider"></span>
+        </label>
+      </div>
+      <div class="toggle-row">
+        <span>Đèn rọi LED Spotlights</span>
+        <label class="toggle-switch">
+          <input type="checkbox" id="toggle-lights" checked onchange="toggleSpotlights(this.checked)">
+          <span class="slider"></span>
+        </label>
+      </div>
+      <div class="toggle-row">
+        <span>Tự động xoay 360°</span>
+        <label class="toggle-switch">
+          <input type="checkbox" id="toggle-autorotate" onchange="toggleAutoRotate(this.checked)">
+          <span class="slider"></span>
+        </label>
+      </div>
+    </div>
+
+    <!-- Lighting Environment -->
+    <div class="panel-section">
+      <div class="section-title">💡 Môi trường Ánh sáng</div>
+      <div class="btn-group-2">
+        <button id="env-hall" class="active" onclick="setLighting('hall')">Sảnh VEC</button>
+        <button id="env-studio" onclick="setLighting('studio')">Studio Sáng</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom Action Bar -->
+  <div class="bottom-bar">
+    <button class="action-btn" onclick="resetCamera()">🔄 Đặt lại góc nhìn</button>
+    <button class="action-btn screenshot" onclick="takeScreenshot()">📸 Xuất Ảnh Mockup HD (Gửi Sếp)</button>
+  </div>
+
+  <!-- 3D Canvas -->
+  <div id="canvas-container"></div>
+
+  <script>
+    // --- CONSTANTS ---
+    const BOOTH_W = 3.0; // 3m
+    const BOOTH_D = 3.0; // 3m
+    const BOOTH_H = 2.5; // 2.5m
+    const VALANCE_H = 0.4; // 40cm
+    const POST_RADIUS = 0.025; // 50mm diameter aluminum upright
+
+    let scene, camera, renderer, controls;
+    let boothGroup, frameGroup, deskGroup, binGroup, lightsGroup;
+    let backwallMesh, sidewallMesh, valanceFrontMesh, valanceSideMesh;
+    let spotLight1, spotLight2, spotLight3, ambientLight, dirLight;
+    let currentVersion = 'v2';
+
+    // Texture sources with Base64 fallback & direct relative paths
+    function getTextureSource(key) {
+      if (window.TEXTURE_DATA && window.TEXTURE_DATA[key]) {
+        return window.TEXTURE_DATA[key];
+      }
+      return 'textures/' + key + '.png';
+    }
+
+    const VERSIONS = {
+      v2: {
+        backwall: () => getTextureSource('v2_backwall'),
+        sidewall: () => getTextureSource('v2_sidewall'),
+        valanceFront: () => getTextureSource('v2_valance_front'),
+        valanceSide: () => getTextureSource('v2_valance_side')
+      },
+      v1: {
+        backwall: () => getTextureSource('v1_backwall'),
+        sidewall: () => getTextureSource('v1_sidewall'),
+        valanceFront: () => getTextureSource('v1_valance_front'),
+        valanceSide: () => getTextureSource('v1_valance_side')
+      },
+      root: {
+        backwall: () => getTextureSource('root_backdrop'),
+        sidewall: () => getTextureSource('root_backdrop'),
+        valanceFront: () => getTextureSource('root_valance'),
+        valanceSide: () => getTextureSource('root_valance')
+      }
+    };
+
+    const textureLoader = new THREE.TextureLoader();
+
+    // App Initializer
+    window.addEventListener('DOMContentLoaded', init);
+
+    function init() {
+      const container = document.getElementById('canvas-container');
+
+      // Scene
+      scene = new THREE.Scene();
+      scene.background = new THREE.Color(0x16181d);
+      scene.fog = new THREE.FogExp2(0x16181d, 0.035);
+
+      // Camera
+      camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 100);
+      camera.position.set(4.5, 2.2, 5.0);
+
+      // Renderer
+      renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.shadowMap.enabled = true;
+      renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+      renderer.toneMapping = THREE.ACESFilmicToneMapping;
+      renderer.toneMappingExposure = 1.1;
+      container.appendChild(renderer.domElement);
+
+      // OrbitControls
+      controls = new THREE.OrbitControls(camera, renderer.domElement);
+      controls.enableDamping = true;
+      controls.dampingFactor = 0.05;
+      controls.maxPolarAngle = Math.PI / 2 - 0.02;
+      controls.minDistance = 1.2;
+      controls.maxDistance = 15;
+      controls.target.set(0, 1.2, 0);
+
+      // Groups
+      boothGroup = new THREE.Group();
+      frameGroup = new THREE.Group();
+      deskGroup = new THREE.Group();
+      binGroup = new THREE.Group();
+      scene.add(boothGroup);
+      boothGroup.add(frameGroup);
+      boothGroup.add(deskGroup);
+      boothGroup.add(binGroup);
+
+      // Setup models & scene
+      setupLighting();
+      buildEnvironment();
+      buildBoothWalls();
+      buildAluminumFrame();
+      buildReceptionDesk();
+      buildTrashBin();
+
+      // Load initial textures
+      loadBoothTextures(currentVersion);
+
+      // Resize listener
+      window.addEventListener('resize', onWindowResize);
+
+      // Loop
+      animate();
+
+      // Fade out loading screen
+      setTimeout(() => {
+        const loader = document.getElementById('loading-overlay');
+        loader.style.opacity = '0';
+        setTimeout(() => loader.style.display = 'none', 400);
+      }, 500);
+    }
+
+    // --- LIGHTING ---
+    function setupLighting() {
+      lightsGroup = new THREE.Group();
+      scene.add(lightsGroup);
+
+      ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
+      lightsGroup.add(ambientLight);
+
+      dirLight = new THREE.DirectionalLight(0xfff5ea, 0.95);
+      dirLight.position.set(5, 8, 5);
+      dirLight.castShadow = true;
+      dirLight.shadow.mapSize.width = 2048;
+      dirLight.shadow.mapSize.height = 2048;
+      dirLight.shadow.camera.near = 0.5;
+      dirLight.shadow.camera.far = 25;
+      dirLight.shadow.camera.left = -5;
+      dirLight.shadow.camera.right = 5;
+      dirLight.shadow.camera.top = 5;
+      dirLight.shadow.camera.bottom = -5;
+      dirLight.shadow.bias = -0.0005;
+      lightsGroup.add(dirLight);
+
+      const fillLight = new THREE.DirectionalLight(0x90b0ff, 0.35);
+      fillLight.position.set(-5, 4, -4);
+      lightsGroup.add(fillLight);
+
+      // Spotlights mounted on booth overhead structure
+      spotLight1 = createSpotlight(-0.6, BOOTH_H + 0.1, 1.2, -0.6, 1.4, -BOOTH_D/2);
+      spotLight2 = createSpotlight(0.8, BOOTH_H + 0.1, 1.2, 0.8, 1.4, -BOOTH_D/2);
+      spotLight3 = createSpotlight(1.2, BOOTH_H + 0.1, -0.6, -BOOTH_W/2, 1.4, -0.6);
+
+      lightsGroup.add(spotLight1);
+      lightsGroup.add(spotLight2);
+      lightsGroup.add(spotLight3);
+    }
+
+    function createSpotlight(x, y, z, tx, ty, tz) {
+      const spot = new THREE.SpotLight(0xfff8ee, 1.8);
+      spot.position.set(x, y, z);
+      spot.target.position.set(tx, ty, tz);
+      spot.angle = Math.PI / 4.5;
+      spot.penumbra = 0.5;
+      spot.decay = 1.5;
+      spot.distance = 6;
+      spot.castShadow = true;
+      spot.shadow.mapSize.width = 1024;
+      spot.shadow.mapSize.height = 1024;
+      scene.add(spot.target);
+
+      const fixtureGeo = new THREE.CylinderGeometry(0.04, 0.06, 0.12, 16);
+      const fixtureMat = new THREE.MeshStandardMaterial({ color: 0x222222, metalness: 0.8, roughness: 0.3 });
+      const fixture = new THREE.Mesh(fixtureGeo, fixtureMat);
+      fixture.position.set(x, y, z);
+      fixture.lookAt(tx, ty, tz);
+      fixture.rotateX(Math.PI / 2);
+      boothGroup.add(fixture);
+
+      const armGeo = new THREE.CylinderGeometry(0.012, 0.012, 0.25);
+      const arm = new THREE.Mesh(armGeo, fixtureMat);
+      arm.position.set(x, y + 0.1, z - 0.08);
+      boothGroup.add(arm);
+
+      return spot;
+    }
+
+    // --- ENVIRONMENT ---
+    function buildEnvironment() {
+      const floorGeo = new THREE.PlaneGeometry(30, 30);
+      const floorMat = new THREE.MeshStandardMaterial({ color: 0x1f2229, roughness: 0.65, metalness: 0.1 });
+      const hallFloor = new THREE.Mesh(floorGeo, floorMat);
+      hallFloor.rotation.x = -Math.PI / 2;
+      hallFloor.receiveShadow = true;
+      scene.add(hallFloor);
+
+      const grid = new THREE.GridHelper(30, 30, 0x333945, 0x272b35);
+      grid.position.y = 0.001;
+      scene.add(grid);
+
+      // Booth Carpet (3m x 3m)
+      const carpetGeo = new THREE.BoxGeometry(BOOTH_W, 0.015, BOOTH_D);
+      const carpetMat = new THREE.MeshStandardMaterial({ color: 0x2b303c, roughness: 0.95, metalness: 0.0 });
+      const carpet = new THREE.Mesh(carpetGeo, carpetMat);
+      carpet.position.set(0, 0.0075, 0);
+      carpet.receiveShadow = true;
+      boothGroup.add(carpet);
+
+      // Trims
+      const trimMat = new THREE.MeshStandardMaterial({ color: 0xa0a5ab, metalness: 0.9, roughness: 0.2 });
+      const trimFront = new THREE.Mesh(new THREE.BoxGeometry(BOOTH_W, 0.016, 0.02), trimMat);
+      trimFront.position.set(0, 0.008, BOOTH_D/2);
+      boothGroup.add(trimFront);
+
+      const trimSide = new THREE.Mesh(new THREE.BoxGeometry(0.02, 0.016, BOOTH_D), trimMat);
+      trimSide.position.set(BOOTH_W/2, 0.008, 0);
+      boothGroup.add(trimSide);
+    }
+
+    // --- WALLS & 2 VALANCE BOARDS ---
+    function buildBoothWalls() {
+      const wallMatDefault = new THREE.MeshStandardMaterial({
+        color: 0xffffff,
+        roughness: 0.35,
+        metalness: 0.05,
+        side: THREE.DoubleSide
+      });
+
+      // 1. Back Wall (3m x 2.5m at Z = -1.5m)
+      const backGeo = new THREE.PlaneGeometry(BOOTH_W, BOOTH_H);
+      backwallMesh = new THREE.Mesh(backGeo, wallMatDefault.clone());
+      backwallMesh.position.set(0, BOOTH_H / 2, -BOOTH_D / 2 + 0.01);
+      backwallMesh.receiveShadow = true;
+      boothGroup.add(backwallMesh);
+
+      // Back of the backwall (grey board)
+      const backBackGeo = new THREE.PlaneGeometry(BOOTH_W, BOOTH_H);
+      const backBackMat = new THREE.MeshStandardMaterial({ color: 0xd6d8db, roughness: 0.9 });
+      const backBackMesh = new THREE.Mesh(backBackGeo, backBackMat);
+      backBackMesh.position.set(0, BOOTH_H / 2, -BOOTH_D / 2 - 0.005);
+      backBackMesh.rotation.y = Math.PI;
+      boothGroup.add(backBackMesh);
+
+      // 2. Side Wall (3m x 2.5m at X = -1.5m)
+      const sideGeo = new THREE.PlaneGeometry(BOOTH_D, BOOTH_H);
+      sidewallMesh = new THREE.Mesh(sideGeo, wallMatDefault.clone());
+      sidewallMesh.position.set(-BOOTH_W / 2 + 0.01, BOOTH_H / 2, 0);
+      sidewallMesh.rotation.y = Math.PI / 2;
+      sidewallMesh.receiveShadow = true;
+      boothGroup.add(sidewallMesh);
+
+      const sideBackMesh = new THREE.Mesh(sideGeo, backBackMat);
+      sideBackMesh.position.set(-BOOTH_W / 2 - 0.005, BOOTH_H / 2, 0);
+      sideBackMesh.rotation.y = -Math.PI / 2;
+      boothGroup.add(sideBackMesh);
+
+      // 3. FRONT VALANCE (Biển trán mặt tiền 3m x 0.4m, Z = +1.5m, facing +Z)
+      const valanceGeo = new THREE.PlaneGeometry(BOOTH_W, VALANCE_H);
+      valanceFrontMesh = new THREE.Mesh(valanceGeo, wallMatDefault.clone());
+      valanceFrontMesh.position.set(0, BOOTH_H - VALANCE_H / 2, BOOTH_D / 2 + 0.005);
+      valanceFrontMesh.castShadow = true;
+      boothGroup.add(valanceFrontMesh);
+
+      // 4. SIDE VALANCE (Biển trán mặt hông 3m x 0.4m, X = +1.5m, facing +X)
+      const valanceSideGeo = new THREE.PlaneGeometry(BOOTH_D, VALANCE_H);
+      valanceSideMesh = new THREE.Mesh(valanceSideGeo, wallMatDefault.clone());
+      valanceSideMesh.position.set(BOOTH_W / 2 + 0.005, BOOTH_H - VALANCE_H / 2, 0);
+      valanceSideMesh.rotation.y = Math.PI / 2; // Faces OUTWARD to the right aisle (+X)
+      valanceSideMesh.castShadow = true;
+      boothGroup.add(valanceSideMesh);
+    }
+
+    // --- ALUMINUM OCTANORM FRAME ---
+    function buildAluminumFrame() {
+      const aluMat = new THREE.MeshStandardMaterial({ color: 0xd0d4d9, metalness: 0.9, roughness: 0.2 });
+      const postGeo = new THREE.CylinderGeometry(POST_RADIUS, POST_RADIUS, BOOTH_H, 16);
+
+      const postPositions = [
+        [-BOOTH_W/2, BOOTH_H/2, -BOOTH_D/2],
+        [ BOOTH_W/2, BOOTH_H/2, -BOOTH_D/2],
+        [-BOOTH_W/2, BOOTH_H/2,  BOOTH_D/2],
+        [ BOOTH_W/2, BOOTH_H/2,  BOOTH_D/2],
+        [-BOOTH_W/2 + 1.0, BOOTH_H/2, -BOOTH_D/2],
+        [-BOOTH_W/2 + 2.0, BOOTH_H/2, -BOOTH_D/2],
+        [-BOOTH_W/2, BOOTH_H/2, -BOOTH_D/2 + 1.0],
+        [-BOOTH_W/2, BOOTH_H/2, -BOOTH_D/2 + 2.0],
+      ];
+
+      postPositions.forEach(([px, py, pz]) => {
+        const post = new THREE.Mesh(postGeo, aluMat);
+        post.position.set(px, py, pz);
+        post.castShadow = true;
+        frameGroup.add(post);
+      });
+
+      const beamGeoX = new THREE.BoxGeometry(BOOTH_W, 0.05, 0.05);
+      const beamGeoZ = new THREE.BoxGeometry(0.05, 0.05, BOOTH_D);
+
+      const topFrontBeam = new THREE.Mesh(beamGeoX, aluMat);
+      topFrontBeam.position.set(0, BOOTH_H, BOOTH_D/2);
+      frameGroup.add(topFrontBeam);
+
+      const topRightBeam = new THREE.Mesh(beamGeoZ, aluMat);
+      topRightBeam.position.set(BOOTH_W/2, BOOTH_H, 0);
+      frameGroup.add(topRightBeam);
+
+      const topBackBeam = new THREE.Mesh(beamGeoX, aluMat);
+      topBackBeam.position.set(0, BOOTH_H, -BOOTH_D/2);
+      frameGroup.add(topBackBeam);
+
+      const topLeftBeam = new THREE.Mesh(beamGeoZ, aluMat);
+      topLeftBeam.position.set(-BOOTH_W/2, BOOTH_H, 0);
+      frameGroup.add(topLeftBeam);
+    }
+
+    // --- RECEPTION DESK (SQUARED / ORTHOGONAL) & STOOLS ---
+    function buildReceptionDesk() {
+      // Desk Body (1.1m W x 0.5m D x 0.98m H), placed squarely parallel to front facade (rotation = 0)
+      const deskGeo = new THREE.BoxGeometry(1.1, 0.96, 0.5);
+      const deskMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.2, metalness: 0.1 });
+      const desk = new THREE.Mesh(deskGeo, deskMat);
+      desk.position.set(0.5, 0.48, 0.85); // Squared up, perpendicular to side wall, parallel to front
+      desk.rotation.y = 0; // Pure orthogonal alignment
+      desk.castShadow = true;
+      desk.receiveShadow = true;
+      deskGroup.add(desk);
+
+      // Dark Wood Countertop
+      const topGeo = new THREE.BoxGeometry(1.16, 0.04, 0.56);
+      const topMat = new THREE.MeshStandardMaterial({ color: 0x1c1f26, roughness: 0.3, metalness: 0.4 });
+      const countertop = new THREE.Mesh(topGeo, topMat);
+      countertop.position.set(0, 0.5, 0);
+      countertop.castShadow = true;
+      desk.add(countertop);
+
+      // Front Murrplastik / T&T Brand Accent Stripe
+      const stripeGeo = new THREE.PlaneGeometry(1.0, 0.22);
+      const stripeMat = new THREE.MeshBasicMaterial({ color: 0xC8442A });
+      const stripe = new THREE.Mesh(stripeGeo, stripeMat);
+      stripe.position.set(0, 0.18, 0.251);
+      desk.add(stripe);
+
+      // 2 Bar Stools placed behind the counter
+      const stool1 = createBarStool();
+      stool1.position.set(0.25, 0, 0.42);
+      deskGroup.add(stool1);
+
+      const stool2 = createBarStool();
+      stool2.position.set(0.75, 0, 0.42);
+      deskGroup.add(stool2);
+    }
+
+    function createBarStool() {
+      const stool = new THREE.Group();
+      const chromeMat = new THREE.MeshStandardMaterial({ color: 0xd8d8d8, metalness: 0.95, roughness: 0.1 });
+      const seatMat = new THREE.MeshStandardMaterial({ color: 0x1a1a1a, roughness: 0.7 });
+
+      const base = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.2, 0.02, 24), chromeMat);
+      base.position.y = 0.01;
+      base.castShadow = true;
+      stool.add(base);
+
+      const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.025, 0.025, 0.7, 16), chromeMat);
+      pole.position.y = 0.36;
+      pole.castShadow = true;
+      stool.add(pole);
+
+      const seat = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.18, 0.06, 24), seatMat);
+      seat.position.y = 0.72;
+      seat.castShadow = true;
+      stool.add(seat);
+
+      return stool;
+    }
+
+    // --- TRASH BIN IN INTERIOR CORNER ---
+    function buildTrashBin() {
+      const binMeshGroup = new THREE.Group();
+      const binBodyMat = new THREE.MeshStandardMaterial({ color: 0x24272d, metalness: 0.6, roughness: 0.4 });
+      const chromeRingMat = new THREE.MeshStandardMaterial({ color: 0xcccccc, metalness: 0.95, roughness: 0.1 });
+
+      // Cylinder Body (Height 0.35m, Radius 0.12m)
+      const binGeo = new THREE.CylinderGeometry(0.12, 0.10, 0.35, 24);
+      const bin = new THREE.Mesh(binGeo, binBodyMat);
+      bin.position.y = 0.175;
+      bin.castShadow = true;
+      bin.receiveShadow = true;
+      binMeshGroup.add(bin);
+
+      // Top Chrome Rim
+      const topRimGeo = new THREE.TorusGeometry(0.12, 0.012, 16, 32);
+      const topRim = new THREE.Mesh(topRimGeo, chromeRingMat);
+      topRim.position.y = 0.35;
+      topRim.rotation.x = Math.PI / 2;
+      binMeshGroup.add(topRim);
+
+      // Position in the interior corner between Back Wall (Z = -1.5m) and Side Wall (X = -1.5m)
+      binMeshGroup.position.set(-1.25, 0, -1.25);
+      binGroup.add(binMeshGroup);
+    }
+
+    // --- TEXTURE LOADER ---
+    function loadTexture(srcUrlOrB64, callback) {
+      textureLoader.load(
+        srcUrlOrB64,
+        (texture) => {
+          texture.anisotropy = renderer.capabilities.getMaxAnisotropy();
+          texture.minFilter = THREE.LinearMipmapLinearFilter;
+          texture.magFilter = THREE.LinearFilter;
+          texture.generateMipmaps = true;
+          texture.needsUpdate = true;
+          if (callback) callback(texture);
+        },
+        undefined,
+        (err) => console.warn('Texture loading error:', err)
+      );
+    }
+
+    function loadBoothTextures(verKey) {
+      const cfg = VERSIONS[verKey];
+      if (!cfg) return;
+
+      loadTexture(cfg.backwall(), (tex) => {
+        backwallMesh.material.map = tex;
+        backwallMesh.material.needsUpdate = true;
+      });
+
+      loadTexture(cfg.sidewall(), (tex) => {
+        sidewallMesh.material.map = tex;
+        sidewallMesh.material.needsUpdate = true;
+      });
+
+      loadTexture(cfg.valanceFront(), (tex) => {
+        valanceFrontMesh.material.map = tex;
+        valanceFrontMesh.material.needsUpdate = true;
+      });
+
+      loadTexture(cfg.valanceSide(), (tex) => {
+        valanceSideMesh.material.map = tex;
+        valanceSideMesh.material.needsUpdate = true;
+      });
+    }
+
+    // --- CONTROLLER ACTIONS ---
+    function switchVersion(ver) {
+      currentVersion = ver;
+      document.querySelectorAll('#btn-ver-v2, #btn-ver-v1, #btn-ver-root').forEach(btn => btn.classList.remove('active'));
+      document.getElementById('btn-ver-' + ver).classList.add('active');
+      loadBoothTextures(ver);
+    }
+
+    function setCameraView(view) {
+      document.querySelectorAll('.panel-section .btn-group-2 button').forEach(b => b.classList.remove('active'));
+      const activeBtn = document.getElementById('cam-' + view);
+      if (activeBtn) activeBtn.classList.add('active');
+
+      switch (view) {
+        case 'corner':
+          animateCamera(new THREE.Vector3(4.2, 2.0, 4.6), new THREE.Vector3(0, 1.2, 0));
+          break;
+        case 'front':
+          animateCamera(new THREE.Vector3(0, 1.35, 3.8), new THREE.Vector3(0, 1.25, -BOOTH_D/2));
+          break;
+        case 'side':
+          animateCamera(new THREE.Vector3(3.8, 1.35, 0), new THREE.Vector3(-BOOTH_W/2, 1.25, 0));
+          break;
+        case 'eye':
+          animateCamera(new THREE.Vector3(1.8, 1.6, 2.2), new THREE.Vector3(-0.4, 1.4, -0.4));
+          break;
+        case 'top':
+          animateCamera(new THREE.Vector3(0.01, 7.5, 0.01), new THREE.Vector3(0, 0, 0));
+          break;
+      }
+    }
+
+    function animateCamera(targetPos, targetLookAt) {
+      const startPos = camera.position.clone();
+      const startTarget = controls.target.clone();
+      const duration = 600;
+      const startTime = performance.now();
+
+      function update() {
+        const elapsed = performance.now() - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        const ease = 0.5 - Math.cos(progress * Math.PI) / 2;
+
+        camera.position.lerpVectors(startPos, targetPos, ease);
+        controls.target.lerpVectors(startTarget, targetLookAt, ease);
+        controls.update();
+
+        if (progress < 1) requestAnimationFrame(update);
+      }
+      requestAnimationFrame(update);
+    }
+
+    function resetCamera() {
+      setCameraView('corner');
+    }
+
+    function toggleFrame(visible) {
+      frameGroup.visible = visible;
+    }
+
+    function toggleDesk(visible) {
+      deskGroup.visible = visible;
+    }
+
+    function toggleBin(visible) {
+      binGroup.visible = visible;
+    }
+
+    function toggleSpotlights(enabled) {
+      spotLight1.visible = enabled;
+      spotLight2.visible = enabled;
+      spotLight3.visible = enabled;
+    }
+
+    function toggleAutoRotate(enabled) {
+      controls.autoRotate = enabled;
+      controls.autoRotateSpeed = 1.5;
+    }
+
+    function setLighting(mode) {
+      document.getElementById('env-hall').classList.toggle('active', mode === 'hall');
+      document.getElementById('env-studio').classList.toggle('active', mode === 'studio');
+
+      if (mode === 'hall') {
+        ambientLight.intensity = 0.7;
+        dirLight.intensity = 0.95;
+        scene.background.setHex(0x16181d);
+      } else {
+        ambientLight.intensity = 0.95;
+        dirLight.intensity = 1.25;
+        scene.background.setHex(0x282c34);
+      }
+    }
+
+    function takeScreenshot() {
+      renderer.render(scene, camera);
+      const dataUrl = renderer.domElement.toDataURL('image/png');
+
+      const link = document.createElement('a');
+      link.download = `Mockup_3D_Booth_VEC2026_${currentVersion}_${Date.now()}.png`;
+      link.href = dataUrl;
+      link.click();
+
+      const toast = document.getElementById('toast');
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 2500);
+    }
+
+    function onWindowResize() {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    }
+
+    function animate() {
+      requestAnimationFrame(animate);
+      controls.update();
+      renderer.render(scene, camera);
+    }
+  </script>
+</body>
+</html>
