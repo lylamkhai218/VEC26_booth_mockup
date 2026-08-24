@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>3D Booth Mockup — T&T VINA × MURRPLASTIK (VEC 2026)</title>
+  <title>3D Booth Mockup - T&T VINA × MURRPLASTIK (VEC 2026)</title>
   <!-- Local Core 3D Engine (Self-contained, No Internet / Offline execution) -->
   <script src="libs/three.min.js"></script>
   <script src="libs/OrbitControls.js"></script>
@@ -1138,7 +1138,7 @@
   <div class="hud-panel right-inspector" id="inspector-drawer">
     <div class="drawer-handle"></div>
     <div class="panel-header">
-      <div class="panel-header-title">📐 THÔNG SỐ &amp; BỐ CỤC (INSPECTOR)</div>
+      <div class="panel-header-title">📐 THÔNG SỐ &amp; BỐ CỤC</div>
       <button class="btn-close-drawer" onclick="toggleInspectorDrawer(false)">✕</button>
     </div>
 
@@ -1196,10 +1196,10 @@
         <button class="comp-chip-btn" style="flex: 1; padding: 4px 2px; font-size: 10px;" onclick="setEquipmentRotationDeg(270)">270°</button>
       </div>
 
-      <!-- JSON Export / Import Action Buttons -->
+      <!-- Concept Action Buttons -->
       <div style="display: flex; gap: 6px; margin-top: 10px;">
-        <button class="action-btn" style="flex: 1; background: #0284c7; border: none; font-size: 11px; padding: 7px 4px;" onclick="exportLayoutJSON()">📥 Xuất JSON</button>
-        <button class="action-btn" style="flex: 1; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); font-size: 11px; padding: 7px 4px;" onclick="openJsonModal()">📋 Nạp JSON</button>
+        <button class="action-btn" style="flex: 1; background: #0284c7; border: none; font-size: 11px; padding: 7px 4px;" onclick="exportLayoutJSON()">💾 Lưu concept</button>
+        <button class="action-btn" style="flex: 1; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); font-size: 11px; padding: 7px 4px;" onclick="openJsonModal()">📋 Nhập concept</button>
         <button class="action-btn" style="flex: 0.8; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.15); font-size: 10px; padding: 7px 4px;" onclick="resetDefaultLayout()">🔄 Mặc định</button>
       </div>
     </div>
@@ -1272,16 +1272,16 @@
     </div>
   </div>
 
-  <!-- JSON Layout Modal -->
+  <!-- Concept Layout Modal -->
   <div id="json-modal" class="modal-backdrop" style="display:none;">
     <div class="modal-card">
       <div class="modal-header">
-        <div class="modal-title">📋 NẠP / CHỈNH SỬA BỐ CỤC GIAN HÀNG (JSON)</div>
+        <div class="modal-title">📋 NHẬP / LƯU CONCEPT BỐ CỤC GIAN HÀNG</div>
         <button class="btn-close-modal" onclick="closeJsonModal()">✕</button>
       </div>
       <div class="modal-body">
-        <p style="font-size:11.5px; color:#94a3b8; margin-bottom:8px;">Dán mã JSON bố cục thiết bị vào đây và nhấn "Áp dụng ngay":</p>
-        <textarea id="json-textarea" spellcheck="false" placeholder="Dán mã JSON vào đây..."></textarea>
+        <p style="font-size:11.5px; color:#94a3b8; margin-bottom:8px;">Dán mã concept bố cục thiết bị vào đây và nhấn "Áp dụng ngay":</p>
+        <textarea id="json-textarea" spellcheck="false" placeholder="Dán mã concept vào đây..."></textarea>
       </div>
       <div class="modal-footer">
         <button class="btn-modal secondary" onclick="copyJsonFromTextarea()">📋 Sao chép</button>
@@ -1835,45 +1835,19 @@
       bezel.position.z = 0.019;
       tvBody.add(bezel);
       
-      // TV Display Screen (Video Canvas Texture)
+      // TV Display Screen (Clean Minimal White with Black "TV" Text)
       const tvCanvas = document.createElement('canvas');
       tvCanvas.width = 1024;
       tvCanvas.height = 576;
       const ctx = tvCanvas.getContext('2d');
-      ctx.fillStyle = '#0f172a';
+      ctx.fillStyle = '#ffffff';
       ctx.fillRect(0, 0, 1024, 576);
       
-      ctx.fillStyle = '#E2001A';
-      ctx.fillRect(0, 0, 1024, 60);
-      ctx.fillStyle = '#ffffff';
-      ctx.font = 'bold 26px Arial';
-      ctx.fillText('MURRPLASTIK SYSTEMTECHNIK — SMART AUTOMATION SOLUTIONS', 40, 42);
-      
-      const grad = ctx.createLinearGradient(0, 60, 1024, 500);
-      grad.addColorStop(0, '#002536');
-      grad.addColorStop(1, '#0b132b');
-      ctx.fillStyle = grad;
-      ctx.fillRect(0, 60, 1024, 450);
-      
-      ctx.fillStyle = '#38bdf8';
-      ctx.font = 'bold 36px Arial';
-      ctx.fillText('▶ TUẦN LỄ CÔNG NGHIỆP VITW 2026', 60, 140);
-      
-      ctx.fillStyle = '#ffffff';
-      ctx.font = 'bold 44px Arial';
-      ctx.fillText('HỆ THỐNG QUẢN LÝ CÁP CHO ROBOT & MÁY CNC', 60, 210);
-      
-      ctx.fillStyle = '#cbd5e1';
-      ctx.font = '24px Arial';
-      ctx.fillText('• Hộp thu hồi cáp R-Tec Box & R-Tec Liner 2.0', 60, 270);
-      ctx.fillText('• Máy in tem nhãn Laser mp-LM 1M siêu tốc', 60, 310);
-      ctx.fillText('• Tấm luồn cáp KDP kín nước IP68/IP69K chuẩn FDA', 60, 350);
-      
-      ctx.fillStyle = '#1e293b';
-      ctx.fillRect(0, 510, 1024, 66);
-      ctx.fillStyle = '#f59e0b';
-      ctx.font = 'bold 26px Arial';
-      ctx.fillText('CÔNG TY TNHH CÔNG NGHIỆP T&T VINA — GIAN HÀNG A (H1-15)', 40, 552);
+      ctx.fillStyle = '#0a0a0a';
+      ctx.font = '900 170px -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('TV', 512, 288);
       
       const screenTex = new THREE.CanvasTexture(tvCanvas);
       screenTex.encoding = THREE.sRGBEncoding;
@@ -2213,7 +2187,7 @@
       fruit3.position.set(0.01, 0.83, 0.02);
       roundTableGroup.add(fruit3);
       
-      // 4 Ghế tiếp khách xung quanh bàn tròn
+      // 4 Ghế tiếp khách xung quanh bàn tròn (quay mặt hướng vào trung tâm bàn)
       const chairAngles = [0, Math.PI / 2, Math.PI, 3 * Math.PI / 2];
       const chairRadius = 0.50;
       chairAngles.forEach((angle) => {
@@ -2223,7 +2197,7 @@
           0,
           Math.cos(angle) * chairRadius
         );
-        chair.rotation.y = angle; // Face the round table center
+        chair.rotation.y = angle + Math.PI; // Face directly inward toward table center
         roundTableGroup.add(chair);
       });
       
@@ -2877,12 +2851,12 @@
       // 1. Copy to clipboard
       if (navigator.clipboard && navigator.clipboard.writeText) {
         navigator.clipboard.writeText(jsonStr).then(() => {
-          showToast("📋 Đã sao chép JSON vào Clipboard & Tải file!");
+          showToast("📋 Đã sao chép concept vào Clipboard & Tải file!");
         }).catch(() => {
-          showToast("💾 Đã tải file JSON bố cục!");
+          showToast("💾 Đã tải file concept bố cục!");
         });
       } else {
-        showToast("💾 Đã tải file JSON bố cục!");
+        showToast("💾 Đã tải file concept bố cục!");
       }
 
       // 2. Download JSON file
@@ -2890,7 +2864,7 @@
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
-      link.download = `booth_layout_vec2026_${Date.now()}.json`;
+      link.download = `concept_booth_vec2026_${Date.now()}.json`;
       link.click();
       URL.revokeObjectURL(url);
     }
@@ -2909,7 +2883,7 @@
       const text = document.getElementById('json-textarea').value;
       if (navigator.clipboard && navigator.clipboard.writeText) {
         navigator.clipboard.writeText(text).then(() => {
-          showToast("📋 Đã sao chép JSON!");
+          showToast("📋 Đã sao chép mã concept!");
         });
       }
     }
@@ -2941,9 +2915,9 @@
         if (transformControls) transformControls.updateMatrixWorld();
 
         closeJsonModal();
-        showToast("⚡ Đã áp dụng bố cục JSON thành công!");
+        showToast("⚡ Đã áp dụng concept thành công!");
       } catch (err) {
-        alert("Lỗi định dạng JSON: " + err.message);
+        alert("Lỗi định dạng concept: " + err.message);
       }
     }
 
