@@ -250,7 +250,7 @@ function copyJsonFromTextarea() {
   const text = document.getElementById('json-textarea').value;
   if (navigator.clipboard && navigator.clipboard.writeText) {
     navigator.clipboard.writeText(text).then(() => {
-      showToast("📋 Đã sao chép mã concept!");
+      showToast("Đã sao chép mã concept vào Clipboard!");
     });
   }
 }
@@ -282,7 +282,7 @@ function applyJsonLayout() {
     if (transformControls) transformControls.updateMatrixWorld();
 
     closeJsonModal();
-    showToast("⚡ Đã áp dụng concept thành công!");
+    showToast("Đã áp dụng concept thành công!");
   } catch (err) {
     alert("Lỗi định dạng concept: " + err.message);
   }
@@ -301,13 +301,18 @@ function resetDefaultLayout() {
     updateInspectorInputsFromObject(EQUIPMENT[activeEquipmentKey].getGroup());
   }
   if (transformControls) transformControls.updateMatrixWorld();
-  showToast("🔄 Đã khôi phục bố cục mặc định!");
+  showToast("Đã khôi phục bố cục mặc định!");
 }
 
 function showToast(msg) {
   const toast = document.getElementById('toast');
+  const toastText = document.getElementById('toast-text');
   if (toast) {
-    toast.innerText = msg;
+    if (toastText) {
+      toastText.innerText = msg;
+    } else {
+      toast.innerText = msg;
+    }
     toast.classList.add('show');
     setTimeout(() => toast.classList.remove('show'), 2600);
   }

@@ -26,12 +26,15 @@
   <!-- Loading Screen -->
   <div id="loading-overlay">
     <div class="spinner"></div>
-    <div style="font-weight: 600; font-size: 13.5px; letter-spacing: 0.5px;">ĐANG TẢI GIAN HÀNG 3D VEC 2026...</div>
-    <div style="font-size: 11px; color: #888;">Tối ưu hiển thị đa thiết bị (Mobile &amp; Desktop)</div>
+    <div style="font-weight: 600; font-size: 13px; letter-spacing: 0.5px;">ĐANG TẢI GIAN HÀNG 3D VEC 2026...</div>
+    <div style="font-size: 10.5px; color: #888;">Tối ưu hiển thị đa thiết bị (Mobile &amp; Desktop)</div>
   </div>
 
   <!-- Toast Notification -->
-  <div id="toast">📸 Đã xuất ảnh mockup HD thành công!</div>
+  <div id="toast">
+    <svg class="svg-icon" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
+    <span id="toast-text">Thông báo</span>
+  </div>
 
   <!-- Drawer Backdrop (Mobile) -->
   <div id="drawer-backdrop" onclick="toggleMobileDrawer(false); toggleInspectorDrawer(false)"></div>
@@ -47,99 +50,110 @@
         <div class="brand-subtitle">Đại diện Murrplastik Systemtechnik (CHLB Đức) • VITW 2026</div>
       </div>
     </div>
-    <div class="booth-tag">📍 Gian hàng A (Ô H1-15) • Sảnh 2 VEC</div>
+    <div class="booth-tag">
+      <svg class="svg-icon sm" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+      <span>Gian hàng A (H1-15) • Sảnh 2 VEC</span>
+    </div>
   </div>
 
-  <!-- Quick Horizontal Camera Chips (Always visible on mobile) -->
+  <!-- Quick Horizontal Camera Chips -->
   <div class="camera-quickbar">
-    <div class="cam-chip active" id="chip-corner" onclick="setCameraView('corner')">🎯 Phối cảnh 45°</div>
-    <div class="cam-chip" id="chip-front" onclick="setCameraView('front')">🖼️ Vách Hậu</div>
-    <div class="cam-chip" id="chip-side" onclick="setCameraView('side')">🖼️ Vách Bên</div>
-    <div class="cam-chip" id="chip-eye" onclick="setCameraView('eye')">👤 Tầm Mắt (1.6m)</div>
-    <div class="cam-chip" id="chip-top" onclick="setCameraView('top')">📐 Mặt Bằng (Top)</div>
-  </div>
-
-  <!-- Click to inspect Hint Tag -->
-  <div class="click-hint-tag">
-    <span>💡 Nhấp vào vách / biển trán trên 3D hoặc panel bên phải để kiểm tra thông số</span>
+    <button class="cam-chip active" id="chip-corner" onclick="setCameraView('corner')">
+      <svg class="svg-icon sm" viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+      <span>Phối cảnh 45°</span>
+    </button>
+    <button class="cam-chip" id="chip-front" onclick="setCameraView('front')">
+      <svg class="svg-icon sm" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="9" y1="3" x2="9" y2="21"></line></svg>
+      <span>Vách Hậu</span>
+    </button>
+    <button class="cam-chip" id="chip-side" onclick="setCameraView('side')">
+      <svg class="svg-icon sm" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line></svg>
+      <span>Vách Bên</span>
+    </button>
+    <button class="cam-chip" id="chip-eye" onclick="setCameraView('eye')">
+      <svg class="svg-icon sm" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+      <span>Tầm Mắt (1.6m)</span>
+    </button>
+    <button class="cam-chip" id="chip-top" onclick="setCameraView('top')">
+      <svg class="svg-icon sm" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+      <span>Mặt Bằng</span>
+    </button>
   </div>
 
   <!-- LEFT PANEL: FUNCTIONS & CONTROLS (CAD sidebar) -->
   <div class="hud-panel left-controls" id="controls-drawer">
     <div class="drawer-handle"></div>
     <div class="panel-header">
-      <div class="panel-header-title">🛠️ CÔNG CỤ &amp; ĐIỀU KHIỂN</div>
+      <div class="panel-header-title">
+        <svg class="svg-icon" viewBox="0 0 24 24"><line x1="4" y1="21" x2="4" y2="14"></line><line x1="4" y1="10" x2="4" y2="3"></line><line x1="12" y1="21" x2="12" y2="12"></line><line x1="12" y1="8" x2="12" y2="3"></line><line x1="20" y1="21" x2="20" y2="16"></line><line x1="20" y1="12" x2="20" y2="3"></line><line x1="1" y1="14" x2="7" y2="14"></line><line x1="9" y1="8" x2="15" y2="8"></line><line x1="17" y1="16" x2="23" y2="16"></line></svg>
+        <span>CÔNG CỤ &amp; ĐIỀU KHIỂN</span>
+      </div>
       <button class="btn-close-drawer" onclick="toggleMobileDrawer(false)">✕</button>
     </div>
 
     <!-- Version Preset -->
     <div class="panel-section">
-      <div class="section-title">🎨 Phiên bản Thiết kế</div>
+      <div class="section-title">
+        <span>Phiên bản Thiết kế</span>
+      </div>
       <div class="btn-group">
         <button class="active" id="btn-ver-v3" onclick="switchVersion('v3')">
-          <span>🚀 Bản V3 Safe-Zone (Mới nhất)</span>
+          <svg class="svg-icon sm" viewBox="0 0 24 24"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
+          <span>Bản V3 Safe-Zone (Chuẩn)</span>
         </button>
         <button id="btn-ver-v2" onclick="switchVersion('v2')">
-          <span>✨ Bản V2 Visual-First</span>
+          <svg class="svg-icon sm" viewBox="0 0 24 24"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
+          <span>Bản V2 Visual-First</span>
         </button>
         <button id="btn-ver-v1" onclick="switchVersion('v1')">
-          <span>📄 Bản V1 Production</span>
+          <svg class="svg-icon sm" viewBox="0 0 24 24"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
+          <span>Bản V1 Production</span>
         </button>
-      </div>
-    </div>
-
-    <!-- Camera Presets -->
-    <div class="panel-section">
-      <div class="section-title">🎥 Góc nhìn Camera</div>
-      <div class="btn-group-2">
-        <button id="side-cam-corner" class="active" onclick="setCameraView('corner')">🎯 Phối cảnh</button>
-        <button id="side-cam-front" onclick="setCameraView('front')">🖼️ Vách Hậu</button>
-        <button id="side-cam-side" onclick="setCameraView('side')">🖼️ Vách Bên</button>
-        <button id="side-cam-eye" onclick="setCameraView('eye')">👤 Tầm Mắt</button>
-        <button id="side-cam-top" style="grid-column: span 2;" onclick="setCameraView('top')">📐 Mặt Bằng (Top View)</button>
       </div>
     </div>
 
     <!-- Display Options -->
     <div class="panel-section">
-      <div class="section-title">📦 Trang thiết bị &amp; Đồ đạc gian hàng</div>
+      <div class="section-title">
+        <span>Hiển thị cấu kiện &amp; thiết bị</span>
+      </div>
       <div class="toggle-row">
-        <span>Khung nhôm định hình T-Slot 50×50mm</span>
+        <span>Khung nhôm T-Slot 50×50mm</span>
         <label class="toggle-switch">
           <input type="checkbox" id="toggle-frame" checked onchange="toggleFrame(this.checked)">
           <span class="slider"></span>
         </label>
       </div>
       <div class="toggle-row">
-        <span>📺 Giá TV di động E2050 + TV 65"</span>
+        <span>Giá TV di động + TV 65"</span>
         <label class="toggle-switch">
           <input type="checkbox" id="toggle-tv" checked onchange="toggleTVStand(this.checked)">
           <span class="slider"></span>
         </label>
       </div>
       <div class="toggle-row">
-        <span>🔬 Bàn Demo 1 (Máy Laser + Laptop)</span>
+        <span>Bàn Laser + Ghế</span>
         <label class="toggle-switch">
           <input type="checkbox" id="toggle-demo1" checked onchange="toggleDemo1(this.checked)">
           <span class="slider"></span>
         </label>
       </div>
       <div class="toggle-row">
-        <span>🤖 Bàn Demo 2 (Robot R-Tec Box)</span>
+        <span>Bàn Robot R-Tec + Ghế</span>
         <label class="toggle-switch">
           <input type="checkbox" id="toggle-demo2" checked onchange="toggleDemo2(this.checked)">
           <span class="slider"></span>
         </label>
       </div>
       <div class="toggle-row">
-        <span>🏗️ Kệ ống modular 3x3 + 3 Thùng Murr</span>
+        <span>Kệ ống modular 3x3</span>
         <label class="toggle-switch">
           <input type="checkbox" id="toggle-piperack" checked onchange="togglePipeRack(this.checked)">
           <span class="slider"></span>
         </label>
       </div>
       <div class="toggle-row">
-        <span>☕ Bàn tròn tiếp khách &amp; hoa quả</span>
+        <span>Bàn tròn tiếp khách (4 ghế)</span>
         <label class="toggle-switch">
           <input type="checkbox" id="toggle-roundtable" checked onchange="toggleRoundTable(this.checked)">
           <span class="slider"></span>
@@ -163,10 +177,18 @@
 
     <!-- Lighting Environment -->
     <div class="panel-section">
-      <div class="section-title">💡 Môi trường ánh sáng</div>
+      <div class="section-title">
+        <span>Môi trường ánh sáng</span>
+      </div>
       <div class="btn-group-2">
-        <button id="env-hall" class="active" onclick="setLighting('hall')">Sảnh VEC</button>
-        <button id="env-studio" onclick="setLighting('studio')">Studio Sáng</button>
+        <button id="env-hall" class="active" onclick="setLighting('hall')">
+          <svg class="svg-icon sm" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+          <span>Sảnh VEC</span>
+        </button>
+        <button id="env-studio" onclick="setLighting('studio')">
+          <svg class="svg-icon sm" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><path d="M12 3v18"></path></svg>
+          <span>Studio Sáng</span>
+        </button>
       </div>
     </div>
   </div>
@@ -175,31 +197,42 @@
   <div class="hud-panel right-inspector" id="inspector-drawer">
     <div class="drawer-handle"></div>
     <div class="panel-header">
-      <div class="panel-header-title">📐 THÔNG SỐ &amp; BỐ CỤC</div>
+      <div class="panel-header-title">
+        <svg class="svg-icon" viewBox="0 0 24 24"><path d="M21.3 8.7 8.7 21.3a1 1 0 0 1-1.4 0l-6-6a1 1 0 0 1 0-1.4L13.9 1.3a1 1 0 0 1 1.4 0l6 6a1 1 0 0 1 0 1.4Z"></path><path d="m14.5 4.5 2 2"></path><path d="m11.5 7.5 2 2"></path><path d="m8.5 10.5 2 2"></path><path d="m5.5 13.5 2 2"></path></svg>
+        <span>THÔNG SỐ &amp; BỐ CỤC</span>
+      </div>
       <button class="btn-close-drawer" onclick="toggleInspectorDrawer(false)">✕</button>
     </div>
 
     <!-- Section 0: Interactive Equipment Layout & Move Mode -->
-    <div class="panel-section" style="border-bottom: 1px solid rgba(226,0,26,0.35); padding-bottom: 12px;">
+    <div class="panel-section" style="border-bottom: 1px solid rgba(226,0,26,0.25); padding-bottom: 10px;">
       <div class="section-title" style="color: #38bdf8;">
-        <span>🎯 Sắp xếp đồ đạc (Gizmo 3D)</span>
+        <span>Bố trí thiết bị (Gizmo 3D)</span>
       </div>
       
       <!-- Equipment Selector Chips -->
-      <div style="font-size: 10px; color: #94a3b8; margin-bottom: 4px;">Chọn đồ vật để kéo / xoay trên sàn:</div>
       <div class="component-chips-grid" style="grid-template-columns: 1fr 1fr; gap: 4px;">
-        <button class="comp-chip-btn active" id="chip-eq-tvStand" onclick="selectEquipment('tvStand')">📺 Giá TV 65"</button>
-        <button class="comp-chip-btn" id="chip-eq-demo1" onclick="selectEquipment('demo1')">🔬 Bàn Laser + Ghế</button>
-        <button class="comp-chip-btn" id="chip-eq-demo2" onclick="selectEquipment('demo2')">🤖 Bàn R-Tec + Ghế</button>
-        <button class="comp-chip-btn" id="chip-eq-pipeRack" onclick="selectEquipment('pipeRack')">🏗️ Kệ ống 3x3</button>
-        <button class="comp-chip-btn" id="chip-eq-roundTable" style="grid-column: span 2;" onclick="selectEquipment('roundTable')">☕ Bàn tròn tiếp khách (4 Ghế)</button>
+        <button class="comp-chip-btn active" id="chip-eq-tvStand" onclick="selectEquipment('tvStand')">Giá TV 65"</button>
+        <button class="comp-chip-btn" id="chip-eq-demo1" onclick="selectEquipment('demo1')">Bàn Laser</button>
+        <button class="comp-chip-btn" id="chip-eq-demo2" onclick="selectEquipment('demo2')">Bàn Robot</button>
+        <button class="comp-chip-btn" id="chip-eq-pipeRack" onclick="selectEquipment('pipeRack')">Kệ ống 3x3</button>
+        <button class="comp-chip-btn" id="chip-eq-roundTable" style="grid-column: span 2;" onclick="selectEquipment('roundTable')">Bàn tiếp khách (4 Ghế)</button>
       </div>
 
       <!-- Transform Controls Mode -->
-      <div style="display: flex; gap: 4px; margin-top: 8px;">
-        <button class="comp-chip-btn active" id="btn-mode-translate" style="flex: 1;" onclick="setTransformMode('translate')">✥ Di chuyển</button>
-        <button class="comp-chip-btn" id="btn-mode-rotate" style="flex: 1;" onclick="setTransformMode('rotate')">🔄 Xoay góc</button>
-        <button class="comp-chip-btn" style="flex: 0.8; color: #f87171;" onclick="detachGizmo()">✕ Bỏ chọn</button>
+      <div style="display: flex; gap: 4px; margin-top: 6px;">
+        <button class="comp-chip-btn active" id="btn-mode-translate" style="flex: 1;" onclick="setTransformMode('translate')">
+          <svg class="svg-icon sm" viewBox="0 0 24 24"><polyline points="5 9 2 12 5 15"></polyline><polyline points="9 5 12 2 15 5"></polyline><polyline points="15 19 12 22 9 19"></polyline><polyline points="19 9 22 12 19 15"></polyline><line x1="2" y1="12" x2="22" y2="12"></line><line x1="12" y1="2" x2="12" y2="22"></line></svg>
+          <span>Di chuyển</span>
+        </button>
+        <button class="comp-chip-btn" id="btn-mode-rotate" style="flex: 1;" onclick="setTransformMode('rotate')">
+          <svg class="svg-icon sm" viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"></polyline><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>
+          <span>Xoay góc</span>
+        </button>
+        <button class="comp-chip-btn" style="flex: 0.7; color: #f87171;" onclick="detachGizmo()">
+          <svg class="svg-icon sm" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+          <span>Hủy</span>
+        </button>
       </div>
 
       <!-- Real-time Position & Rotation Numeric Sliders -->
@@ -224,28 +257,27 @@
         </div>
       </div>
 
-      <!-- Quick Preset Rotation Angles -->
-      <div style="display: flex; gap: 4px; margin-top: 6px;">
-        <button class="comp-chip-btn" style="flex: 1; padding: 4px 2px; font-size: 10px;" onclick="setEquipmentRotationDeg(0)">0°</button>
-        <button class="comp-chip-btn" style="flex: 1; padding: 4px 2px; font-size: 10px;" onclick="setEquipmentRotationDeg(45)">45°</button>
-        <button class="comp-chip-btn" style="flex: 1; padding: 4px 2px; font-size: 10px;" onclick="setEquipmentRotationDeg(90)">90°</button>
-        <button class="comp-chip-btn" style="flex: 1; padding: 4px 2px; font-size: 10px;" onclick="setEquipmentRotationDeg(180)">180°</button>
-        <button class="comp-chip-btn" style="flex: 1; padding: 4px 2px; font-size: 10px;" onclick="setEquipmentRotationDeg(270)">270°</button>
-      </div>
-
       <!-- Concept Action Buttons -->
-      <div style="display: flex; gap: 6px; margin-top: 10px;">
-        <button class="action-btn" style="flex: 1; background: #0284c7; border: none; font-size: 11px; padding: 7px 4px;" onclick="exportLayoutJSON()">💾 Lưu concept</button>
-        <button class="action-btn" style="flex: 1; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); font-size: 11px; padding: 7px 4px;" onclick="openJsonModal()">📋 Nhập concept</button>
-        <button class="action-btn" style="flex: 0.8; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.15); font-size: 10px; padding: 7px 4px;" onclick="resetDefaultLayout()">🔄 Mặc định</button>
+      <div style="display: flex; gap: 4px; margin-top: 8px;">
+        <button class="action-btn" style="flex: 1; background: #0284c7; border: none; font-size: 11px; padding: 6px 4px; color: #fff;" onclick="exportLayoutJSON()">
+          <svg class="svg-icon sm" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+          <span>Lưu concept</span>
+        </button>
+        <button class="action-btn" style="flex: 1; background: rgba(255,255,255,0.06); border: 1px solid var(--panel-border); font-size: 11px; padding: 6px 4px;" onclick="openJsonModal()">
+          <svg class="svg-icon sm" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+          <span>Nhập concept</span>
+        </button>
+        <button class="action-btn" style="flex: 0.6; background: rgba(255,255,255,0.04); border: 1px solid var(--panel-border); font-size: 10px; padding: 6px 4px;" onclick="resetDefaultLayout()" title="Khôi phục mặc định">
+          <svg class="svg-icon sm" viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg>
+        </button>
       </div>
     </div>
 
     <!-- Section 1: Active Component Details -->
     <div class="panel-section">
       <div class="section-title">
-        <span>🔍 Cấu kiện vách đang chọn</span>
-        <span style="font-size: 9px; color: #38bdf8; font-weight: 600;">(Click 3D hoặc chọn)</span>
+        <span>Cấu kiện đang chọn</span>
+        <span style="font-size: 9px; color: #64748b;">(Click 3D)</span>
       </div>
       
       <!-- Quick Chips -->
@@ -258,7 +290,10 @@
 
       <!-- Component Specs Card -->
       <div id="inspector-details-card">
-        <div class="dim-pill-badge" id="dim-badge">📏 3.000 × 2.500 mm</div>
+        <div class="dim-pill-badge" id="dim-badge">
+          <svg class="svg-icon sm" viewBox="0 0 24 24"><path d="M21.3 8.7 8.7 21.3a1 1 0 0 1-1.4 0l-6-6a1 1 0 0 1 0-1.4L13.9 1.3a1 1 0 0 1 1.4 0l6 6a1 1 0 0 1 0 1.4Z"></path></svg>
+          <span>3.000 × 2.500 mm</span>
+        </div>
         <div class="dimension-title" id="dim-title">VÁCH HẬU CHÍNH (BACKWALL)</div>
         
         <div class="dimension-row">
@@ -273,7 +308,7 @@
           <div class="dimension-label">Vị trí:</div>
           <div class="dimension-val" id="dim-loc">Vách chính diện phía sau (Z = -1.5m)</div>
         </div>
-        <div class="dimension-row" style="margin-top: 6px; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 6px;">
+        <div class="dimension-row" style="margin-top: 5px; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 5px;">
           <div class="dimension-val" id="dim-desc" style="color: #94a3b8; font-style: italic;">Trưng bày 5 nhóm sản phẩm chính (AUR, ACS, EFK, SUV, KHD) &amp; 50cm chân an toàn.</div>
         </div>
       </div>
@@ -281,10 +316,12 @@
 
     <!-- Section 2: Overall Booth Engineering Footprint -->
     <div class="panel-section">
-      <div class="section-title">🏗️ Kết cấu tổng thể gian hàng</div>
+      <div class="section-title">
+        <span>Kết cấu tổng thể</span>
+      </div>
       <div class="dimension-row">
         <div class="dimension-label">Mặt bằng:</div>
-        <div class="dimension-val" style="color: #38bdf8; font-weight: 700;">3.000 × 3.000 mm (9.0 m²)</div>
+        <div class="dimension-val" style="color: #38bdf8; font-weight: 600;">3.000 × 3.000 mm (9.0 m²)</div>
       </div>
       <div class="dimension-row">
         <div class="dimension-label">Chiều cao:</div>
@@ -304,7 +341,7 @@
       </div>
       <div class="dimension-row">
         <div class="dimension-label">Vị trí ô:</div>
-        <div class="dimension-val" style="color: #f59e0b; font-weight: 700;">Gian hàng A • Cụm H1-15 (Sảnh 2)</div>
+        <div class="dimension-val" style="color: #f59e0b; font-weight: 600;">Gian hàng A • Cụm H1-15 (Sảnh 2)</div>
       </div>
     </div>
   </div>
@@ -313,26 +350,47 @@
   <div id="json-modal" class="modal-backdrop" style="display:none;">
     <div class="modal-card">
       <div class="modal-header">
-        <div class="modal-title">📋 NHẬP / LƯU CONCEPT BỐ CỤC GIAN HÀNG</div>
+        <div class="modal-title">
+          <svg class="svg-icon" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+          <span>NHẬP / LƯU CONCEPT BỐ CỤC GIAN HÀNG</span>
+        </div>
         <button class="btn-close-modal" onclick="closeJsonModal()">✕</button>
       </div>
       <div class="modal-body">
-        <p style="font-size:11.5px; color:#94a3b8; margin-bottom:8px;">Dán mã concept bố cục thiết bị vào đây và nhấn "Áp dụng ngay":</p>
+        <p style="font-size:11px; color:#94a3b8; margin-bottom:6px;">Dán mã concept bố cục thiết bị vào đây và nhấn "Áp dụng ngay":</p>
         <textarea id="json-textarea" spellcheck="false" placeholder="Dán mã concept vào đây..."></textarea>
       </div>
       <div class="modal-footer">
-        <button class="btn-modal secondary" onclick="copyJsonFromTextarea()">📋 Sao chép</button>
-        <button class="btn-modal primary" onclick="applyJsonLayout()">⚡ Áp dụng ngay</button>
+        <button class="btn-modal secondary" onclick="copyJsonFromTextarea()">
+          <svg class="svg-icon sm" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+          <span>Sao chép</span>
+        </button>
+        <button class="btn-modal primary" onclick="applyJsonLayout()">
+          <svg class="svg-icon sm" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
+          <span>Áp dụng ngay</span>
+        </button>
       </div>
     </div>
   </div>
 
   <!-- Bottom Floating Action Bar -->
   <div class="bottom-bar">
-    <button class="btn-mobile-menu" onclick="toggleMobileDrawer(true)">⚙️ Menu</button>
-    <button class="action-btn toggle-ui" id="btn-toggle-ui" onclick="toggleZenMode()">👁️ Ẩn Panels</button>
-    <button class="action-btn" onclick="resetCamera()">🔄 Đặt lại góc</button>
-    <button class="action-btn screenshot" onclick="takeScreenshot()">📸 Xuất Ảnh Mockup HD</button>
+    <button class="btn-mobile-menu" onclick="toggleMobileDrawer(true)">
+      <svg class="svg-icon sm" viewBox="0 0 24 24"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+      <span>Menu</span>
+    </button>
+    <button class="action-btn toggle-ui" id="btn-toggle-ui" onclick="toggleZenMode()">
+      <svg class="svg-icon sm" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+      <span>Ẩn Panels</span>
+    </button>
+    <button class="action-btn" onclick="resetCamera()">
+      <svg class="svg-icon sm" viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg>
+      <span>Đặt lại góc</span>
+    </button>
+    <button class="action-btn screenshot" onclick="takeScreenshot()">
+      <svg class="svg-icon sm" viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+      <span>Xuất Ảnh Mockup HD</span>
+    </button>
   </div>
 
   <!-- 3D Canvas Container -->

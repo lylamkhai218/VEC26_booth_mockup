@@ -240,7 +240,9 @@ function toggleZenMode() {
   const btn = document.getElementById('btn-toggle-ui');
   if (btn) {
     const isZen = document.body.classList.contains('zen-mode');
-    btn.innerHTML = isZen ? '👁️ Hiện Panels' : '👁️ Ẩn Panels';
+    btn.innerHTML = isZen
+      ? `<svg class="svg-icon sm" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg><span>Hiện Panels</span>`
+      : `<svg class="svg-icon sm" viewBox="0 0 24 24"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg><span>Ẩn Panels</span>`;
   }
 }
 
@@ -452,7 +454,7 @@ function showDimensionCard(data) {
   const descEl = document.getElementById('dim-desc');
 
   if (titleEl) titleEl.innerText = data.title;
-  if (badgeEl) badgeEl.innerText = '📏 ' + data.dim;
+  if (badgeEl) badgeEl.innerHTML = `<svg class="svg-icon sm" viewBox="0 0 24 24"><path d="M21.3 8.7 8.7 21.3a1 1 0 0 1-1.4 0l-6-6a1 1 0 0 1 0-1.4L13.9 1.3a1 1 0 0 1 1.4 0l6 6a1 1 0 0 1 0 1.4Z"></path></svg><span>${data.dim}</span>`;
   if (panelsEl) panelsEl.innerText = data.panels;
   if (matEl) matEl.innerText = data.mat;
   if (locEl) locEl.innerText = data.loc;
