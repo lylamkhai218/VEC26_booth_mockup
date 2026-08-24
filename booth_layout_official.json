@@ -1,0 +1,57 @@
+{
+  "booth_size": {
+    "width": 3.0,
+    "depth": 3.0,
+    "height": 2.5
+  },
+  "unit": "meter",
+  "concept_name": "Official Concept VEC 2026 - T&T Vina x Murrplastik",
+  "timestamp": "2026-08-24T10:20:01.275Z",
+  "equipment_layout": {
+    "tvStand": {
+      "name": "Giá TV di động E2050 + TV 65\"",
+      "position": {
+        "x": -1.16,
+        "y": 0.0,
+        "z": -0.17
+      },
+      "rotation_deg_y": 90
+    },
+    "demo1": {
+      "name": "Bàn Demo 1 (Laser + Laptop)",
+      "position": {
+        "x": 0.99,
+        "y": 0.0,
+        "z": -0.56
+      },
+      "rotation_deg_y": 180
+    },
+    "demo2": {
+      "name": "Bàn Demo 2 (Robot R-Tec Box)",
+      "position": {
+        "x": 0.95,
+        "y": 0.0,
+        "z": 1.27
+      },
+      "rotation_deg_y": 180
+    },
+    "pipeRack": {
+      "name": "Kệ khung ống modular 3x3 + 3 Thùng",
+      "position": {
+        "x": -0.81,
+        "y": 0.0,
+        "z": 1.26
+      },
+      "rotation_deg_y": 0
+    },
+    "roundTable": {
+      "name": "Bàn tròn tiếp khách & hoa quả (4 ghế)",
+      "position": {
+        "x": -0.08,
+        "y": 0.0,
+        "z": -0.49
+      },
+      "rotation_deg_y": 0
+    }
+  }
+}

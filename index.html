@@ -1169,20 +1169,20 @@
       <div class="coord-grid" id="coord-controls-box">
         <div class="coord-row">
           <span class="coord-label">Trục X (Ngang):</span>
-          <input type="range" class="coord-slider" id="slider-x" min="-1.40" max="1.40" step="0.01" value="-1.12" oninput="onCoordSliderChange()">
-          <input type="number" class="coord-input" id="input-x" min="-1.40" max="1.40" step="0.01" value="-1.12" onchange="onCoordInputChange()">
+          <input type="range" class="coord-slider" id="slider-x" min="-1.40" max="1.40" step="0.01" value="-1.16" oninput="onCoordSliderChange()">
+          <input type="number" class="coord-input" id="input-x" min="-1.40" max="1.40" step="0.01" value="-1.16" onchange="onCoordInputChange()">
           <span class="coord-unit">m</span>
         </div>
         <div class="coord-row">
           <span class="coord-label">Trục Z (Sâu):</span>
-          <input type="range" class="coord-slider" id="slider-z" min="-1.40" max="1.40" step="0.01" value="-1.12" oninput="onCoordSliderChange()">
-          <input type="number" class="coord-input" id="input-z" min="-1.40" max="1.40" step="0.01" value="-1.12" onchange="onCoordInputChange()">
+          <input type="range" class="coord-slider" id="slider-z" min="-1.40" max="1.40" step="0.01" value="-0.17" oninput="onCoordSliderChange()">
+          <input type="number" class="coord-input" id="input-z" min="-1.40" max="1.40" step="0.01" value="-0.17" onchange="onCoordInputChange()">
           <span class="coord-unit">m</span>
         </div>
         <div class="coord-row">
           <span class="coord-label">Góc xoay Y:</span>
-          <input type="range" class="coord-slider" id="slider-rot" min="0" max="360" step="1" value="45" oninput="onCoordSliderChange()">
-          <input type="number" class="coord-input" id="input-rot" min="0" max="360" step="1" value="45" onchange="onCoordInputChange()">
+          <input type="range" class="coord-slider" id="slider-rot" min="0" max="360" step="1" value="90" oninput="onCoordSliderChange()">
+          <input type="number" class="coord-input" id="input-rot" min="0" max="360" step="1" value="90" onchange="onCoordInputChange()">
           <span class="coord-unit">°</span>
         </div>
       </div>
@@ -1884,13 +1884,13 @@
       
       tvStandGroup.add(tvBody);
       
-      // Position TV Cart at Inner Corner (-1.15, 0, -1.15), rotated 45 deg facing out (+X, +Z)
-      tvStandGroup.position.set(-1.12, 0, -1.12);
-      tvStandGroup.rotation.y = Math.PI / 4;
+      // Position TV Cart: X = -1.16, Z = -0.17, RotY = 90 deg
+      tvStandGroup.position.set(-1.16, 0, -0.17);
+      tvStandGroup.rotation.y = Math.PI / 2;
       boothGroup.add(tvStandGroup);
     }
 
-    // --- 2. BÀN DEMO 1 (MÁY LASER MP-LM 1M + LAPTOP + 2 CATALOGS) ---
+    // --- 2. BÀN DEMO 1 (MÁY LASER MP-LM 1M + LAPTOP + 2 CATALOGS + 2 GHẾ) ---
     function buildDemoTable1Laser() {
       demoTable1Group = new THREE.Group();
       
@@ -1982,8 +1982,9 @@
       chairD1_2.rotation.y = Math.PI;
       demoTable1Group.add(chairD1_2);
       
-      // Position Demo Table 1 perpendicular to Backwall (X = -0.45, Z = -1.15)
-      demoTable1Group.position.set(-0.45, 0, -1.15);
+      // Position Demo Table 1: X = 0.99, Z = -0.56, RotY = 180 deg
+      demoTable1Group.position.set(0.99, 0, -0.56);
+      demoTable1Group.rotation.y = Math.PI;
       boothGroup.add(demoTable1Group);
     }
 
@@ -2060,9 +2061,9 @@
       chairD2_2.rotation.y = Math.PI;
       demoTable2Group.add(chairD2_2);
       
-      // Position Demo Table 2 perpendicular to Sidewall center post (X = -1.15, Z = 0.0)
-      demoTable2Group.position.set(-1.15, 0, 0.0);
-      demoTable2Group.rotation.y = Math.PI / 2;
+      // Position Demo Table 2: X = 0.95, Z = 1.27, RotY = 180 deg
+      demoTable2Group.position.set(0.95, 0, 1.27);
+      demoTable2Group.rotation.y = Math.PI;
       boothGroup.add(demoTable2Group);
     }
 
@@ -2164,9 +2165,9 @@
       catStack.position.set(-0.25, 1.55 + 0.025, 0);
       pipeRackGroup.add(catStack);
       
-      // Position Pipe Rack perpendicular to Sidewall at Z = 1.05 (Panel 3 edge)
-      pipeRackGroup.position.set(-1.25, 0, 1.05);
-      pipeRackGroup.rotation.y = Math.PI / 2;
+      // Position Pipe Rack: X = -0.81, Z = 1.26, RotY = 0 deg
+      pipeRackGroup.position.set(-0.81, 0, 1.26);
+      pipeRackGroup.rotation.y = 0;
       boothGroup.add(pipeRackGroup);
     }
 
@@ -2226,7 +2227,9 @@
         roundTableGroup.add(chair);
       });
       
-      roundTableGroup.position.set(0.15, 0, 0.15);
+      // Position Round Table: X = -0.08, Z = -0.49, RotY = 0 deg
+      roundTableGroup.position.set(-0.08, 0, -0.49);
+      roundTableGroup.rotation.y = 0;
       boothGroup.add(roundTableGroup);
     }
 
@@ -2665,31 +2668,31 @@
       tvStand: {
         name: 'Giá TV di động E2050 + TV 65"',
         getGroup: () => tvStandGroup,
-        defaultPos: [-1.12, 0, -1.12],
-        defaultRotY: Math.PI / 4
+        defaultPos: [-1.16, 0, -0.17],
+        defaultRotY: Math.PI / 2
       },
       demo1: {
         name: 'Bàn Demo 1 (Laser + Laptop)',
         getGroup: () => demoTable1Group,
-        defaultPos: [-0.45, 0, -1.15],
-        defaultRotY: 0
+        defaultPos: [0.99, 0, -0.56],
+        defaultRotY: Math.PI
       },
       demo2: {
         name: 'Bàn Demo 2 (Robot R-Tec Box)',
         getGroup: () => demoTable2Group,
-        defaultPos: [-1.15, 0, 0.0],
-        defaultRotY: Math.PI / 2
+        defaultPos: [0.95, 0, 1.27],
+        defaultRotY: Math.PI
       },
       pipeRack: {
         name: 'Kệ khung ống modular 3x3 + 3 Thùng',
         getGroup: () => pipeRackGroup,
-        defaultPos: [-1.25, 0, 1.05],
-        defaultRotY: Math.PI / 2
+        defaultPos: [-0.81, 0, 1.26],
+        defaultRotY: 0
       },
       roundTable: {
         name: 'Bàn tròn tiếp khách & hoa quả (4 ghế)',
         getGroup: () => roundTableGroup,
-        defaultPos: [0.15, 0, 0.15],
+        defaultPos: [-0.08, 0, -0.49],
         defaultRotY: 0
       }
     };
