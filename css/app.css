@@ -421,11 +421,62 @@ button.active .svg-icon {
   border: 1px solid rgba(226, 0, 26, 0.35);
   color: #ff6b7a;
   font-weight: 700;
-  font-size: 11.5px;
-  padding: 4px 10px;
+  font-size: 11px;
+  padding: 3px 8px;
   border-radius: 5px;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
   letter-spacing: 0.3px;
+}
+
+.dim-pill-badge.safe {
+  background: rgba(6, 182, 212, 0.15);
+  border-color: rgba(6, 182, 212, 0.35);
+  color: #38bdf8;
+}
+
+.dim-pill-badge.warning {
+  background: rgba(245, 158, 11, 0.15);
+  border-color: rgba(245, 158, 11, 0.35);
+  color: #fbbf24;
+}
+
+.dim-pill-badge.danger {
+  background: rgba(239, 68, 68, 0.18);
+  border-color: rgba(239, 68, 68, 0.45);
+  color: #f87171;
+}
+
+/* Concept Slots Selector Grid */
+.slot-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 4px;
+  margin-bottom: 6px;
+}
+
+.slot-btn {
+  padding: 5px 4px;
+  font-size: 10px;
+  font-weight: 500;
+  border-radius: 5px;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  color: var(--text-muted);
+  justify-content: center;
+  text-align: center;
+  min-height: 26px;
+}
+
+.slot-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+}
+
+.slot-btn.active {
+  background: rgba(2, 132, 199, 0.2);
+  border-color: rgba(2, 132, 199, 0.5);
+  color: #38bdf8;
+  font-weight: 600;
 }
 
 .dimension-title {

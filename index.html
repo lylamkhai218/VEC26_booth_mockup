@@ -160,6 +160,13 @@
         </label>
       </div>
       <div class="toggle-row">
+        <span>Thước đo lối đi &amp; Vùng an toàn</span>
+        <label class="toggle-switch">
+          <input type="checkbox" id="toggle-clearance" checked onchange="toggleClearance(this.checked)">
+          <span class="slider"></span>
+        </label>
+      </div>
+      <div class="toggle-row">
         <span>Đèn rọi LED Spotlights</span>
         <label class="toggle-switch">
           <input type="checkbox" id="toggle-lights" checked onchange="toggleSpotlights(this.checked)">
@@ -204,10 +211,22 @@
       <button class="btn-close-drawer" onclick="toggleInspectorDrawer(false)">✕</button>
     </div>
 
-    <!-- Section 0: Interactive Equipment Layout & Move Mode -->
+    <!-- Section 0: Interactive Equipment Layout & Concept Slots -->
     <div class="panel-section" style="border-bottom: 1px solid rgba(226,0,26,0.25); padding-bottom: 10px;">
       <div class="section-title" style="color: #38bdf8;">
         <span>Bố trí thiết bị (Gizmo 3D)</span>
+        <span id="clearance-chip" class="dim-pill-badge safe" style="margin: 0; font-size: 9.5px; padding: 2px 6px;">
+          <svg class="svg-icon sm" viewBox="0 0 24 24"><path d="M21.3 8.7 8.7 21.3a1 1 0 0 1-1.4 0l-6-6a1 1 0 0 1 0-1.4L13.9 1.3a1 1 0 0 1 1.4 0l6 6a1 1 0 0 1 0 1.4Z"></path></svg>
+          <span id="clearance-val">0.84m (Rộng rãi)</span>
+        </span>
+      </div>
+
+      <!-- 3 Concept Slots Switcher -->
+      <div style="font-size: 10px; color: #64748b; margin-bottom: 4px;">Chọn phương án bố cục (1-Click):</div>
+      <div class="slot-grid">
+        <button class="slot-btn active" id="slot-btn-0" onclick="selectConceptSlot(0)">1. Đón Khách</button>
+        <button class="slot-btn" id="slot-btn-1" onclick="selectConceptSlot(1)">2. Trình Diễn</button>
+        <button class="slot-btn" id="slot-btn-2" onclick="selectConceptSlot(2)">3. VIP Lounge</button>
       </div>
       
       <!-- Equipment Selector Chips -->
@@ -259,16 +278,17 @@
 
       <!-- Concept Action Buttons -->
       <div style="display: flex; gap: 4px; margin-top: 8px;">
-        <button class="action-btn" style="flex: 1; background: #0284c7; border: none; font-size: 11px; padding: 6px 4px; color: #fff;" onclick="exportLayoutJSON()">
+        <button class="action-btn" style="flex: 1.1; background: #0284c7; border: none; font-size: 10px; padding: 6px 4px; color: #fff;" onclick="saveToCurrentSlot()" title="Lưu tọa độ hiện tại vào Slot đang chọn">
           <svg class="svg-icon sm" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
-          <span>Lưu concept</span>
+          <span>Lưu vào Slot</span>
         </button>
-        <button class="action-btn" style="flex: 1; background: rgba(255,255,255,0.06); border: 1px solid var(--panel-border); font-size: 11px; padding: 6px 4px;" onclick="openJsonModal()">
+        <button class="action-btn" style="flex: 0.9; background: rgba(255,255,255,0.06); border: 1px solid var(--panel-border); font-size: 10px; padding: 6px 4px;" onclick="exportLayoutJSON()" title="Tải file concept JSON">
+          <svg class="svg-icon sm" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+          <span>Tải file</span>
+        </button>
+        <button class="action-btn" style="flex: 0.9; background: rgba(255,255,255,0.06); border: 1px solid var(--panel-border); font-size: 10px; padding: 6px 4px;" onclick="openJsonModal()" title="Nhập mã concept">
           <svg class="svg-icon sm" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
-          <span>Nhập concept</span>
-        </button>
-        <button class="action-btn" style="flex: 0.6; background: rgba(255,255,255,0.04); border: 1px solid var(--panel-border); font-size: 10px; padding: 6px 4px;" onclick="resetDefaultLayout()" title="Khôi phục mặc định">
-          <svg class="svg-icon sm" viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg>
+          <span>Nhập mã</span>
         </button>
       </div>
     </div>

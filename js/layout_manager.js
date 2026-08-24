@@ -1,6 +1,6 @@
 /**
- * layout_manager.js - Interactive Gizmo & Concept Export/Import System
- * Manages TransformControls, Slider Synchronization, and Layout Persistence.
+ * layout_manager.js - Interactive Gizmo, Multi-Slot Concept Manager & Walkway Clearance
+ * Manages TransformControls, Concept Slots (A/B/C), and Real-Time Safety Clearance.
  */
 
 // --- EQUIPMENT REGISTRY WITH OFFICIAL POSITIONS ---
@@ -9,33 +9,81 @@ const EQUIPMENT = {
     name: 'Giá TV di động E2050 + TV 65"',
     getGroup: () => tvStandGroup,
     defaultPos: [-1.16, 0, -0.17],
-    defaultRotY: Math.PI / 2
+    defaultRotY: Math.PI / 2,
+    radius: 0.35
   },
   demo1: {
     name: 'Bàn Demo 1 (Laser + Laptop)',
     getGroup: () => demoTable1Group,
     defaultPos: [0.99, 0, -0.56],
-    defaultRotY: Math.PI
+    defaultRotY: Math.PI,
+    radius: 0.45
   },
   demo2: {
     name: 'Bàn Demo 2 (Robot R-Tec Box)',
     getGroup: () => demoTable2Group,
     defaultPos: [0.95, 0, 1.27],
-    defaultRotY: Math.PI
+    defaultRotY: Math.PI,
+    radius: 0.45
   },
   pipeRack: {
     name: 'Kệ khung ống modular 3x3 + 3 Thùng',
     getGroup: () => pipeRackGroup,
     defaultPos: [-0.81, 0, 1.26],
-    defaultRotY: 0
+    defaultRotY: 0,
+    radius: 0.42
   },
   roundTable: {
     name: 'Bàn tròn tiếp khách & hoa quả (4 ghế)',
     getGroup: () => roundTableGroup,
     defaultPos: [-0.08, 0, -0.49],
-    defaultRotY: 0
+    defaultRotY: 0,
+    radius: 0.52
   }
 };
+
+// --- 3 PRESET CONCEPT SLOTS ---
+const CONCEPT_PRESETS = [
+  {
+    id: 1,
+    name: 'Concept 1: Đón Khách (Tiêu chuẩn)',
+    desc: 'Bố cục mở, tối ưu lối đi thông thoáng & tiếp khách',
+    layout: {
+      tvStand: { pos: [-1.16, 0, -0.17], rotDeg: 90 },
+      demo1: { pos: [0.99, 0, -0.56], rotDeg: 180 },
+      demo2: { pos: [0.95, 0, 1.27], rotDeg: 180 },
+      pipeRack: { pos: [-0.81, 0, 1.26], rotDeg: 0 },
+      roundTable: { pos: [-0.08, 0, -0.49], rotDeg: 0 }
+    }
+  },
+  {
+    id: 2,
+    name: 'Concept 2: Trình Diễn (Demo-First)',
+    desc: 'Tập trung hướng máy Laser & Robot ra mặt tiền sảnh',
+    layout: {
+      tvStand: { pos: [0.95, 0, -0.15], rotDeg: 270 },
+      demo1: { pos: [-0.85, 0, -0.60], rotDeg: 0 },
+      demo2: { pos: [-0.85, 0, 0.65], rotDeg: 0 },
+      pipeRack: { pos: [0.92, 0, 1.25], rotDeg: 180 },
+      roundTable: { pos: [0.00, 0, 0.25], rotDeg: 0 }
+    }
+  },
+  {
+    id: 3,
+    name: 'Concept 3: VIP Lounge (Tiếp khách)',
+    desc: 'Bàn tròn đặt góc yên tĩnh, TV chuyển mặt tiền đón khách',
+    layout: {
+      tvStand: { pos: [-1.16, 0, 0.55], rotDeg: 90 },
+      demo1: { pos: [0.95, 0, -0.85], rotDeg: 180 },
+      demo2: { pos: [0.95, 0, 0.30], rotDeg: 180 },
+      pipeRack: { pos: [0.95, 0, 1.25], rotDeg: 180 },
+      roundTable: { pos: [-0.35, 0, -0.55], rotDeg: 0 }
+    }
+  }
+];
+
+let currentSlotIndex = 0;
+let userCustomSlots = null;
 
 // --- INITIALIZE TRANSFORM CONTROLS GIZMO ---
 function initTransformControls() {
@@ -57,6 +105,9 @@ function initTransformControls() {
       if (grp) {
         grp.position.y = 0; // enforce floor grounding
         updateInspectorInputsFromObject(grp);
+        if (typeof updateClearanceVisuals === 'function') {
+          updateClearanceVisuals();
+        }
       }
     }
   });
@@ -67,12 +118,94 @@ function initTransformControls() {
 
   scene.add(transformControls);
 
+  // Load saved slots from LocalStorage
+  loadSavedConceptSlots();
+
   // Select default item
   setTimeout(() => {
     selectEquipment('tvStand');
+    if (typeof updateClearanceVisuals === 'function') {
+      updateClearanceVisuals();
+    }
   }, 500);
 }
 
+// --- CONCEPT SLOT MANAGEMENT (1-CLICK INSTANT SWITCH) ---
+function loadSavedConceptSlots() {
+  try {
+    const saved = localStorage.getItem('vec2026_concept_slots');
+    if (saved) {
+      userCustomSlots = JSON.parse(saved);
+    }
+  } catch (e) {
+    console.warn('LocalStorage unavailable, using preset defaults');
+  }
+}
+
+function selectConceptSlot(slotIdx) {
+  currentSlotIndex = slotIdx;
+  
+  // Update slot buttons UI
+  document.querySelectorAll('.slot-btn').forEach((b, i) => {
+    b.classList.toggle('active', i === slotIdx);
+  });
+
+  const slots = userCustomSlots || CONCEPT_PRESETS;
+  const targetSlot = slots[slotIdx] || CONCEPT_PRESETS[slotIdx];
+  if (!targetSlot || !targetSlot.layout) return;
+
+  Object.entries(targetSlot.layout).forEach(([key, data]) => {
+    if (EQUIPMENT[key]) {
+      const grp = EQUIPMENT[key].getGroup();
+      if (grp && data.pos) {
+        grp.position.set(data.pos[0], data.pos[1], data.pos[2]);
+        if (data.rotDeg !== undefined) {
+          grp.rotation.y = THREE.MathUtils.degToRad(data.rotDeg);
+        } else if (data.rotY !== undefined) {
+          grp.rotation.y = data.rotY;
+        }
+      }
+    }
+  });
+
+  if (activeEquipmentKey && EQUIPMENT[activeEquipmentKey]) {
+    updateInspectorInputsFromObject(EQUIPMENT[activeEquipmentKey].getGroup());
+  }
+  if (transformControls) transformControls.updateMatrixWorld();
+  if (typeof updateClearanceVisuals === 'function') updateClearanceVisuals();
+
+  showToast(`Đã chuyển sang ${targetSlot.name}`);
+}
+
+function saveToCurrentSlot() {
+  if (!userCustomSlots) {
+    userCustomSlots = JSON.parse(JSON.stringify(CONCEPT_PRESETS));
+  }
+
+  const currentLayout = {};
+  Object.entries(EQUIPMENT).forEach(([key, eq]) => {
+    const grp = eq.getGroup();
+    if (grp) {
+      let deg = Math.round(THREE.MathUtils.radToDeg(grp.rotation.y)) % 360;
+      if (deg < 0) deg += 360;
+      currentLayout[key] = {
+        pos: [parseFloat(grp.position.x.toFixed(3)), 0, parseFloat(grp.position.z.toFixed(3))],
+        rotDeg: deg
+      };
+    }
+  });
+
+  userCustomSlots[currentSlotIndex].layout = currentLayout;
+
+  try {
+    localStorage.setItem('vec2026_concept_slots', JSON.stringify(userCustomSlots));
+    showToast(`Đã lưu bố cục hiện tại vào ${userCustomSlots[currentSlotIndex].name}!`);
+  } catch (e) {
+    showToast("Đã lưu vào bộ nhớ tạm phiên làm việc!");
+  }
+}
+
+// --- EQUIPMENT SELECTION & GIZMO CONTROL ---
 function selectEquipment(key) {
   activeEquipmentKey = key;
   document.querySelectorAll('[id^="chip-eq-"]').forEach(btn => btn.classList.remove('active'));
@@ -153,6 +286,7 @@ function onCoordSliderChange() {
   grp.position.z = z;
   grp.rotation.y = THREE.MathUtils.degToRad(deg);
   if (transformControls) transformControls.updateMatrixWorld();
+  if (typeof updateClearanceVisuals === 'function') updateClearanceVisuals();
 }
 
 function onCoordInputChange() {
@@ -174,6 +308,7 @@ function onCoordInputChange() {
   grp.position.z = z;
   grp.rotation.y = THREE.MathUtils.degToRad(deg);
   if (transformControls) transformControls.updateMatrixWorld();
+  if (typeof updateClearanceVisuals === 'function') updateClearanceVisuals();
 }
 
 function setEquipmentRotationDeg(deg) {
@@ -184,6 +319,35 @@ function setEquipmentRotationDeg(deg) {
   onCoordSliderChange();
 }
 
+// --- CLEARANCE SAFETY METRICS CALCULATION ---
+function calculateMinClearance() {
+  const keys = Object.keys(EQUIPMENT);
+  let minDistance = 999;
+  let closestPair = null;
+
+  for (let i = 0; i < keys.length; i++) {
+    for (let j = i + 1; j < keys.length; j++) {
+      const g1 = EQUIPMENT[keys[i]].getGroup();
+      const g2 = EQUIPMENT[keys[j]].getGroup();
+      if (g1 && g2 && g1.visible && g2.visible) {
+        const centerDist = Math.hypot(g1.position.x - g2.position.x, g1.position.z - g2.position.z);
+        const edgeDist = centerDist - (EQUIPMENT[keys[i]].radius + EQUIPMENT[keys[j]].radius);
+        if (edgeDist < minDistance) {
+          minDistance = edgeDist;
+          closestPair = [EQUIPMENT[keys[i]].name, EQUIPMENT[keys[j]].name];
+        }
+      }
+    }
+  }
+
+  return {
+    distance: Math.max(0, minDistance),
+    closestPair: closestPair,
+    isSafe: minDistance >= 0.55 // 55cm minimum clearance for passage
+  };
+}
+
+// --- CONCEPT SERIALIZATION & MODALS ---
 function getBoothLayoutObject() {
   const layout = {
     booth_size: { width: 3.0, depth: 3.0, height: 2.5 },
@@ -218,12 +382,12 @@ function exportLayoutJSON() {
   // 1. Copy to clipboard
   if (navigator.clipboard && navigator.clipboard.writeText) {
     navigator.clipboard.writeText(jsonStr).then(() => {
-      showToast("📋 Đã sao chép concept vào Clipboard & Tải file!");
+      showToast("Đã sao chép concept vào Clipboard & Tải file!");
     }).catch(() => {
-      showToast("💾 Đã tải file concept bố cục!");
+      showToast("Đã tải file concept bố cục!");
     });
   } else {
-    showToast("💾 Đã tải file concept bố cục!");
+    showToast("Đã tải file concept bố cục!");
   }
 
   // 2. Download JSON file
@@ -280,6 +444,7 @@ function applyJsonLayout() {
       updateInspectorInputsFromObject(EQUIPMENT[activeEquipmentKey].getGroup());
     }
     if (transformControls) transformControls.updateMatrixWorld();
+    if (typeof updateClearanceVisuals === 'function') updateClearanceVisuals();
 
     closeJsonModal();
     showToast("Đã áp dụng concept thành công!");
@@ -289,19 +454,7 @@ function applyJsonLayout() {
 }
 
 function resetDefaultLayout() {
-  Object.entries(EQUIPMENT).forEach(([key, eq]) => {
-    const grp = eq.getGroup();
-    if (grp) {
-      grp.position.set(eq.defaultPos[0], eq.defaultPos[1], eq.defaultPos[2]);
-      grp.rotation.y = eq.defaultRotY;
-    }
-  });
-
-  if (activeEquipmentKey && EQUIPMENT[activeEquipmentKey]) {
-    updateInspectorInputsFromObject(EQUIPMENT[activeEquipmentKey].getGroup());
-  }
-  if (transformControls) transformControls.updateMatrixWorld();
-  showToast("Đã khôi phục bố cục mặc định!");
+  selectConceptSlot(0);
 }
 
 function showToast(msg) {

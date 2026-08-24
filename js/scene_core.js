@@ -1,8 +1,12 @@
 /**
- * scene_core.js - Three.js Engine Lifecycle, Lighting, Camera, Textures & Dimension Raycaster
+ * scene_core.js - Three.js Engine Lifecycle, Lighting, Camera, Textures & Clearance Visualization
  */
 
 window.addEventListener('DOMContentLoaded', init);
+
+let clearanceGroup;
+let clearanceCircles = {};
+let clearanceLine;
 
 function init() {
   const container = document.getElementById('canvas-container');
@@ -55,19 +59,22 @@ function init() {
   buildModularPipeRack();
   buildRoundTableCenter();
 
-  // 7. Load Textures
+  // 7. Clearance & Walkway Visual System
+  buildClearanceSystem();
+
+  // 8. Load Textures
   loadBoothTextures(currentVersion);
 
-  // 8. Setup Interactive Dimension Inspection on Click
+  // 9. Setup Interactive Dimension Inspection on Click
   setupInteractiveDimensions();
 
-  // 9. Setup TransformControls (Gizmo) for Equipment Placement
+  // 10. Setup TransformControls (Gizmo) for Equipment Placement
   initTransformControls();
 
-  // 10. Event Listeners
+  // 11. Event Listeners
   window.addEventListener('resize', onWindowResize);
 
-  // 11. Animation Loop
+  // 12. Animation Loop
   animate();
 
   // Fade out loading screen
@@ -126,7 +133,6 @@ function createSpotlight(x, y, z, tx, ty, tz, intensity) {
   lightsGroup.add(spot);
   scene.add(spot.target);
 
-  // Fixture geometry
   const fixMat = new THREE.MeshStandardMaterial({ color: 0x1a1a1a, metalness: 0.85, roughness: 0.2 });
   const fixture = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.06, 0.09, 16), fixMat);
   fixture.position.set(x, y, z);
@@ -187,6 +193,86 @@ function buildEnvironment() {
   const trimSide = new THREE.Mesh(new THREE.BoxGeometry(0.02, 0.016, BOOTH_D), trimMat);
   trimSide.position.set(BOOTH_W/2, 0.008, 0);
   boothGroup.add(trimSide);
+}
+
+// --- WALKWAY CLEARANCE & DISTANCE MEASUREMENT VISUALIZER ---
+function buildClearanceSystem() {
+  clearanceGroup = new THREE.Group();
+  clearanceGroup.visible = true; // Enabled by default
+  boothGroup.add(clearanceGroup);
+
+  const ringGeo = new THREE.RingGeometry(0.96, 1.0, 48);
+  ringGeo.rotateX(-Math.PI / 2);
+
+  Object.entries(EQUIPMENT).forEach(([key, eq]) => {
+    const ringMat = new THREE.MeshBasicMaterial({
+      color: 0x06b6d4,
+      transparent: true,
+      opacity: 0.65,
+      side: THREE.DoubleSide
+    });
+    const ring = new THREE.Mesh(ringGeo, ringMat);
+    ring.scale.set(eq.radius, 1, eq.radius);
+    ring.position.y = 0.012;
+    clearanceGroup.add(ring);
+    clearanceCircles[key] = ring;
+  });
+
+  // Dynamic distance line
+  const lineGeo = new THREE.BufferGeometry();
+  const positions = new Float32Array([0, 0.015, 0, 0, 0.015, 0]);
+  lineGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+  const lineMat = new THREE.LineBasicMaterial({ color: 0x38bdf8, linewidth: 2 });
+  clearanceLine = new THREE.Line(lineGeo, lineMat);
+  clearanceGroup.add(clearanceLine);
+}
+
+function updateClearanceVisuals() {
+  if (!clearanceGroup) return;
+
+  // Update ring positions
+  Object.entries(EQUIPMENT).forEach(([key, eq]) => {
+    const grp = eq.getGroup();
+    const ring = clearanceCircles[key];
+    if (grp && ring) {
+      ring.position.x = grp.position.x;
+      ring.position.z = grp.position.z;
+      ring.visible = grp.visible;
+    }
+  });
+
+  // Calculate metrics
+  if (typeof calculateMinClearance === 'function') {
+    const metrics = calculateMinClearance();
+    const dist = metrics.distance;
+    
+    // Update ring colors based on clearance
+    let colorHex = 0x06b6d4; // Cyan (safe >= 0.75m)
+    let statusText = `${dist.toFixed(2)}m (Rộng rãi)`;
+    let badgeClass = 'safe';
+
+    if (dist < 0.55) {
+      colorHex = 0xef4444; // Red warning
+      statusText = `${dist.toFixed(2)}m (Hẹp / Kẹt lối)`;
+      badgeClass = 'danger';
+    } else if (dist < 0.75) {
+      colorHex = 0xf59e0b; // Amber caution
+      statusText = `${dist.toFixed(2)}m (Vừa vặn)`;
+      badgeClass = 'warning';
+    }
+
+    Object.values(clearanceCircles).forEach(ring => {
+      ring.material.color.setHex(colorHex);
+    });
+
+    // Update HUD chip
+    const hudChip = document.getElementById('clearance-val');
+    const hudBadge = document.getElementById('clearance-chip');
+    if (hudChip) hudChip.innerText = statusText;
+    if (hudBadge) {
+      hudBadge.className = `dim-pill-badge ${badgeClass}`;
+    }
+  }
 }
 
 // --- CAMERA PRESETS ---
@@ -362,7 +448,6 @@ function setupInteractiveDimensions() {
     };
   }
 
-  // Pointer listener on WebGL canvas
   const dom = renderer.domElement;
   dom.addEventListener('pointerdown', (e) => {
     touchStartTime = Date.now();
@@ -433,7 +518,7 @@ function triggerGlowHighlight(mesh) {
   
   activeHighlightMesh = mesh;
   activeHighlightOrigColor = mesh.material.color.clone();
-  mesh.material.color.setHex(0xffea00); // Warm yellow highlight pulse
+  mesh.material.color.setHex(0xffea00);
 
   clearTimeout(activeHighlightTimeout);
   activeHighlightTimeout = setTimeout(() => {
@@ -543,11 +628,7 @@ function takeScreenshot() {
   link.href = dataUrl;
   link.click();
 
-  const toast = document.getElementById('toast');
-  if (toast) {
-    toast.classList.add('show');
-    setTimeout(() => toast.classList.remove('show'), 2500);
-  }
+  showToast("Đã xuất ảnh mockup HD thành công!");
 }
 
 function onWindowResize() {
@@ -573,18 +654,26 @@ function toggleFrame(visible) {
 }
 function toggleTVStand(visible) {
   if (tvStandGroup) tvStandGroup.visible = visible;
+  updateClearanceVisuals();
 }
 function toggleDemo1(visible) {
   if (demoTable1Group) demoTable1Group.visible = visible;
+  updateClearanceVisuals();
 }
 function toggleDemo2(visible) {
   if (demoTable2Group) demoTable2Group.visible = visible;
+  updateClearanceVisuals();
 }
 function togglePipeRack(visible) {
   if (pipeRackGroup) pipeRackGroup.visible = visible;
+  updateClearanceVisuals();
 }
 function toggleRoundTable(visible) {
   if (roundTableGroup) roundTableGroup.visible = visible;
+  updateClearanceVisuals();
+}
+function toggleClearance(visible) {
+  if (clearanceGroup) clearanceGroup.visible = visible;
 }
 function toggleSpotlights(visible) {
   [spotLight1, spotLight2, spotLight3].forEach(s => {

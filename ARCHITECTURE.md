@@ -152,4 +152,5 @@ Dữ liệu cấu hình bố cục không gian chính thức (Official Concept) 
 | **v1.1.0** | 2026-08-24 | AI Assistant & Team | Bổ sung tương tác Gizmo 3D TransformControls, xuất/nạp bố cục JSON. |
 | **v2.0.0** | 2026-08-24 | CTO & Senior FE | **Tái cấu trúc Modular Architecture:** Tách `index.html` thành 5 module độc lập (`config.js`, `booth_structures.js`, `equipment_models.js`, `layout_manager.js`, `scene_core.js`, `app.css`). Thiết lập bản đồ chỉ mục tra cứu code nhanh `PROJECT_MAP.md`. |
 | **v2.1.0** | 2026-08-24 | CTO & Senior FE | Ban hành bộ tài liệu chuẩn hóa `ARCHITECTURE.md`, `AGENTS.md`, `README.md` và thiết lập quy chuẩn **Append-Only / Non-Destructive** vĩnh viễn cho tài liệu. |
+| **v2.2.0** | 2026-08-25 | CTO & Senior FE | Tích hợp hệ thống **Thước đo Lối đi & Vòng an toàn (Walkway Clearance)** và **Bộ quản lý 3 Slot Concept nhanh (A/B/C)** lưu trữ LocalStorage. Thay thế toàn bộ Emojis bằng bộ Vector SVG đơn sắc Lucide chuẩn Industrial CAD. |
 
