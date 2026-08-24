@@ -55,40 +55,60 @@
     .top-bar {
       position: absolute;
       top: var(--safe-top);
-      left: 12px;
-      right: 12px;
-      z-index: 10;
+      left: 16px;
+      right: 16px;
+      z-index: 40;
       display: flex;
       justify-content: space-between;
       align-items: center;
       pointer-events: none;
-      gap: 8px;
+      gap: 12px;
+      transition: transform 0.3s ease, opacity 0.3s ease;
     }
 
     .brand-badge {
       pointer-events: auto;
-      background: var(--panel-bg);
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 6px 12px;
+      background: rgba(14, 18, 25, 0.92);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 12px;
+      padding: 6px 14px;
       display: flex;
       align-items: center;
-      gap: 8px;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+      gap: 10px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
       min-width: 0;
     }
 
-    .brand-logo-pill {
-      background: var(--primary);
-      color: white;
+    .brand-tt-pill {
+      background: #002536;
+      color: #38bdf8;
+      border: 1px solid rgba(56, 189, 248, 0.4);
       font-weight: 800;
       font-size: 11px;
       letter-spacing: 0.8px;
-      padding: 3px 6px;
-      border-radius: 5px;
+      padding: 4px 8px;
+      border-radius: 6px;
       flex-shrink: 0;
+    }
+
+    .brand-cross {
+      color: #64748b;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .brand-murr-pill {
+      background: #E2001A;
+      color: #ffffff;
+      font-weight: 800;
+      font-size: 11px;
+      letter-spacing: 0.8px;
+      padding: 4px 8px;
+      border-radius: 6px;
+      flex-shrink: 0;
+      box-shadow: 0 0 12px rgba(226, 0, 26, 0.4);
     }
 
     .brand-info {
@@ -98,17 +118,18 @@
     }
 
     .brand-title {
-      font-size: 12px;
-      font-weight: 700;
+      font-size: 12.5px;
+      font-weight: 800;
       color: #fff;
+      letter-spacing: 0.3px;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
     }
 
     .brand-subtitle {
-      font-size: 9.5px;
-      color: var(--text-muted);
+      font-size: 10px;
+      color: #94a3b8;
       margin-top: 1px;
       white-space: nowrap;
       overflow: hidden;
@@ -117,15 +138,18 @@
 
     .booth-tag {
       pointer-events: auto;
-      background: rgba(37, 99, 235, 0.2);
-      border: 1px solid rgba(96, 165, 250, 0.35);
-      padding: 5px 8px;
-      border-radius: 8px;
-      font-size: 10.5px;
-      color: #93c5fd;
-      font-weight: 700;
+      background: rgba(14, 18, 25, 0.92);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      padding: 7px 12px;
+      border-radius: 10px;
+      font-size: 11.5px;
+      color: #38bdf8;
+      font-weight: 800;
       white-space: nowrap;
       flex-shrink: 0;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.4);
     }
 
     /* Horizontal Camera Quick-Bar (Always accessible) */
@@ -176,34 +200,47 @@
       box-shadow: 0 2px 10px rgba(200, 68, 42, 0.5);
     }
 
-    /* HUD Controls Panel (Desktop sidebar / Mobile bottom sheet) */
+    /* --- FIGMA / CAD WORKSTATION DUAL SIDEBARS --- */
     .hud-panel {
       position: absolute;
-      z-index: 20;
-      background: var(--panel-bg);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border: 1px solid var(--border);
+      z-index: 30;
+      background: rgba(14, 18, 26, 0.90);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 1px solid rgba(255, 255, 255, 0.12);
       border-radius: 16px;
       padding: 16px;
-      box-shadow: 0 16px 36px rgba(0,0,0,0.6);
+      box-shadow: 0 16px 40px rgba(0,0,0,0.65), 0 0 1px rgba(255,255,255,0.2);
       pointer-events: auto;
       transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s ease;
+      display: flex;
+      flex-direction: column;
     }
 
-    /* Desktop Sidebar */
+    /* Left Panel: Functions & Controls (Docked Full Vertical on Desktop) */
     .left-controls {
-      top: 104px;
+      top: 60px;
       left: 16px;
-      width: 290px;
-      max-height: calc(100vh - 170px);
+      bottom: 82px;
+      width: 310px;
       overflow-y: auto;
     }
 
-    .left-controls::-webkit-scrollbar {
+    /* Right Panel: Technical Specifications & Live Inspector */
+    .right-inspector {
+      top: 60px;
+      right: 16px;
+      bottom: 82px;
+      width: 325px;
+      overflow-y: auto;
+    }
+
+    .left-controls::-webkit-scrollbar,
+    .right-inspector::-webkit-scrollbar {
       width: 4px;
     }
-    .left-controls::-webkit-scrollbar-thumb {
+    .left-controls::-webkit-scrollbar-thumb,
+    .right-inspector::-webkit-scrollbar-thumb {
       background: rgba(255,255,255,0.2);
       border-radius: 4px;
     }
@@ -213,16 +250,18 @@
       justify-content: space-between;
       align-items: center;
       margin-bottom: 12px;
-      padding-bottom: 8px;
-      border-bottom: 1px solid rgba(255,255,255,0.08);
+      padding-bottom: 10px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      flex-shrink: 0;
     }
     .panel-header-title {
       font-size: 13px;
-      font-weight: 700;
+      font-weight: 800;
       color: #fff;
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 7px;
+      letter-spacing: 0.5px;
     }
     .drawer-handle {
       display: none;
@@ -261,9 +300,12 @@
       font-size: 11px;
       text-transform: uppercase;
       letter-spacing: 0.8px;
-      font-weight: 700;
-      color: var(--text-muted);
+      font-weight: 800;
+      color: #94a3b8;
       margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
     }
 
     .btn-group {
@@ -287,7 +329,7 @@
       font-size: 12px;
       font-weight: 500;
       padding: 8px 12px;
-      min-height: 38px;
+      min-height: 36px;
       border-radius: 8px;
       transition: all 0.15s ease;
       display: flex;
@@ -308,8 +350,73 @@
       background: var(--primary);
       border-color: var(--primary);
       color: #fff;
+      font-weight: 700;
+      box-shadow: 0 2px 10px rgba(226, 0, 26, 0.4);
+    }
+
+    /* Quick Component Selector Chips inside Inspector */
+    .component-chips-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+      margin-bottom: 12px;
+    }
+    .comp-chip-btn {
+      padding: 6px 8px;
+      font-size: 11px;
       font-weight: 600;
-      box-shadow: 0 2px 10px rgba(200, 68, 42, 0.4);
+      border-radius: 6px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      color: #cbd5e1;
+      justify-content: center;
+      min-height: 32px;
+    }
+    .comp-chip-btn.active {
+      background: #E2001A;
+      border-color: #E2001A;
+      color: #fff;
+    }
+
+    /* Inspector Dimension Card Styles */
+    .dim-pill-badge {
+      display: inline-block;
+      background: #E2001A;
+      color: #fff;
+      font-weight: 800;
+      font-size: 13px;
+      padding: 5px 12px;
+      border-radius: 6px;
+      margin-bottom: 10px;
+      letter-spacing: 0.5px;
+      box-shadow: 0 0 12px rgba(226, 0, 26, 0.4);
+    }
+
+    .dimension-title {
+      font-size: 13.5px;
+      font-weight: 800;
+      color: #fff;
+      line-height: 1.3;
+      margin-bottom: 6px;
+    }
+
+    .dimension-row {
+      display: flex;
+      font-size: 11.5px;
+      margin-bottom: 6px;
+      line-height: 1.4;
+    }
+
+    .dimension-label {
+      color: var(--text-muted);
+      width: 75px;
+      flex-shrink: 0;
+      font-weight: 600;
+    }
+
+    .dimension-val {
+      color: #e2e8f0;
+      font-weight: 500;
     }
 
     /* Toggle switches */
@@ -320,13 +427,13 @@
       padding: 5px 0;
       font-size: 12px;
       color: #d1d5db;
-      min-height: 34px;
+      min-height: 32px;
     }
 
     .toggle-switch {
       position: relative;
-      width: 40px;
-      height: 22px;
+      width: 38px;
+      height: 20px;
       flex-shrink: 0;
     }
     .toggle-switch input {
@@ -340,13 +447,13 @@
       top: 0; left: 0; right: 0; bottom: 0;
       background-color: rgba(255,255,255,0.18);
       transition: .2s;
-      border-radius: 22px;
+      border-radius: 20px;
     }
     .slider:before {
       position: absolute;
       content: "";
-      height: 16px;
-      width: 16px;
+      height: 14px;
+      width: 14px;
       left: 3px;
       bottom: 3px;
       background-color: white;
@@ -366,14 +473,14 @@
       bottom: var(--safe-bottom);
       left: 50%;
       transform: translateX(-50%);
-      z-index: 15;
+      z-index: 40;
       display: flex;
       align-items: center;
       gap: 8px;
-      background: var(--panel-bg);
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
-      border: 1px solid var(--border);
+      background: rgba(14, 18, 25, 0.94);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border: 1px solid rgba(255, 255, 255, 0.14);
       border-radius: 30px;
       padding: 6px 12px;
       box-shadow: 0 10px 30px rgba(0,0,0,0.6);
@@ -387,44 +494,61 @@
       font-size: 12px;
       font-weight: 600;
       white-space: nowrap;
-      min-height: 38px;
+      min-height: 36px;
     }
+
+    .action-btn.toggle-ui {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: #e2e8f0;
+      transition: all 0.2s ease;
+    }
+    .action-btn.toggle-ui:hover {
+      background: rgba(255, 255, 255, 0.16);
+      border-color: rgba(255, 255, 255, 0.4);
+      color: #fff;
+    }
+
     .action-btn.screenshot {
-      background: linear-gradient(135deg, #C8442A, #e05338);
+      background: linear-gradient(135deg, #E2001A, #b80015);
       border: none;
       color: #fff;
-      box-shadow: 0 4px 15px rgba(200, 68, 42, 0.4);
+      box-shadow: 0 4px 15px rgba(226, 0, 26, 0.4);
     }
     .action-btn.screenshot:hover {
       transform: translateY(-1px);
-      box-shadow: 0 6px 20px rgba(200, 68, 42, 0.6);
+      box-shadow: 0 6px 20px rgba(226, 0, 26, 0.6);
     }
 
     .btn-mobile-menu {
       display: none;
     }
 
-    /* Static Footprint Card (Desktop only) */
-    .booth-footprint-card {
-      position: absolute;
-      bottom: var(--safe-bottom);
-      right: 16px;
-      z-index: 10;
-      background: var(--panel-bg);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 8px 12px;
-      font-size: 10.5px;
-      color: var(--text-muted);
-      pointer-events: none;
+    /* --- ZEN / FOCUS MODE (When panels are toggled OFF) --- */
+    body.zen-mode .left-controls {
+      transform: translateX(calc(-100% - 30px)) !important;
+      opacity: 0 !important;
+      pointer-events: none !important;
     }
-    .booth-footprint-card strong {
+    body.zen-mode .right-inspector {
+      transform: translateX(calc(100% + 30px)) !important;
+      opacity: 0 !important;
+      pointer-events: none !important;
+    }
+    body.zen-mode .camera-quickbar {
+      transform: translateY(-60px) !important;
+      opacity: 0 !important;
+      pointer-events: none !important;
+    }
+    body.zen-mode .click-hint-tag {
+      opacity: 0 !important;
+      pointer-events: none !important;
+    }
+    body.zen-mode .action-btn.toggle-ui {
+      background: #E2001A;
+      border-color: #E2001A;
       color: #fff;
-      font-size: 12px;
-      display: block;
-      margin-bottom: 2px;
+      box-shadow: 0 0 15px rgba(226, 0, 26, 0.5);
     }
 
     /* Loading Overlay */
@@ -443,7 +567,7 @@
     .spinner {
       width: 42px;
       height: 42px;
-      border: 3px solid rgba(200, 68, 42, 0.2);
+      border: 3px solid rgba(226, 0, 26, 0.2);
       border-top-color: var(--primary);
       border-radius: 50%;
       animation: spin 0.8s linear infinite;
@@ -496,118 +620,80 @@
       opacity: 1;
     }
 
-    /* --- DESKTOP INTERACTIVE DIMENSION CARD --- */
-    .dimension-overlay {
-      position: absolute;
-      bottom: 115px;
-      right: 16px;
-      z-index: 40;
-      background: rgba(18, 20, 26, 0.95);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border: 1px solid rgba(226, 0, 26, 0.5);
-      border-radius: 16px;
-      padding: 16px;
-      width: 325px;
-      max-width: calc(100vw - 32px);
-      box-shadow: 0 20px 40px rgba(0,0,0,0.75), 0 0 30px rgba(226, 0, 26, 0.25);
+    /* Horizontal Camera Quick-Bar (Mobile / Tablet only) */
+    .camera-quickbar {
       display: none;
-      animation: slideUpFade 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      position: absolute;
+      top: 46px;
+      left: 8px;
+      right: 8px;
+      z-index: 10;
+      gap: 6px;
+      overflow-x: auto;
+      padding: 2px 0 6px 0;
+      pointer-events: auto;
+      scrollbar-width: none;
+      -webkit-overflow-scrolling: touch;
+    }
+    .camera-quickbar::-webkit-scrollbar {
+      display: none;
     }
 
-    @keyframes slideUpFade {
-      from { opacity: 0; transform: translateY(16px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .dimension-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      margin-bottom: 8px;
-      gap: 8px;
-    }
-
-    .dimension-title {
-      font-size: 13px;
-      font-weight: 800;
-      color: #fff;
-      line-height: 1.3;
-    }
-
-    .dim-pill-badge {
-      display: inline-block;
-      background: #E2001A;
-      color: #fff;
-      font-weight: 800;
-      font-size: 13px;
-      padding: 4px 10px;
-      border-radius: 6px;
-      margin-bottom: 10px;
-      letter-spacing: 0.5px;
-    }
-
-    .dimension-row {
-      display: flex;
-      font-size: 11.5px;
-      margin-bottom: 6px;
-      line-height: 1.4;
-    }
-
-    .dimension-label {
-      color: var(--text-muted);
-      width: 75px;
-      flex-shrink: 0;
+    .cam-chip {
+      background: var(--panel-bg);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 6px 12px;
+      border-radius: 18px;
+      font-size: 11px;
       font-weight: 600;
-    }
-
-    .dimension-val {
-      color: #e2e8f0;
-      font-weight: 500;
-    }
-
-    .btn-close-dim {
-      background: rgba(255,255,255,0.12);
-      border: none;
-      color: #fff;
-      width: 24px;
-      height: 24px;
-      border-radius: 50%;
+      white-space: nowrap;
       cursor: pointer;
       display: flex;
       align-items: center;
-      justify-content: center;
-      font-size: 12px;
+      gap: 4px;
+      transition: all 0.15s ease;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
       flex-shrink: 0;
-      transition: background 0.15s ease;
     }
-    .btn-close-dim:hover {
-      background: #E2001A;
+    .cam-chip:active {
+      transform: scale(0.95);
+    }
+    .cam-chip.active {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #fff;
+      box-shadow: 0 2px 10px rgba(226, 0, 26, 0.5);
     }
 
-    /* Click Hint Tag (Desktop) */
+    /* Click Hint Tag */
     .click-hint-tag {
+      display: none;
       position: absolute;
-      top: 96px;
-      right: 16px;
-      z-index: 10;
+      top: 86px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 20;
       background: rgba(20, 22, 27, 0.88);
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
       border: 1px dashed rgba(226, 0, 26, 0.4);
       border-radius: 20px;
-      padding: 5px 12px;
-      font-size: 11px;
+      padding: 4px 12px;
+      font-size: 10.5px;
       color: #cbd5e1;
       pointer-events: none;
-      display: flex;
       align-items: center;
       gap: 6px;
       box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      white-space: nowrap;
+      transition: opacity 0.3s ease, transform 0.3s ease;
     }
 
-    /* --- MOBILE RESPONSIVE TWEAKS (< 768px) --- */
-    @media (max-width: 768px) {
+    /* --- RESPONSIVE ADAPTATION (Mobile & Tablet <= 1024px) --- */
+    @media (max-width: 1024px) {
       .top-bar {
         top: var(--safe-top);
         left: 8px;
@@ -633,6 +719,7 @@
       }
 
       .camera-quickbar {
+        display: flex;
         top: 46px;
         left: 8px;
         right: 8px;
@@ -644,42 +731,13 @@
       }
 
       .click-hint-tag {
+        display: flex;
         top: 86px;
-        left: 50%;
-        right: auto;
-        transform: translateX(-50%);
         font-size: 10px;
         padding: 4px 10px;
-        white-space: nowrap;
       }
 
-      /* Hide static desktop footprint badge on mobile */
-      .booth-footprint-card {
-        display: none !important;
-      }
-
-      /* Mobile Bottom Sheet for Dimension Details */
-      .dimension-overlay {
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        width: 100%;
-        max-width: 100%;
-        border-radius: 20px 20px 0 0;
-        padding: 16px 20px max(24px, env(safe-area-inset-bottom)) 20px;
-        z-index: 120;
-        background: rgba(16, 18, 24, 0.98);
-        backdrop-filter: blur(25px);
-        -webkit-backdrop-filter: blur(25px);
-        border-top: 1px solid rgba(226, 0, 26, 0.5);
-        border-left: none;
-        border-right: none;
-        border-bottom: none;
-        box-shadow: 0 -10px 40px rgba(0,0,0,0.85);
-      }
-
-      /* Transform Left Sidebar into Mobile Bottom Sheet Drawer */
+      /* Mobile Bottom Sheet Drawer for Left Controls */
       .left-controls {
         position: fixed;
         top: auto;
@@ -704,6 +762,33 @@
       }
       .btn-close-drawer {
         display: flex;
+      }
+
+      /* Mobile Bottom Sheet Drawer for Right Inspector */
+      .right-inspector {
+        position: fixed;
+        top: auto;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        width: 100%;
+        max-height: 75vh;
+        border-radius: 20px 20px 0 0;
+        padding: 14px 18px max(24px, env(safe-area-inset-bottom)) 18px;
+        z-index: 120;
+        background: rgba(16, 18, 24, 0.98);
+        backdrop-filter: blur(25px);
+        -webkit-backdrop-filter: blur(25px);
+        border-top: 1px solid rgba(226, 0, 26, 0.5);
+        border-left: none;
+        border-right: none;
+        border-bottom: none;
+        box-shadow: 0 -10px 40px rgba(0,0,0,0.85);
+        transform: translateY(115%);
+        transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+      .right-inspector.open {
+        transform: translateY(0%);
       }
 
       /* Mobile Bottom Bar Layout */
@@ -764,16 +849,18 @@
   <!-- Top Bar -->
   <div class="top-bar">
     <div class="brand-badge">
-      <div class="brand-logo-pill">MURRPLASTIK</div>
+      <div class="brand-tt-pill">T&amp;T VINA</div>
+      <div class="brand-cross">✕</div>
+      <div class="brand-murr-pill">MURRPLASTIK</div>
       <div class="brand-info">
-        <div class="brand-title">T&T VINA — GIAN HÀNG 3D</div>
-        <div class="brand-subtitle">VITW 2026 @ VEC Hà Nội</div>
+        <div class="brand-title">CÔNG TY TNHH CÔNG NGHIỆP T&amp;T VINA</div>
+        <div class="brand-subtitle">Đại diện Murrplastik Systemtechnik (CHLB Đức) • VITW 2026</div>
       </div>
     </div>
-    <div class="booth-tag">📍 Gian góc H1-15 (3×3m)</div>
+    <div class="booth-tag">📍 Gian hàng A (Ô H1-15) • Sảnh 2 VEC</div>
   </div>
 
-  <!-- Quick Horizontal Camera Chips (Always visible) -->
+  <!-- Quick Horizontal Camera Chips (Always visible on mobile) -->
   <div class="camera-quickbar">
     <div class="cam-chip active" id="chip-corner" onclick="setCameraView('corner')">🎯 Phối cảnh 45°</div>
     <div class="cam-chip" id="chip-front" onclick="setCameraView('front')">🖼️ Vách Hậu</div>
@@ -782,48 +869,16 @@
     <div class="cam-chip" id="chip-top" onclick="setCameraView('top')">📐 Mặt Bằng (Top)</div>
   </div>
 
-  <!-- Static Footprint Card (Desktop only) -->
-  <div class="booth-footprint-card">
-    <strong>📐 Kích thước gian hàng</strong>
-    Mặt bằng: 3.000 × 3.000 mm<br>
-    Chiều cao vách: 2.500 mm<br>
-    02 Biển trán: 2.950 × 400 mm
-  </div>
-
   <!-- Click to inspect Hint Tag -->
   <div class="click-hint-tag">
-    <span>💡 Nhấp vào vách / biển trán để xem kích thước</span>
+    <span>💡 Nhấp vào vách / biển trán trên 3D hoặc panel bên phải để kiểm tra thông số</span>
   </div>
 
-  <!-- Interactive Dimension Card on Click -->
-  <div class="dimension-overlay" id="dimension-card">
-    <div class="dimension-header">
-      <div class="dimension-title" id="dim-title">BIỂN TRÁN MẶT TIỀN CHÍNH</div>
-      <button class="btn-close-dim" onclick="closeDimensionCard()">✕</button>
-    </div>
-    <div class="dim-pill-badge" id="dim-badge">📏 2.950 × 400 mm</div>
-    <div class="dimension-row">
-      <div class="dimension-label">Quy cách:</div>
-      <div class="dimension-val" id="dim-panels">01 Tấm liền</div>
-    </div>
-    <div class="dimension-row">
-      <div class="dimension-label">Vật liệu:</div>
-      <div class="dimension-val" id="dim-mat">Decal PP cán mờ bồi Formex 5mm</div>
-    </div>
-    <div class="dimension-row">
-      <div class="dimension-label">Vị trí:</div>
-      <div class="dimension-val" id="dim-loc">Mặt tiền chính (Cao độ 2.1 - 2.5m)</div>
-    </div>
-    <div class="dimension-row" style="margin-top: 6px; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 6px;">
-      <div class="dimension-val" id="dim-desc" style="color: #94a3b8; font-style: italic;">Chứa Logo Murrplastik &amp; Số hiệu Gian hàng A (H1-15).</div>
-    </div>
-  </div>
-
-  <!-- HUD Controls Panel (Sidebar on desktop / Drawer on mobile) -->
+  <!-- LEFT PANEL: FUNCTIONS & CONTROLS (Full vertical docked CAD sidebar) -->
   <div class="hud-panel left-controls" id="controls-drawer">
     <div class="drawer-handle"></div>
     <div class="panel-header">
-      <div class="panel-header-title">⚙️ Tùy Chỉnh Gian Hàng</div>
+      <div class="panel-header-title">🛠️ CÔNG CỤ &amp; ĐIỀU KHIỂN</div>
       <button class="btn-close-drawer" onclick="toggleMobileDrawer(false)">✕</button>
     </div>
 
@@ -843,18 +898,30 @@
       </div>
     </div>
 
+    <!-- Camera Angles inside Sidebar -->
+    <div class="panel-section">
+      <div class="section-title">🎥 Góc nhìn Camera</div>
+      <div class="btn-group-2">
+        <button id="side-cam-corner" class="active" onclick="setCameraView('corner')">🎯 Phối cảnh</button>
+        <button id="side-cam-front" onclick="setCameraView('front')">🖼️ Vách Hậu</button>
+        <button id="side-cam-side" onclick="setCameraView('side')">🖼️ Vách Bên</button>
+        <button id="side-cam-eye" onclick="setCameraView('eye')">👤 Tầm Mắt</button>
+        <button id="side-cam-top" style="grid-column: span 2;" onclick="setCameraView('top')">📐 Mặt Bằng (Top View)</button>
+      </div>
+    </div>
+
     <!-- Display Options -->
     <div class="panel-section">
       <div class="section-title">📦 Trang thiết bị gian hàng</div>
       <div class="toggle-row">
-        <span>Khung nhôm tiêu chuẩn (Octanorm)</span>
+        <span>Khung nhôm Octanorm</span>
         <label class="toggle-switch">
           <input type="checkbox" id="toggle-frame" checked onchange="toggleFrame(this.checked)">
           <span class="slider"></span>
         </label>
       </div>
       <div class="toggle-row">
-        <span>Bàn lễ tân vuông góc & ghế</span>
+        <span>Bàn lễ tân &amp; ghế</span>
         <label class="toggle-switch">
           <input type="checkbox" id="toggle-desk" checked onchange="toggleDesk(this.checked)">
           <span class="slider"></span>
@@ -893,10 +960,87 @@
     </div>
   </div>
 
+  <!-- RIGHT PANEL: TECHNICAL SPECIFICATIONS & LIVE INSPECTOR -->
+  <div class="hud-panel right-inspector" id="inspector-drawer">
+    <div class="drawer-handle"></div>
+    <div class="panel-header">
+      <div class="panel-header-title">📐 THÔNG SỐ KỸ THUẬT (INSPECTOR)</div>
+      <button class="btn-close-drawer" onclick="toggleInspectorDrawer(false)">✕</button>
+    </div>
+
+    <!-- Section 1: Active Component Details -->
+    <div class="panel-section">
+      <div class="section-title">
+        <span>🔍 Cấu kiện đang chọn</span>
+        <span style="font-size: 9px; color: #38bdf8; font-weight: 600;">(Click 3D hoặc chọn)</span>
+      </div>
+      
+      <!-- Quick Chips -->
+      <div class="component-chips-grid">
+        <button class="comp-chip-btn" id="chip-inspect-valance-front" onclick="selectInspectorComponent('valanceFront')">Trán chính</button>
+        <button class="comp-chip-btn" id="chip-inspect-valance-side" onclick="selectInspectorComponent('valanceSide')">Trán hông</button>
+        <button class="comp-chip-btn active" id="chip-inspect-backwall" onclick="selectInspectorComponent('backwall')">Vách hậu</button>
+        <button class="comp-chip-btn" id="chip-inspect-sidewall" onclick="selectInspectorComponent('sidewall')">Vách bên</button>
+      </div>
+
+      <!-- Component Specs Card -->
+      <div id="inspector-details-card">
+        <div class="dim-pill-badge" id="dim-badge">📏 3.000 × 2.500 mm</div>
+        <div class="dimension-title" id="dim-title">VÁCH HẬU CHÍNH (BACKWALL)</div>
+        
+        <div class="dimension-row">
+          <div class="dimension-label">Quy cách:</div>
+          <div class="dimension-val" id="dim-panels">03 Panel (1.000 × 2.500 mm / panel)</div>
+        </div>
+        <div class="dimension-row">
+          <div class="dimension-label">Vật liệu:</div>
+          <div class="dimension-val" id="dim-mat">Decal PP cán mờ bồi vách Octanorm</div>
+        </div>
+        <div class="dimension-row">
+          <div class="dimension-label">Vị trí:</div>
+          <div class="dimension-val" id="dim-loc">Vách chính diện phía sau (Z = -1.5m)</div>
+        </div>
+        <div class="dimension-row" style="margin-top: 6px; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 6px;">
+          <div class="dimension-val" id="dim-desc" style="color: #94a3b8; font-style: italic;">Trưng bày 5 nhóm sản phẩm chính (AUR, ACS, EFK, SUV, KHD) &amp; 50cm chân an toàn.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 2: Overall Booth Engineering Footprint -->
+    <div class="panel-section">
+      <div class="section-title">🏗️ Kết cấu tổng thể gian hàng</div>
+      <div class="dimension-row">
+        <div class="dimension-label">Mặt bằng:</div>
+        <div class="dimension-val" style="color: #38bdf8; font-weight: 700;">3.000 × 3.000 mm (9.0 m²)</div>
+      </div>
+      <div class="dimension-row">
+        <div class="dimension-label">Chiều cao:</div>
+        <div class="dimension-val">2.500 mm (Chuẩn quy hoạch VEC)</div>
+      </div>
+      <div class="dimension-row">
+        <div class="dimension-label">Kết cấu:</div>
+        <div class="dimension-val">Khung nhôm Anodized Octanorm Ø50mm</div>
+      </div>
+      <div class="dimension-row">
+        <div class="dimension-label">Biển trán:</div>
+        <div class="dimension-val">02 Tấm 2.950 × 400 mm (Formex 5mm)</div>
+      </div>
+      <div class="dimension-row">
+        <div class="dimension-label">Thảm sàn:</div>
+        <div class="dimension-val">Thảm nỉ sự kiện màu xám ghi (9m²)</div>
+      </div>
+      <div class="dimension-row">
+        <div class="dimension-label">Vị trí ô:</div>
+        <div class="dimension-val" style="color: #f59e0b; font-weight: 700;">Gian hàng A • Cụm H1-15 (Sảnh 2)</div>
+      </div>
+    </div>
+  </div>
+
   <!-- Bottom Floating Action Bar -->
   <div class="bottom-bar">
     <button class="btn-mobile-menu" onclick="toggleMobileDrawer(true)">⚙️ Menu</button>
-    <button class="action-btn" onclick="resetCamera()">🔄 Đặt lại</button>
+    <button class="action-btn toggle-ui" id="btn-toggle-ui" onclick="toggleZenMode()">👁️ Ẩn Panels</button>
+    <button class="action-btn" onclick="resetCamera()">🔄 Đặt lại góc</button>
     <button class="action-btn screenshot" onclick="takeScreenshot()">📸 Xuất Ảnh Mockup HD</button>
   </div>
 
@@ -1488,33 +1632,92 @@
     }
 
     function showDimensionCard(data) {
-      const card = document.getElementById('dimension-card');
-      if (!card) return;
+      const titleEl = document.getElementById('dim-title');
+      const badgeEl = document.getElementById('dim-badge');
+      const panelsEl = document.getElementById('dim-panels');
+      const matEl = document.getElementById('dim-mat');
+      const locEl = document.getElementById('dim-loc');
+      const descEl = document.getElementById('dim-desc');
 
-      document.getElementById('dim-title').innerText = data.title;
-      document.getElementById('dim-badge').innerText = '📏 ' + data.dim;
-      document.getElementById('dim-panels').innerText = data.panels;
-      document.getElementById('dim-mat').innerText = data.mat;
-      document.getElementById('dim-loc').innerText = data.loc;
-      document.getElementById('dim-desc').innerText = data.desc;
+      if (titleEl) titleEl.innerText = data.title;
+      if (badgeEl) badgeEl.innerText = '📏 ' + data.dim;
+      if (panelsEl) panelsEl.innerText = data.panels;
+      if (matEl) matEl.innerText = data.mat;
+      if (locEl) locEl.innerText = data.loc;
+      if (descEl) descEl.innerText = data.desc;
 
-      card.style.display = 'block';
-    }
+      if (data.title.includes('MẶT TIỀN CHÍNH')) {
+        updateInspectorChipActive('valanceFront');
+      } else if (data.title.includes('MẶT TIỀN HÔNG')) {
+        updateInspectorChipActive('valanceSide');
+      } else if (data.title.includes('VÁCH HẬU')) {
+        updateInspectorChipActive('backwall');
+      } else if (data.title.includes('VÁCH BÊN')) {
+        updateInspectorChipActive('sidewall');
+      }
 
-    function closeDimensionCard() {
-      const card = document.getElementById('dimension-card');
-      if (card) card.style.display = 'none';
-      if (activeHighlightMesh && activeHighlightOrigColor) {
-        activeHighlightMesh.material.color.copy(activeHighlightOrigColor);
+      if (window.innerWidth <= 1024) {
+        toggleInspectorDrawer(true);
       }
     }
 
+    function selectInspectorComponent(name) {
+      let targetMesh = null;
+      if (name === 'valanceFront') targetMesh = valanceFrontMesh;
+      else if (name === 'valanceSide') targetMesh = valanceSideMesh;
+      else if (name === 'backwall') targetMesh = backwallMesh;
+      else if (name === 'sidewall') targetMesh = sidewallMesh;
+
+      if (targetMesh && targetMesh.userData) {
+        showDimensionCard(targetMesh.userData);
+        triggerGlowHighlight(targetMesh);
+        updateInspectorChipActive(name);
+      }
+    }
+
+    function updateInspectorChipActive(name) {
+      document.querySelectorAll('.comp-chip-btn').forEach(b => b.classList.remove('active'));
+      const chipMap = {
+        'valanceFront': 'chip-inspect-valance-front',
+        'valanceSide': 'chip-inspect-valance-side',
+        'backwall': 'chip-inspect-backwall',
+        'sidewall': 'chip-inspect-sidewall'
+      };
+      const activeId = chipMap[name];
+      if (activeId) {
+        const el = document.getElementById(activeId);
+        if (el) el.classList.add('active');
+      }
+    }
+
+    function toggleZenMode() {
+      document.body.classList.toggle('zen-mode');
+      const isZen = document.body.classList.contains('zen-mode');
+      const btn = document.getElementById('btn-toggle-ui');
+      if (btn) {
+        btn.innerHTML = isZen ? '👁️ Hiện Panels' : '👁️ Ẩn Panels';
+      }
+    }
+
+    // Keyboard Shortcuts for Pro CAD Workstation experience (Tab or H to toggle UI)
+    window.addEventListener('keydown', (e) => {
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+      if (e.key === 'Tab' || e.key.toLowerCase() === 'h') {
+        e.preventDefault();
+        toggleZenMode();
+      }
+    });
+
     function setCameraView(view) {
       document.querySelectorAll('.cam-chip').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('[id^="side-cam-"]').forEach(b => b.classList.remove('active'));
+
       const activeChip = document.getElementById('chip-' + view);
       if (activeChip) activeChip.classList.add('active');
+      const activeSideBtn = document.getElementById('side-cam-' + view);
+      if (activeSideBtn) activeSideBtn.classList.add('active');
 
-      const isMobile = window.innerWidth <= 768;
+      const isMobile = window.innerWidth <= 1024;
       const targetLookAt = getAdaptiveTarget();
 
       switch (view) {
@@ -1622,6 +1825,18 @@
       }
     }
 
+    function toggleInspectorDrawer(open) {
+      const drawer = document.getElementById('inspector-drawer');
+      const backdrop = document.getElementById('drawer-backdrop');
+      if (open) {
+        drawer.classList.add('open');
+        backdrop.classList.add('active');
+      } else {
+        drawer.classList.remove('open');
+        backdrop.classList.remove('active');
+      }
+    }
+
     function takeScreenshot() {
       renderer.render(scene, camera);
       const dataUrl = renderer.domElement.toDataURL('image/png');
@@ -1642,7 +1857,6 @@
       camera.updateProjectionMatrix();
       renderer.setSize(window.innerWidth, window.innerHeight);
 
-      // Re-align camera distance on resize to keep booth perfectly framed
       const currentActiveChip = document.querySelector('.cam-chip.active');
       const view = currentActiveChip ? currentActiveChip.id.replace('chip-', '') : 'corner';
       setCameraView(view);
