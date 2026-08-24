@@ -7,6 +7,7 @@
   <!-- Local Core 3D Engine (Self-contained, No Internet / Offline execution) -->
   <script src="libs/three.min.js"></script>
   <script src="libs/OrbitControls.js"></script>
+  <script src="libs/TransformControls.js"></script>
   <!-- Embedded Texture Data (Base64 offline payload) -->
   <script src="textures_data.js"></script>
 
@@ -603,6 +604,158 @@
       opacity: 1;
     }
 
+    /* Coordinate Control Rows */
+    .coord-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      margin-top: 6px;
+    }
+    .coord-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      background: rgba(0,0,0,0.35);
+      padding: 4px 8px;
+      border-radius: 6px;
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+    .coord-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: #94a3b8;
+      width: 78px;
+      flex-shrink: 0;
+    }
+    .coord-slider {
+      flex: 1;
+      accent-color: #E2001A;
+      cursor: pointer;
+      height: 4px;
+    }
+    .coord-input {
+      width: 54px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 4px;
+      color: #38bdf8;
+      font-size: 11px;
+      font-weight: 700;
+      text-align: center;
+      padding: 3px 2px;
+    }
+    .coord-unit {
+      font-size: 10.5px;
+      color: #64748b;
+      width: 12px;
+      text-align: left;
+    }
+
+    /* Modal Backdrop & Dialog */
+    .modal-backdrop {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.82);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      z-index: 300;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      animation: fadeIn 0.2s ease;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    .modal-card {
+      background: #16181e;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.85);
+      border-radius: 14px;
+      width: 100%;
+      max-width: 540px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .modal-header {
+      padding: 12px 16px;
+      background: rgba(255,255,255,0.03);
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .modal-title {
+      font-size: 12.5px;
+      font-weight: 700;
+      color: #38bdf8;
+      letter-spacing: 0.3px;
+    }
+    .btn-close-modal {
+      background: transparent;
+      border: none;
+      color: #94a3b8;
+      font-size: 18px;
+      cursor: pointer;
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+    .btn-close-modal:hover { color: #fff; background: rgba(255,255,255,0.1); }
+    .modal-body {
+      padding: 14px 16px;
+      display: flex;
+      flex-direction: column;
+    }
+    #json-textarea {
+      width: 100%;
+      height: 250px;
+      background: #0b0c0f;
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 8px;
+      padding: 10px;
+      color: #a5f3fc;
+      font-family: Consolas, Monaco, "Courier New", monospace;
+      font-size: 11.5px;
+      line-height: 1.45;
+      resize: vertical;
+      outline: none;
+    }
+    #json-textarea:focus {
+      border-color: #38bdf8;
+      box-shadow: 0 0 12px rgba(56, 189, 248, 0.35);
+    }
+    .modal-footer {
+      padding: 10px 16px;
+      background: rgba(255,255,255,0.02);
+      border-top: 1px solid rgba(255,255,255,0.08);
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+    .btn-modal {
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: all 0.15s ease;
+    }
+    .btn-modal.primary {
+      background: #E2001A;
+      color: #fff;
+    }
+    .btn-modal.primary:hover { background: #b80015; }
+    .btn-modal.secondary {
+      background: rgba(255,255,255,0.1);
+      color: #e2e8f0;
+    }
+    .btn-modal.secondary:hover { background: rgba(255,255,255,0.18); color: #fff; }
+
     /* Drawer Backdrop (Mobile) */
     #drawer-backdrop {
       display: none;
@@ -992,14 +1145,77 @@
   <div class="hud-panel right-inspector" id="inspector-drawer">
     <div class="drawer-handle"></div>
     <div class="panel-header">
-      <div class="panel-header-title">📐 THÔNG SỐ KỸ THUẬT (INSPECTOR)</div>
+      <div class="panel-header-title">📐 THÔNG SỐ &amp; BỐ CỤC (INSPECTOR)</div>
       <button class="btn-close-drawer" onclick="toggleInspectorDrawer(false)">✕</button>
+    </div>
+
+    <!-- Section 0: Interactive Equipment Layout & Move Mode -->
+    <div class="panel-section" style="border-bottom: 1px solid rgba(226,0,26,0.35); padding-bottom: 12px;">
+      <div class="section-title" style="color: #38bdf8;">
+        <span>🎯 Sắp xếp đồ đạc (Gizmo 3D)</span>
+      </div>
+      
+      <!-- Equipment Selector Chips -->
+      <div style="font-size: 10px; color: #94a3b8; margin-bottom: 4px;">Chọn đồ vật để kéo / xoay trên sàn:</div>
+      <div class="component-chips-grid" style="grid-template-columns: 1fr 1fr; gap: 4px;">
+        <button class="comp-chip-btn active" id="chip-eq-tvStand" onclick="selectEquipment('tvStand')">📺 Giá TV 65"</button>
+        <button class="comp-chip-btn" id="chip-eq-demo1" onclick="selectEquipment('demo1')">🔬 Bàn Laser</button>
+        <button class="comp-chip-btn" id="chip-eq-demo2" onclick="selectEquipment('demo2')">🤖 Bàn R-Tec</button>
+        <button class="comp-chip-btn" id="chip-eq-pipeRack" onclick="selectEquipment('pipeRack')">🏗️ Kệ ống 3x3</button>
+        <button class="comp-chip-btn" id="chip-eq-roundTable" onclick="selectEquipment('roundTable')">☕ Bàn tròn</button>
+        <button class="comp-chip-btn" id="chip-eq-desk" onclick="selectEquipment('desk')">🛎️ Bàn lễ tân</button>
+      </div>
+
+      <!-- Transform Controls Mode -->
+      <div style="display: flex; gap: 4px; margin-top: 8px;">
+        <button class="comp-chip-btn active" id="btn-mode-translate" style="flex: 1;" onclick="setTransformMode('translate')">✥ Di chuyển</button>
+        <button class="comp-chip-btn" id="btn-mode-rotate" style="flex: 1;" onclick="setTransformMode('rotate')">🔄 Xoay góc</button>
+        <button class="comp-chip-btn" style="flex: 0.8; color: #f87171;" onclick="detachGizmo()">✕ Bỏ chọn</button>
+      </div>
+
+      <!-- Real-time Position & Rotation Numeric Sliders -->
+      <div class="coord-grid" id="coord-controls-box">
+        <div class="coord-row">
+          <span class="coord-label">Trục X (Ngang):</span>
+          <input type="range" class="coord-slider" id="slider-x" min="-1.40" max="1.40" step="0.01" value="-1.12" oninput="onCoordSliderChange()">
+          <input type="number" class="coord-input" id="input-x" min="-1.40" max="1.40" step="0.01" value="-1.12" onchange="onCoordInputChange()">
+          <span class="coord-unit">m</span>
+        </div>
+        <div class="coord-row">
+          <span class="coord-label">Trục Z (Sâu):</span>
+          <input type="range" class="coord-slider" id="slider-z" min="-1.40" max="1.40" step="0.01" value="-1.12" oninput="onCoordSliderChange()">
+          <input type="number" class="coord-input" id="input-z" min="-1.40" max="1.40" step="0.01" value="-1.12" onchange="onCoordInputChange()">
+          <span class="coord-unit">m</span>
+        </div>
+        <div class="coord-row">
+          <span class="coord-label">Góc xoay Y:</span>
+          <input type="range" class="coord-slider" id="slider-rot" min="0" max="360" step="1" value="45" oninput="onCoordSliderChange()">
+          <input type="number" class="coord-input" id="input-rot" min="0" max="360" step="1" value="45" onchange="onCoordInputChange()">
+          <span class="coord-unit">°</span>
+        </div>
+      </div>
+
+      <!-- Quick Preset Rotation Angles -->
+      <div style="display: flex; gap: 4px; margin-top: 6px;">
+        <button class="comp-chip-btn" style="flex: 1; padding: 4px 2px; font-size: 10px;" onclick="setEquipmentRotationDeg(0)">0°</button>
+        <button class="comp-chip-btn" style="flex: 1; padding: 4px 2px; font-size: 10px;" onclick="setEquipmentRotationDeg(45)">45°</button>
+        <button class="comp-chip-btn" style="flex: 1; padding: 4px 2px; font-size: 10px;" onclick="setEquipmentRotationDeg(90)">90°</button>
+        <button class="comp-chip-btn" style="flex: 1; padding: 4px 2px; font-size: 10px;" onclick="setEquipmentRotationDeg(180)">180°</button>
+        <button class="comp-chip-btn" style="flex: 1; padding: 4px 2px; font-size: 10px;" onclick="setEquipmentRotationDeg(270)">270°</button>
+      </div>
+
+      <!-- JSON Export / Import Action Buttons -->
+      <div style="display: flex; gap: 6px; margin-top: 10px;">
+        <button class="action-btn" style="flex: 1; background: #0284c7; border: none; font-size: 11px; padding: 7px 4px;" onclick="exportLayoutJSON()">📥 Xuất JSON</button>
+        <button class="action-btn" style="flex: 1; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); font-size: 11px; padding: 7px 4px;" onclick="openJsonModal()">📋 Nạp JSON</button>
+        <button class="action-btn" style="flex: 0.8; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.15); font-size: 10px; padding: 7px 4px;" onclick="resetDefaultLayout()">🔄 Mặc định</button>
+      </div>
     </div>
 
     <!-- Section 1: Active Component Details -->
     <div class="panel-section">
       <div class="section-title">
-        <span>🔍 Cấu kiện đang chọn</span>
+        <span>🔍 Cấu kiện vách đang chọn</span>
         <span style="font-size: 9px; color: #38bdf8; font-weight: 600;">(Click 3D hoặc chọn)</span>
       </div>
       
@@ -1064,6 +1280,24 @@
     </div>
   </div>
 
+  <!-- JSON Layout Modal -->
+  <div id="json-modal" class="modal-backdrop" style="display:none;">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="modal-title">📋 NẠP / CHỈNH SỬA BỐ CỤC GIAN HÀNG (JSON)</div>
+        <button class="btn-close-modal" onclick="closeJsonModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size:11.5px; color:#94a3b8; margin-bottom:8px;">Dán mã JSON bố cục thiết bị vào đây và nhấn "Áp dụng ngay":</p>
+        <textarea id="json-textarea" spellcheck="false" placeholder="Dán mã JSON vào đây..."></textarea>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-modal secondary" onclick="copyJsonFromTextarea()">📋 Sao chép</button>
+        <button class="btn-modal primary" onclick="applyJsonLayout()">⚡ Áp dụng ngay</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Bottom Floating Action Bar -->
   <div class="bottom-bar">
     <button class="btn-mobile-menu" onclick="toggleMobileDrawer(true)">⚙️ Menu</button>
@@ -1089,6 +1323,8 @@
     let backwallMesh, sidewallMesh, valanceFrontMesh, valanceSideMesh;
     let spotLight1, spotLight2, spotLight3, ambientLight, dirLight;
     let currentVersion = 'v3';
+    let transformControls = null;
+    let activeEquipmentKey = 'tvStand';
 
     // Texture sources: Base64 first, relative path fallback
     function getTextureSource(key) {
@@ -1204,10 +1440,13 @@
       // 8. Setup Interactive Dimension Inspection on Click
       setupInteractiveDimensions();
 
-      // 9. Event Listeners
+      // 9. Setup TransformControls (Gizmo) for Equipment Placement
+      initTransformControls();
+
+      // 10. Event Listeners
       window.addEventListener('resize', onWindowResize);
 
-      // 9. Animation Loop
+      // 11. Animation Loop
       animate();
 
       // Fade out loading screen
@@ -2150,6 +2389,28 @@
 
       raycaster.setFromCamera(clickMouse, camera);
 
+      // 1. Check if user clicked any 3D Equipment item directly
+      const equipmentItems = [
+        { key: 'tvStand', grp: tvStandGroup },
+        { key: 'demo1', grp: demoTable1Group },
+        { key: 'demo2', grp: demoTable2Group },
+        { key: 'pipeRack', grp: pipeRackGroup },
+        { key: 'roundTable', grp: roundTableGroup },
+        { key: 'desk', grp: deskGroup }
+      ];
+
+      for (const eq of equipmentItems) {
+        if (eq.grp && eq.grp.visible) {
+          const hits = raycaster.intersectObjects(eq.grp.children, true);
+          if (hits.length > 0) {
+            selectEquipment(eq.key);
+            if (window.innerWidth <= 1024) toggleInspectorDrawer(true);
+            return;
+          }
+        }
+      }
+
+      // 2. Check if user clicked any Wall or Valance
       const interactiveTargets = [
         valanceFrontMesh,
         valanceSideMesh,
@@ -2424,6 +2685,321 @@
       const toast = document.getElementById('toast');
       toast.classList.add('show');
       setTimeout(() => toast.classList.remove('show'), 2500);
+    }
+
+    // --- EQUIPMENT DEFINITION & GIZMO PLACEMENT SYSTEM ---
+    const EQUIPMENT = {
+      tvStand: {
+        name: 'Giá TV di động E2050 + TV 65"',
+        getGroup: () => tvStandGroup,
+        defaultPos: [-1.12, 0, -1.12],
+        defaultRotY: Math.PI / 4
+      },
+      demo1: {
+        name: 'Bàn Demo 1 (Laser + Laptop)',
+        getGroup: () => demoTable1Group,
+        defaultPos: [-0.45, 0, -1.15],
+        defaultRotY: 0
+      },
+      demo2: {
+        name: 'Bàn Demo 2 (Robot R-Tec Box)',
+        getGroup: () => demoTable2Group,
+        defaultPos: [-1.15, 0, 0.0],
+        defaultRotY: Math.PI / 2
+      },
+      pipeRack: {
+        name: 'Kệ khung ống modular 3x3 + 3 Thùng',
+        getGroup: () => pipeRackGroup,
+        defaultPos: [-1.25, 0, 1.05],
+        defaultRotY: Math.PI / 2
+      },
+      roundTable: {
+        name: 'Bàn tròn tiếp khách & hoa quả',
+        getGroup: () => roundTableGroup,
+        defaultPos: [0.15, 0, 0.15],
+        defaultRotY: 0
+      },
+      desk: {
+        name: 'Bàn lễ tân & ghế bar',
+        getGroup: () => deskGroup,
+        defaultPos: [0.5, 0, 0.85],
+        defaultRotY: 0
+      }
+    };
+
+    function initTransformControls() {
+      if (typeof THREE.TransformControls === 'undefined') {
+        console.warn('TransformControls library not found');
+        return;
+      }
+
+      transformControls = new THREE.TransformControls(camera, renderer.domElement);
+      transformControls.size = 0.75;
+      transformControls.setTranslationSnap(0.01); // 1cm precision
+      transformControls.setRotationSnap(THREE.MathUtils.degToRad(5)); // 5 degree precision
+      transformControls.showY = false; // Lock translation on floor plane
+      transformControls.setMode('translate');
+
+      transformControls.addEventListener('change', () => {
+        if (activeEquipmentKey && EQUIPMENT[activeEquipmentKey]) {
+          const grp = EQUIPMENT[activeEquipmentKey].getGroup();
+          if (grp) {
+            grp.position.y = 0; // enforce floor grounding
+            updateInspectorInputsFromObject(grp);
+          }
+        }
+      });
+
+      transformControls.addEventListener('dragging-changed', (event) => {
+        controls.enabled = !event.value;
+      });
+
+      scene.add(transformControls);
+
+      // Select default item
+      setTimeout(() => {
+        selectEquipment('tvStand');
+      }, 500);
+    }
+
+    function selectEquipment(key) {
+      activeEquipmentKey = key;
+      document.querySelectorAll('[id^="chip-eq-"]').forEach(btn => btn.classList.remove('active'));
+      const activeBtn = document.getElementById('chip-eq-' + key);
+      if (activeBtn) activeBtn.classList.add('active');
+
+      const eq = EQUIPMENT[key];
+      if (eq && transformControls) {
+        const grp = eq.getGroup();
+        if (grp) {
+          transformControls.attach(grp);
+          updateInspectorInputsFromObject(grp);
+        }
+      }
+    }
+
+    function detachGizmo() {
+      activeEquipmentKey = null;
+      if (transformControls) transformControls.detach();
+      document.querySelectorAll('[id^="chip-eq-"]').forEach(btn => btn.classList.remove('active'));
+    }
+
+    function setTransformMode(mode) {
+      if (transformControls) {
+        transformControls.setMode(mode);
+        if (mode === 'rotate') {
+          transformControls.showX = false;
+          transformControls.showZ = false;
+          transformControls.showY = true;
+        } else {
+          transformControls.showX = true;
+          transformControls.showZ = true;
+          transformControls.showY = false;
+        }
+        const btnTrans = document.getElementById('btn-mode-translate');
+        const btnRot = document.getElementById('btn-mode-rotate');
+        if (btnTrans) btnTrans.classList.toggle('active', mode === 'translate');
+        if (btnRot) btnRot.classList.toggle('active', mode === 'rotate');
+      }
+    }
+
+    function updateInspectorInputsFromObject(obj) {
+      if (!obj) return;
+      const x = obj.position.x;
+      const z = obj.position.z;
+      let deg = Math.round(THREE.MathUtils.radToDeg(obj.rotation.y)) % 360;
+      if (deg < 0) deg += 360;
+
+      const sx = document.getElementById('slider-x');
+      const ix = document.getElementById('input-x');
+      const sz = document.getElementById('slider-z');
+      const iz = document.getElementById('input-z');
+      const srot = document.getElementById('slider-rot');
+      const irot = document.getElementById('input-rot');
+
+      if (sx) sx.value = x.toFixed(2);
+      if (ix) ix.value = x.toFixed(2);
+      if (sz) sz.value = z.toFixed(2);
+      if (iz) iz.value = z.toFixed(2);
+      if (srot) srot.value = deg;
+      if (irot) irot.value = deg;
+    }
+
+    function onCoordSliderChange() {
+      if (!activeEquipmentKey || !EQUIPMENT[activeEquipmentKey]) return;
+      const grp = EQUIPMENT[activeEquipmentKey].getGroup();
+      if (!grp) return;
+
+      const x = parseFloat(document.getElementById('slider-x').value);
+      const z = parseFloat(document.getElementById('slider-z').value);
+      const deg = parseFloat(document.getElementById('slider-rot').value);
+
+      document.getElementById('input-x').value = x.toFixed(2);
+      document.getElementById('input-z').value = z.toFixed(2);
+      document.getElementById('input-rot').value = deg;
+
+      grp.position.x = x;
+      grp.position.z = z;
+      grp.rotation.y = THREE.MathUtils.degToRad(deg);
+      if (transformControls) transformControls.updateMatrixWorld();
+    }
+
+    function onCoordInputChange() {
+      if (!activeEquipmentKey || !EQUIPMENT[activeEquipmentKey]) return;
+      const grp = EQUIPMENT[activeEquipmentKey].getGroup();
+      if (!grp) return;
+
+      const x = parseFloat(document.getElementById('input-x').value) || 0;
+      const z = parseFloat(document.getElementById('input-z').value) || 0;
+      let deg = parseFloat(document.getElementById('input-rot').value) || 0;
+      if (deg < 0) deg = 0;
+      if (deg > 360) deg = 360;
+
+      document.getElementById('slider-x').value = x;
+      document.getElementById('slider-z').value = z;
+      document.getElementById('slider-rot').value = deg;
+
+      grp.position.x = x;
+      grp.position.z = z;
+      grp.rotation.y = THREE.MathUtils.degToRad(deg);
+      if (transformControls) transformControls.updateMatrixWorld();
+    }
+
+    function setEquipmentRotationDeg(deg) {
+      const srot = document.getElementById('slider-rot');
+      const irot = document.getElementById('input-rot');
+      if (srot) srot.value = deg;
+      if (irot) irot.value = deg;
+      onCoordSliderChange();
+    }
+
+    function getBoothLayoutObject() {
+      const layout = {
+        booth_size: { width: 3.0, depth: 3.0, height: 2.5 },
+        unit: 'meter',
+        timestamp: new Date().toISOString(),
+        equipment_layout: {}
+      };
+
+      Object.entries(EQUIPMENT).forEach(([key, eq]) => {
+        const grp = eq.getGroup();
+        if (grp) {
+          let deg = Math.round(THREE.MathUtils.radToDeg(grp.rotation.y)) % 360;
+          if (deg < 0) deg += 360;
+          layout.equipment_layout[key] = {
+            name: eq.name,
+            position: {
+              x: parseFloat(grp.position.x.toFixed(3)),
+              y: parseFloat(grp.position.y.toFixed(3)),
+              z: parseFloat(grp.position.z.toFixed(3))
+            },
+            rotation_deg_y: deg
+          };
+        }
+      });
+      return layout;
+    }
+
+    function exportLayoutJSON() {
+      const layoutObj = getBoothLayoutObject();
+      const jsonStr = JSON.stringify(layoutObj, null, 2);
+
+      // 1. Copy to clipboard
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(jsonStr).then(() => {
+          showToast("📋 Đã sao chép JSON vào Clipboard & Tải file!");
+        }).catch(() => {
+          showToast("💾 Đã tải file JSON bố cục!");
+        });
+      } else {
+        showToast("💾 Đã tải file JSON bố cục!");
+      }
+
+      // 2. Download JSON file
+      const blob = new Blob([jsonStr], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `booth_layout_vec2026_${Date.now()}.json`;
+      link.click();
+      URL.revokeObjectURL(url);
+    }
+
+    function openJsonModal() {
+      const layoutObj = getBoothLayoutObject();
+      document.getElementById('json-textarea').value = JSON.stringify(layoutObj, null, 2);
+      document.getElementById('json-modal').style.display = 'flex';
+    }
+
+    function closeJsonModal() {
+      document.getElementById('json-modal').style.display = 'none';
+    }
+
+    function copyJsonFromTextarea() {
+      const text = document.getElementById('json-textarea').value;
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(() => {
+          showToast("📋 Đã sao chép JSON!");
+        });
+      }
+    }
+
+    function applyJsonLayout() {
+      try {
+        const text = document.getElementById('json-textarea').value;
+        const parsed = JSON.parse(text);
+        const eqData = parsed.equipment_layout || parsed;
+
+        Object.entries(eqData).forEach(([key, item]) => {
+          if (EQUIPMENT[key]) {
+            const grp = EQUIPMENT[key].getGroup();
+            if (grp && item.position) {
+              if (item.position.x !== undefined) grp.position.x = parseFloat(item.position.x);
+              if (item.position.z !== undefined) grp.position.z = parseFloat(item.position.z);
+              if (item.rotation_deg_y !== undefined) {
+                grp.rotation.y = THREE.MathUtils.degToRad(parseFloat(item.rotation_deg_y));
+              } else if (item.rotation_y !== undefined) {
+                grp.rotation.y = parseFloat(item.rotation_y);
+              }
+            }
+          }
+        });
+
+        if (activeEquipmentKey && EQUIPMENT[activeEquipmentKey]) {
+          updateInspectorInputsFromObject(EQUIPMENT[activeEquipmentKey].getGroup());
+        }
+        if (transformControls) transformControls.updateMatrixWorld();
+
+        closeJsonModal();
+        showToast("⚡ Đã áp dụng bố cục JSON thành công!");
+      } catch (err) {
+        alert("Lỗi định dạng JSON: " + err.message);
+      }
+    }
+
+    function resetDefaultLayout() {
+      Object.entries(EQUIPMENT).forEach(([key, eq]) => {
+        const grp = eq.getGroup();
+        if (grp) {
+          grp.position.set(eq.defaultPos[0], eq.defaultPos[1], eq.defaultPos[2]);
+          grp.rotation.y = eq.defaultRotY;
+        }
+      });
+
+      if (activeEquipmentKey && EQUIPMENT[activeEquipmentKey]) {
+        updateInspectorInputsFromObject(EQUIPMENT[activeEquipmentKey].getGroup());
+      }
+      if (transformControls) transformControls.updateMatrixWorld();
+      showToast("🔄 Đã khôi phục bố cục mặc định!");
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      if (toast) {
+        toast.innerText = msg;
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 2600);
+      }
     }
 
     function onWindowResize() {
