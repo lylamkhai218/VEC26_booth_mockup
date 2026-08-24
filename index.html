@@ -248,9 +248,12 @@
           <svg class="svg-icon sm" viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"></polyline><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>
           <span>Xoay góc</span>
         </button>
-        <button class="comp-chip-btn" style="flex: 0.7; color: #f87171;" onclick="detachGizmo()">
+        <button class="comp-chip-btn btn-undo" style="flex: 0.95; color: #38bdf8;" onclick="undo()" title="Hoàn tác thao tác vừa rồi (Ctrl+Z)">
+          <svg class="svg-icon sm" viewBox="0 0 24 24"><path d="M3 7v6h6"></path><path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"></path></svg>
+          <span>Hoàn tác</span>
+        </button>
+        <button class="comp-chip-btn" style="flex: 0.6; color: #f87171;" onclick="detachGizmo()" title="Bỏ chọn đối tượng">
           <svg class="svg-icon sm" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-          <span>Hủy</span>
         </button>
       </div>
 
@@ -402,6 +405,10 @@
     <button class="action-btn toggle-ui" id="btn-toggle-ui" onclick="toggleZenMode()">
       <svg class="svg-icon sm" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
       <span>Ẩn Panels</span>
+    </button>
+    <button class="action-btn btn-undo" onclick="undo()" title="Hoàn tác thao tác trước (Ctrl + Z)">
+      <svg class="svg-icon sm" viewBox="0 0 24 24"><path d="M3 7v6h6"></path><path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"></path></svg>
+      <span>Hoàn tác (Ctrl+Z)</span>
     </button>
     <button class="action-btn" onclick="resetCamera()">
       <svg class="svg-icon sm" viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg>

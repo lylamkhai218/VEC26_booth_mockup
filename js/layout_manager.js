@@ -1,6 +1,6 @@
 /**
- * layout_manager.js - Interactive Gizmo, Multi-Slot Concept Manager & Walkway Clearance
- * Manages TransformControls, Concept Slots (A/B/C), and Real-Time Safety Clearance.
+ * layout_manager.js - Interactive Gizmo, Multi-Slot Concept Manager, Walkway Clearance & History Stack (Undo/Redo)
+ * Manages TransformControls, Concept Slots (A/B/C), Real-Time Clearance & Full Ctrl+Z Undo History.
  */
 
 // --- EQUIPMENT REGISTRY WITH OFFICIAL POSITIONS ---
@@ -85,6 +85,125 @@ const CONCEPT_PRESETS = [
 let currentSlotIndex = 0;
 let userCustomSlots = null;
 
+// --- UNDO / REDO HISTORY STACK SYSTEM ---
+const historyStack = [];
+const redoStack = [];
+const MAX_HISTORY = 50;
+let isApplyingHistory = false;
+
+function getEquipmentSnapshot() {
+  const snap = {};
+  Object.entries(EQUIPMENT).forEach(([key, eq]) => {
+    const grp = eq.getGroup();
+    if (grp) {
+      snap[key] = {
+        x: parseFloat(grp.position.x.toFixed(3)),
+        y: parseFloat(grp.position.y.toFixed(3)),
+        z: parseFloat(grp.position.z.toFixed(3)),
+        rotY: parseFloat(grp.rotation.y.toFixed(4))
+      };
+    }
+  });
+  return snap;
+}
+
+function pushHistoryState(actionName) {
+  if (isApplyingHistory) return;
+  const currentSnap = getEquipmentSnapshot();
+
+  // Prevent duplicate consecutive states
+  if (historyStack.length > 0) {
+    const lastSnap = historyStack[historyStack.length - 1];
+    if (JSON.stringify(lastSnap) === JSON.stringify(currentSnap)) {
+      return;
+    }
+  }
+
+  historyStack.push(currentSnap);
+  if (historyStack.length > MAX_HISTORY) {
+    historyStack.shift();
+  }
+  redoStack.length = 0; // Clear redo on new modification
+  updateUndoButtonState();
+}
+
+function applySnapshot(snap) {
+  if (!snap) return;
+  isApplyingHistory = true;
+
+  Object.entries(snap).forEach(([key, data]) => {
+    if (EQUIPMENT[key]) {
+      const grp = EQUIPMENT[key].getGroup();
+      if (grp) {
+        grp.position.set(data.x, data.y, data.z);
+        grp.rotation.y = data.rotY;
+      }
+    }
+  });
+
+  if (activeEquipmentKey && EQUIPMENT[activeEquipmentKey]) {
+    updateInspectorInputsFromObject(EQUIPMENT[activeEquipmentKey].getGroup());
+  }
+  if (transformControls) transformControls.updateMatrixWorld();
+  if (typeof updateClearanceVisuals === 'function') updateClearanceVisuals();
+
+  isApplyingHistory = false;
+  updateUndoButtonState();
+}
+
+function undo() {
+  if (historyStack.length <= 1) {
+    showToast("Không còn thao tác để hoàn tác!");
+    return;
+  }
+
+  const currentState = historyStack.pop();
+  redoStack.push(currentState);
+  const prevState = historyStack[historyStack.length - 1];
+  applySnapshot(prevState);
+  showToast("Đã hoàn tác (Ctrl+Z)!");
+}
+
+function redo() {
+  if (redoStack.length === 0) {
+    showToast("Không có thao tác để làm lại!");
+    return;
+  }
+
+  const nextState = redoStack.pop();
+  historyStack.push(nextState);
+  applySnapshot(nextState);
+  showToast("Đã làm lại (Ctrl+Y)!");
+}
+
+function updateUndoButtonState() {
+  const canUndo = historyStack.length > 1;
+  document.querySelectorAll('.btn-undo').forEach(btn => {
+    btn.style.opacity = canUndo ? '1' : '0.45';
+    btn.style.pointerEvents = canUndo ? 'auto' : 'none';
+  });
+}
+
+// Global Keyboard Listener for Ctrl+Z / Ctrl+Y / Cmd+Z
+window.addEventListener('keydown', (e) => {
+  // If user is currently typing in modal textarea, let browser handle native text undo
+  if (document.activeElement && document.activeElement.id === 'json-textarea') {
+    return;
+  }
+
+  if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z') {
+    e.preventDefault();
+    if (e.shiftKey) {
+      redo();
+    } else {
+      undo();
+    }
+  } else if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'y') {
+    e.preventDefault();
+    redo();
+  }
+});
+
 // --- INITIALIZE TRANSFORM CONTROLS GIZMO ---
 function initTransformControls() {
   if (typeof THREE.TransformControls === 'undefined') {
@@ -114,6 +233,10 @@ function initTransformControls() {
 
   transformControls.addEventListener('dragging-changed', (event) => {
     controls.enabled = !event.value;
+    // When drag ends, push state to Undo history
+    if (!event.value) {
+      pushHistoryState('Gizmo drag');
+    }
   });
 
   scene.add(transformControls);
@@ -121,12 +244,13 @@ function initTransformControls() {
   // Load saved slots from LocalStorage
   loadSavedConceptSlots();
 
-  // Select default item
+  // Select default item & Push initial snapshot
   setTimeout(() => {
     selectEquipment('tvStand');
     if (typeof updateClearanceVisuals === 'function') {
       updateClearanceVisuals();
     }
+    pushHistoryState('Initial');
   }, 500);
 }
 
@@ -174,6 +298,7 @@ function selectConceptSlot(slotIdx) {
   if (transformControls) transformControls.updateMatrixWorld();
   if (typeof updateClearanceVisuals === 'function') updateClearanceVisuals();
 
+  pushHistoryState(`Slot ${slotIdx + 1}`);
   showToast(`Đã chuyển sang ${targetSlot.name}`);
 }
 
@@ -309,6 +434,8 @@ function onCoordInputChange() {
   grp.rotation.y = THREE.MathUtils.degToRad(deg);
   if (transformControls) transformControls.updateMatrixWorld();
   if (typeof updateClearanceVisuals === 'function') updateClearanceVisuals();
+
+  pushHistoryState('Numeric input');
 }
 
 function setEquipmentRotationDeg(deg) {
@@ -317,6 +444,7 @@ function setEquipmentRotationDeg(deg) {
   if (srot) srot.value = deg;
   if (irot) irot.value = deg;
   onCoordSliderChange();
+  pushHistoryState('Rotation change');
 }
 
 // --- CLEARANCE SAFETY METRICS CALCULATION ---
@@ -446,6 +574,7 @@ function applyJsonLayout() {
     if (transformControls) transformControls.updateMatrixWorld();
     if (typeof updateClearanceVisuals === 'function') updateClearanceVisuals();
 
+    pushHistoryState('Import concept');
     closeJsonModal();
     showToast("Đã áp dụng concept thành công!");
   } catch (err) {
