@@ -914,7 +914,7 @@
     <div class="panel-section">
       <div class="section-title">📦 Trang thiết bị &amp; Đồ đạc gian hàng</div>
       <div class="toggle-row">
-        <span>Khung nhôm Octanorm</span>
+        <span>Khung nhôm định hình T-Slot 50×50mm</span>
         <label class="toggle-switch">
           <input type="checkbox" id="toggle-frame" checked onchange="toggleFrame(this.checked)">
           <span class="slider"></span>
@@ -1047,7 +1047,7 @@
       </div>
       <div class="dimension-row">
         <div class="dimension-label">Kết cấu:</div>
-        <div class="dimension-val">Khung nhôm Anodized Octanorm Ø50mm</div>
+        <div class="dimension-val">Khung nhôm định hình vuông T-Slot 50×50 mm</div>
       </div>
       <div class="dimension-row">
         <div class="dimension-label">Biển trán:</div>
@@ -1367,10 +1367,102 @@
       boothGroup.add(valanceSideMesh);
     }
 
-    // --- ALUMINUM OCTANORM FRAME ---
+    // --- T-SLOT ALUMINUM PROFILE GENERATOR (Nhôm định hình vuông T-Slot 50x50mm) ---
+    function createTSlotGeometry(length, size = 0.05) {
+      const s = size / 2; // 0.025 (25mm from center)
+      const hw1 = 0.0045; // half outer slot mouth width (9mm total opening)
+      const hw2 = 0.0090; // half inner groove width (18mm total groove width)
+      const d1 = 0.0035;  // outer lip thickness (3.5mm)
+      const d2 = 0.0095;  // total T-slot depth (9.5mm)
+      
+      const shape = new THREE.Shape();
+      
+      // 1. Outer Perimeter with 4 T-Slots (Clockwise)
+      // Top Side
+      shape.moveTo(-s, s);
+      shape.lineTo(-hw1, s);
+      shape.lineTo(-hw1, s - d1);
+      shape.lineTo(-hw2, s - d1);
+      shape.lineTo(-hw2, s - d2);
+      shape.lineTo(hw2, s - d2);
+      shape.lineTo(hw2, s - d1);
+      shape.lineTo(hw1, s - d1);
+      shape.lineTo(hw1, s);
+      shape.lineTo(s, s);
+      
+      // Right Side
+      shape.lineTo(s, hw1);
+      shape.lineTo(s - d1, hw1);
+      shape.lineTo(s - d1, hw2);
+      shape.lineTo(s - d2, hw2);
+      shape.lineTo(s - d2, -hw2);
+      shape.lineTo(s - d1, -hw2);
+      shape.lineTo(s - d1, -hw1);
+      shape.lineTo(s, -hw1);
+      shape.lineTo(s, -s);
+      
+      // Bottom Side
+      shape.lineTo(hw1, -s);
+      shape.lineTo(hw1, -s + d1);
+      shape.lineTo(hw2, -s + d1);
+      shape.lineTo(hw2, -s + d2);
+      shape.lineTo(-hw2, -s + d2);
+      shape.lineTo(-hw2, -s + d1);
+      shape.lineTo(-hw1, -s + d1);
+      shape.lineTo(-hw1, -s);
+      shape.lineTo(-s, -s);
+      
+      // Left Side
+      shape.lineTo(-s, -hw1);
+      shape.lineTo(-s + d1, -hw1);
+      shape.lineTo(-s + d1, -hw2);
+      shape.lineTo(-s + d2, -hw2);
+      shape.lineTo(-s + d2, hw2);
+      shape.lineTo(-s + d1, hw2);
+      shape.lineTo(-s + d1, hw1);
+      shape.lineTo(-s, hw1);
+      shape.lineTo(-s, s);
+      
+      // 2. Central Bore Hole (Diameter ~11mm)
+      const centerHole = new THREE.Path();
+      centerHole.absarc(0, 0, 0.0055, 0, Math.PI * 2, true);
+      shape.holes.push(centerHole);
+      
+      // 3. 4 Corner Weight-Reduction Holes (Diameter ~6mm)
+      const chR = 0.003;
+      const chOffset = s - 0.0075;
+      [
+        [chOffset, chOffset],
+        [-chOffset, chOffset],
+        [-chOffset, -chOffset],
+        [chOffset, -chOffset]
+      ].forEach(([hx, hy]) => {
+        const cornerHole = new THREE.Path();
+        cornerHole.absarc(hx, hy, chR, 0, Math.PI * 2, true);
+        shape.holes.push(cornerHole);
+      });
+      
+      const extrudeSettings = {
+        depth: length,
+        bevelEnabled: false,
+        steps: 1
+      };
+      
+      const geo = new THREE.ExtrudeGeometry(shape, extrudeSettings);
+      geo.center(); // Center geometry along extrusion depth
+      return geo;
+    }
+
+    // --- ALUMINUM T-SLOT EXTRUSION FRAME ---
     function buildAluminumFrame() {
-      const aluMat = new THREE.MeshStandardMaterial({ color: 0xd0d4d9, metalness: 0.9, roughness: 0.2 });
-      const postGeo = new THREE.CylinderGeometry(POST_RADIUS, POST_RADIUS, BOOTH_H, 16);
+      const aluMat = new THREE.MeshStandardMaterial({
+        color: 0xd2d6dc,
+        metalness: 0.88,
+        roughness: 0.22
+      });
+
+      // 1. Vertical Posts (Length = 2.5m, Profile 50x50mm T-Slot)
+      const postGeo = createTSlotGeometry(BOOTH_H, 0.05);
 
       const postPositions = [
         [-BOOTH_W/2, BOOTH_H/2, -BOOTH_D/2],
@@ -1386,27 +1478,40 @@
       postPositions.forEach(([px, py, pz]) => {
         const post = new THREE.Mesh(postGeo, aluMat);
         post.position.set(px, py, pz);
+        post.rotation.x = Math.PI / 2; // Extrude along Y
         post.castShadow = true;
+        post.receiveShadow = true;
         frameGroup.add(post);
       });
 
-      const beamGeoX = new THREE.BoxGeometry(BOOTH_W, 0.05, 0.05);
-      const beamGeoZ = new THREE.BoxGeometry(0.05, 0.05, BOOTH_D);
+      // 2. Horizontal Top Beams (Length = 3.0m, Profile 50x50mm T-Slot)
+      const beamGeoX = createTSlotGeometry(BOOTH_W, 0.05);
+      const beamGeoZ = createTSlotGeometry(BOOTH_D, 0.05);
 
+      // Top Front Beam (along X)
       const topFrontBeam = new THREE.Mesh(beamGeoX, aluMat);
       topFrontBeam.position.set(0, BOOTH_H, BOOTH_D/2);
+      topFrontBeam.rotation.y = Math.PI / 2;
+      topFrontBeam.castShadow = true;
       frameGroup.add(topFrontBeam);
 
+      // Top Right Beam (along Z)
       const topRightBeam = new THREE.Mesh(beamGeoZ, aluMat);
       topRightBeam.position.set(BOOTH_W/2, BOOTH_H, 0);
+      topRightBeam.castShadow = true;
       frameGroup.add(topRightBeam);
 
+      // Top Back Beam (along X)
       const topBackBeam = new THREE.Mesh(beamGeoX, aluMat);
       topBackBeam.position.set(0, BOOTH_H, -BOOTH_D/2);
+      topBackBeam.rotation.y = Math.PI / 2;
+      topBackBeam.castShadow = true;
       frameGroup.add(topBackBeam);
 
+      // Top Left Beam (along Z)
       const topLeftBeam = new THREE.Mesh(beamGeoZ, aluMat);
       topLeftBeam.position.set(-BOOTH_W/2, BOOTH_H, 0);
+      topLeftBeam.castShadow = true;
       frameGroup.add(topLeftBeam);
     }
 
