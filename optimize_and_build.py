@@ -7,39 +7,39 @@ sys.stdout.reconfigure(encoding='utf-8')
 Image.MAX_IMAGE_PIXELS = None
 
 BASE_DIR = r"D:\T&TVina\VEC_2026_2\mockup"
-V2_SOURCE_DIR = os.path.join(BASE_DIR, "textures", "V2")
+V3_SOURCE_DIR = os.path.join(BASE_DIR, "textures", "V3")
 TEXTURE_DIR = os.path.join(BASE_DIR, "textures")
 
-# 1. Map Figma V2 files to target texture names
-v2_mappings = [
+# 1. Map Figma V3 files to target texture names
+v3_mappings = [
     {
-        "id": "v2_backwall",
-        "src": os.path.join(V2_SOURCE_DIR, "vec2026_backwall_full_3000x2500mm 4.png"),
-        "dest": os.path.join(TEXTURE_DIR, "v2_backwall.png"),
+        "id": "v3_backwall",
+        "src": os.path.join(V3_SOURCE_DIR, "vec2026_backwall_full_3000x2500mm 6.png"),
+        "dest": os.path.join(TEXTURE_DIR, "v3_backwall.png"),
         "max_w": 2048
     },
     {
-        "id": "v2_sidewall",
-        "src": os.path.join(V2_SOURCE_DIR, "vec2026_sidewall_full_3000x2500mm 4.png"),
-        "dest": os.path.join(TEXTURE_DIR, "v2_sidewall.png"),
+        "id": "v3_sidewall",
+        "src": os.path.join(V3_SOURCE_DIR, "vec2026_sidewall_full_3000x2500mm 6.png"),
+        "dest": os.path.join(TEXTURE_DIR, "v3_sidewall.png"),
         "max_w": 2048
     },
     {
-        "id": "v2_valance_front",
-        "src": os.path.join(V2_SOURCE_DIR, "vec2026_valance_front_2950x400mm 3.png"),
-        "dest": os.path.join(TEXTURE_DIR, "v2_valance_front.png"),
+        "id": "v3_valance_front",
+        "src": os.path.join(V3_SOURCE_DIR, "v3_valance_front_side.png"),
+        "dest": os.path.join(TEXTURE_DIR, "v3_valance_front.png"),
         "max_w": 2048
     },
     {
-        "id": "v2_valance_side",
-        "src": os.path.join(V2_SOURCE_DIR, "vec2026_valance_side_2950x400mm 4.png"),
-        "dest": os.path.join(TEXTURE_DIR, "v2_valance_side.png"),
+        "id": "v3_valance_side",
+        "src": os.path.join(V3_SOURCE_DIR, "v3_valance_front_side.png"),
+        "dest": os.path.join(TEXTURE_DIR, "v3_valance_side.png"),
         "max_w": 2048
     }
 ]
 
-print("=== [1/2] OPTIMIZING FIGMA V2 PNG TEXTURES (LANCZOS 2048px) ===")
-for item in v2_mappings:
+print("=== [1/2] OPTIMIZING FIGMA V3 PNG TEXTURES (LANCZOS 2048px) ===")
+for item in v3_mappings:
     src_file = item["src"]
     dest_file = item["dest"]
     max_w = item["max_w"]
@@ -65,16 +65,23 @@ for item in v2_mappings:
 print("\n=== [2/2] GENERATING BASE64 DATA SCRIPT (textures_data.js) ===")
 
 all_texture_files = [
+    # V3 (New Safe-Zone & Visual First - Figma Refined)
+    ("v3_backwall", os.path.join(TEXTURE_DIR, "v3_backwall.png")),
+    ("v3_sidewall", os.path.join(TEXTURE_DIR, "v3_sidewall.png")),
+    ("v3_valance_front", os.path.join(TEXTURE_DIR, "v3_valance_front.png")),
+    ("v3_valance_side", os.path.join(TEXTURE_DIR, "v3_valance_side.png")),
+    
+    # V2 (Figma Edited)
     ("v2_backwall", os.path.join(TEXTURE_DIR, "v2_backwall.png")),
     ("v2_sidewall", os.path.join(TEXTURE_DIR, "v2_sidewall.png")),
     ("v2_valance_front", os.path.join(TEXTURE_DIR, "v2_valance_front.png")),
     ("v2_valance_side", os.path.join(TEXTURE_DIR, "v2_valance_side.png")),
+    
+    # V1 (Original Production)
     ("v1_backwall", os.path.join(TEXTURE_DIR, "v1_backwall.png")),
     ("v1_sidewall", os.path.join(TEXTURE_DIR, "v1_sidewall.png")),
     ("v1_valance_front", os.path.join(TEXTURE_DIR, "v1_valance_front.png")),
     ("v1_valance_side", os.path.join(TEXTURE_DIR, "v1_valance_side.png")),
-    ("root_backdrop", os.path.join(TEXTURE_DIR, "root_backdrop.png")),
-    ("root_valance", os.path.join(TEXTURE_DIR, "root_valance.png")),
 ]
 
 js_path = os.path.join(BASE_DIR, "textures_data.js")

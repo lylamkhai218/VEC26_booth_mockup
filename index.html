@@ -596,6 +596,129 @@
         justify-content: center;
       }
     }
+
+    /* Interactive Dimension Floating Card */
+    .dimension-overlay {
+      position: absolute;
+      bottom: 76px;
+      right: 16px;
+      z-index: 30;
+      background: var(--panel-bg);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(226, 0, 26, 0.5);
+      border-radius: 16px;
+      padding: 16px;
+      width: 320px;
+      max-width: calc(100vw - 32px);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.7), 0 0 25px rgba(226, 0, 26, 0.2);
+      display: none;
+      animation: slideUpFade 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes slideUpFade {
+      from { opacity: 0; transform: translateY(16px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .dimension-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 8px;
+      gap: 8px;
+    }
+
+    .dimension-title {
+      font-size: 13px;
+      font-weight: 800;
+      color: #fff;
+      line-height: 1.3;
+    }
+
+    .dimension-badge {
+      display: inline-block;
+      background: #E2001A;
+      color: #fff;
+      font-weight: 800;
+      font-size: 13px;
+      padding: 4px 10px;
+      border-radius: 6px;
+      margin-bottom: 10px;
+      letter-spacing: 0.5px;
+    }
+
+    .dimension-row {
+      display: flex;
+      font-size: 11.5px;
+      margin-bottom: 6px;
+      line-height: 1.4;
+    }
+
+    .dimension-label {
+      color: var(--text-muted);
+      width: 75px;
+      flex-shrink: 0;
+      font-weight: 600;
+    }
+
+    .dimension-val {
+      color: #e2e8f0;
+      font-weight: 500;
+    }
+
+    .btn-close-dim {
+      background: rgba(255,255,255,0.12);
+      border: none;
+      color: #fff;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      flex-shrink: 0;
+      transition: background 0.15s ease;
+    }
+    .btn-close-dim:hover {
+      background: #E2001A;
+    }
+
+    /* Click Hint Tag */
+    .click-hint-tag {
+      position: absolute;
+      top: 96px;
+      right: 16px;
+      z-index: 10;
+      background: rgba(20, 22, 27, 0.88);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px dashed rgba(226, 0, 26, 0.4);
+      border-radius: 20px;
+      padding: 5px 12px;
+      font-size: 11px;
+      color: #cbd5e1;
+      pointer-events: none;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    }
+    @media (max-width: 768px) {
+      .click-hint-tag {
+        top: 90px;
+        font-size: 10px;
+        padding: 4px 10px;
+      }
+      .dimension-overlay {
+        bottom: 70px;
+        right: 12px;
+        left: 12px;
+        width: auto;
+      }
+    }
   </style>
 </head>
 <body>
@@ -642,6 +765,35 @@
     02 Biển trán: 2.950 × 400 mm
   </div>
 
+  <!-- Click to inspect Hint Tag -->
+  <div class="click-hint-tag">
+    <span>💡 Nhấp vào vách / biển trán để xem kích thước</span>
+  </div>
+
+  <!-- Interactive Dimension Card on Click -->
+  <div class="dimension-overlay" id="dimension-card">
+    <div class="dimension-header">
+      <div class="dimension-title" id="dim-title">BIỂN TRÁN MẶT TIỀN CHÍNH</div>
+      <button class="btn-close-dim" onclick="closeDimensionCard()">✕</button>
+    </div>
+    <div class="dimension-badge" id="dim-badge">📏 2.950 × 400 mm</div>
+    <div class="dimension-row">
+      <div class="dimension-label">Quy cách:</div>
+      <div class="dimension-val" id="dim-panels">01 Tấm liền</div>
+    </div>
+    <div class="dimension-row">
+      <div class="dimension-label">Vật liệu:</div>
+      <div class="dimension-val" id="dim-mat">Decal PP cán mờ bồi Formex 5mm</div>
+    </div>
+    <div class="dimension-row">
+      <div class="dimension-label">Vị trí:</div>
+      <div class="dimension-val" id="dim-loc">Mặt tiền chính (Cao độ 2.1 - 2.5m)</div>
+    </div>
+    <div class="dimension-row" style="margin-top: 6px; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 6px;">
+      <div class="dimension-val" id="dim-desc" style="color: #94a3b8; font-style: italic;">Chứa Logo Murrplastik &amp; Số hiệu Gian hàng A (H1-15).</div>
+    </div>
+  </div>
+
   <!-- HUD Controls Panel (Sidebar on desktop / Drawer on mobile) -->
   <div class="hud-panel left-controls" id="controls-drawer">
     <div class="drawer-handle"></div>
@@ -654,14 +806,14 @@
     <div class="panel-section">
       <div class="section-title">🎨 Phiên bản Thiết kế</div>
       <div class="btn-group">
-        <button class="active" id="btn-ver-v2" onclick="switchVersion('v2')">
-          <span>✨ Bản V2 Visual-First (Mới nhất)</span>
+        <button class="active" id="btn-ver-v3" onclick="switchVersion('v3')">
+          <span>🚀 Bản V3 Safe-Zone (Mới nhất)</span>
+        </button>
+        <button id="btn-ver-v2" onclick="switchVersion('v2')">
+          <span>✨ Bản V2 Visual-First</span>
         </button>
         <button id="btn-ver-v1" onclick="switchVersion('v1')">
-          <span>📄 Bản V1 Production (Chuẩn in ấn)</span>
-        </button>
-        <button id="btn-ver-root" onclick="switchVersion('root')">
-          <span>🏷️ Bản Backdrop 295×210cm</span>
+          <span>📄 Bản V1 Production</span>
         </button>
       </div>
     </div>
@@ -738,7 +890,7 @@
     let boothGroup, frameGroup, deskGroup, binGroup, lightsGroup;
     let backwallMesh, sidewallMesh, valanceFrontMesh, valanceSideMesh;
     let spotLight1, spotLight2, spotLight3, ambientLight, dirLight;
-    let currentVersion = 'v2';
+    let currentVersion = 'v3';
 
     // Texture sources: Base64 first, relative path fallback
     function getTextureSource(key) {
@@ -749,6 +901,12 @@
     }
 
     const VERSIONS = {
+      v3: {
+        backwall: () => getTextureSource('v3_backwall'),
+        sidewall: () => getTextureSource('v3_sidewall'),
+        valanceFront: () => getTextureSource('v3_valance_front'),
+        valanceSide: () => getTextureSource('v3_valance_side')
+      },
       v2: {
         backwall: () => getTextureSource('v2_backwall'),
         sidewall: () => getTextureSource('v2_sidewall'),
@@ -760,12 +918,6 @@
         sidewall: () => getTextureSource('v1_sidewall'),
         valanceFront: () => getTextureSource('v1_valance_front'),
         valanceSide: () => getTextureSource('v1_valance_side')
-      },
-      root: {
-        backwall: () => getTextureSource('root_backdrop'),
-        sidewall: () => getTextureSource('root_backdrop'),
-        valanceFront: () => getTextureSource('root_valance'),
-        valanceSide: () => getTextureSource('root_valance')
       }
     };
 
@@ -848,7 +1000,10 @@
       // 7. Load Textures
       loadBoothTextures(currentVersion);
 
-      // 8. Event Listeners
+      // 8. Setup Interactive Dimension Inspection on Click
+      setupInteractiveDimensions();
+
+      // 9. Event Listeners
       window.addEventListener('resize', onWindowResize);
 
       // 9. Animation Loop
@@ -1178,9 +1333,153 @@
     // --- CONTROLLER ACTIONS ---
     function switchVersion(ver) {
       currentVersion = ver;
-      document.querySelectorAll('#btn-ver-v2, #btn-ver-v1, #btn-ver-root').forEach(btn => btn.classList.remove('active'));
-      document.getElementById('btn-ver-' + ver).classList.add('active');
+      document.querySelectorAll('#btn-ver-v3, #btn-ver-v2, #btn-ver-v1').forEach(btn => btn.classList.remove('active'));
+      const activeBtn = document.getElementById('btn-ver-' + ver);
+      if (activeBtn) activeBtn.classList.add('active');
       loadBoothTextures(ver);
+    }
+
+    // --- INTERACTIVE RAYCASTER FOR 3D DIMENSION INSPECTION ---
+    const raycaster = new THREE.Raycaster();
+    const clickMouse = new THREE.Vector2();
+    let touchStartTime = 0;
+    let touchStartPos = { x: 0, y: 0 };
+    let activeHighlightMesh = null;
+    let activeHighlightOrigColor = null;
+    let activeHighlightTimeout = null;
+
+    function setupInteractiveDimensions() {
+      // 1. Assign rich engineering & dimension metadata to meshes
+      if (valanceFrontMesh) {
+        valanceFrontMesh.userData = {
+          title: 'BIỂN TRÁN MẶT TIỀN CHÍNH (FRONT VALANCE)',
+          dim: '2.950 × 400 mm',
+          panels: '01 Tấm liền phẳng',
+          mat: 'Decal PP cán mờ bồi tấm Formex 5mm',
+          loc: 'Mặt tiền chính (Cao độ 2.100 - 2.500 mm)',
+          desc: 'Logo Murrplastik × T&T Vina & Số hiệu Gian hàng A (Cụm ô H1-15, Sảnh 2).'
+        };
+      }
+
+      if (valanceSideMesh) {
+        valanceSideMesh.userData = {
+          title: 'BIỂN TRÁN MẶT TIỀN HÔNG (SIDE VALANCE)',
+          dim: '2.950 × 400 mm',
+          panels: '01 Tấm liền phẳng',
+          mat: 'Decal PP cán mờ bồi tấm Formex 5mm',
+          loc: 'Mặt tiền hông (Cao độ 2.100 - 2.500 mm)',
+          desc: 'Đồng bộ nhận diện thương hiệu 2 mặt tiền thông thoáng của gian hàng góc.'
+        };
+      }
+
+      if (backwallMesh) {
+        backwallMesh.userData = {
+          title: 'VÁCH HẬU CHÍNH (BACKWALL)',
+          dim: '3.000 × 2.500 mm',
+          panels: '03 Panel vách (1.000 × 2.500 mm / panel)',
+          mat: 'Decal PP cán bóng bồi tấm vách Octanorm tiêu chuẩn',
+          loc: 'Vách chính diện phía sau gian hàng (Z = -1.5m)',
+          desc: 'Trưng bày 5 nhóm sản phẩm chính (AUR, ACS, EFK, SUV, KHD) & 50cm chân an toàn.'
+        };
+      }
+
+      if (sidewallMesh) {
+        sidewallMesh.userData = {
+          title: 'VÁCH BÊN HÔNG (SIDEWALL)',
+          dim: '3.000 × 2.500 mm',
+          panels: '03 Panel vách (1.000 × 2.500 mm / panel)',
+          mat: 'Decal PP cán bóng bồi tấm vách Octanorm tiêu chuẩn',
+          loc: 'Vách bên trái gian hàng (X = -1.5m)',
+          desc: 'Trưng bày 5 Bàn Demo, 3 Key Visual ngành, Trụ cột uy tín & QR Code tài liệu.'
+        };
+      }
+
+      // 2. Setup Pointer / Click listener on WebGL canvas
+      const dom = renderer.domElement;
+      
+      dom.addEventListener('pointerdown', (e) => {
+        touchStartTime = Date.now();
+        touchStartPos = { x: e.clientX, y: e.clientY };
+      });
+
+      dom.addEventListener('pointerup', (e) => {
+        const elapsed = Date.now() - touchStartTime;
+        const dist = Math.hypot(e.clientX - touchStartPos.x, e.clientY - touchStartPos.y);
+        
+        // Treat as Click / Tap if mouse didn't drag (< 350ms, moved < 6px)
+        if (elapsed < 350 && dist < 6) {
+          handleMeshClick(e);
+        }
+      });
+    }
+
+    function handleMeshClick(event) {
+      const rect = renderer.domElement.getBoundingClientRect();
+      clickMouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+      clickMouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+
+      raycaster.setFromCamera(clickMouse, camera);
+
+      const interactiveTargets = [
+        valanceFrontMesh,
+        valanceSideMesh,
+        backwallMesh,
+        sidewallMesh
+      ].filter(Boolean);
+
+      const intersects = raycaster.intersectObjects(interactiveTargets, false);
+
+      if (intersects.length > 0) {
+        const hitObj = intersects[0].object;
+        if (hitObj.userData && hitObj.userData.title) {
+          showDimensionCard(hitObj.userData);
+          triggerGlowHighlight(hitObj);
+        }
+      }
+    }
+
+    function triggerGlowHighlight(mesh) {
+      if (!mesh || !mesh.material) return;
+      
+      // Reset previous if active
+      if (activeHighlightMesh && activeHighlightOrigColor) {
+        activeHighlightMesh.material.color.copy(activeHighlightOrigColor);
+      }
+      
+      activeHighlightMesh = mesh;
+      activeHighlightOrigColor = mesh.material.color.clone();
+      mesh.material.color.setHex(0xffea00); // Warm yellow highlight pulse
+
+      clearTimeout(activeHighlightTimeout);
+      activeHighlightTimeout = setTimeout(() => {
+        if (activeHighlightMesh && activeHighlightOrigColor) {
+          activeHighlightMesh.material.color.copy(activeHighlightOrigColor);
+          activeHighlightMesh = null;
+          activeHighlightOrigColor = null;
+        }
+      }, 350);
+    }
+
+    function showDimensionCard(data) {
+      const card = document.getElementById('dimension-card');
+      if (!card) return;
+
+      document.getElementById('dim-title').innerText = data.title;
+      document.getElementById('dim-badge').innerText = '📏 ' + data.dim;
+      document.getElementById('dim-panels').innerText = data.panels;
+      document.getElementById('dim-mat').innerText = data.mat;
+      document.getElementById('dim-loc').innerText = data.loc;
+      document.getElementById('dim-desc').innerText = data.desc;
+
+      card.style.display = 'block';
+    }
+
+    function closeDimensionCard() {
+      const card = document.getElementById('dimension-card');
+      if (card) card.style.display = 'none';
+      if (activeHighlightMesh && activeHighlightOrigColor) {
+        activeHighlightMesh.material.color.copy(activeHighlightOrigColor);
+      }
     }
 
     function setCameraView(view) {

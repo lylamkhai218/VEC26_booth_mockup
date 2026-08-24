@@ -13,6 +13,31 @@ TEXTURE_DIR = os.path.join(BASE_DIR, "mockup", "textures")
 os.makedirs(TEXTURE_DIR, exist_ok=True)
 
 svg_tasks = [
+    # V3 Safe Zone & Visual First
+    {
+        "src": os.path.join(BASE_DIR, "04_PRODUCTION_SVG", "V3", "vec2026_backwall_full_3000x2500mm.svg"),
+        "dest": os.path.join(TEXTURE_DIR, "v3_backwall.png"),
+        "width": 3000,
+        "height": 2500
+    },
+    {
+        "src": os.path.join(BASE_DIR, "04_PRODUCTION_SVG", "V3", "vec2026_sidewall_full_3000x2500mm.svg"),
+        "dest": os.path.join(TEXTURE_DIR, "v3_sidewall.png"),
+        "width": 3000,
+        "height": 2500
+    },
+    {
+        "src": os.path.join(BASE_DIR, "04_PRODUCTION_SVG", "V3", "vec2026_valance_front_2950x400mm.svg"),
+        "dest": os.path.join(TEXTURE_DIR, "v3_valance_front.png"),
+        "width": 2950,
+        "height": 400
+    },
+    {
+        "src": os.path.join(BASE_DIR, "04_PRODUCTION_SVG", "V3", "vec2026_valance_side_2950x400mm.svg"),
+        "dest": os.path.join(TEXTURE_DIR, "v3_valance_side.png"),
+        "width": 2950,
+        "height": 400
+    },
     # V2 Visual First
     {
         "src": os.path.join(BASE_DIR, "04_PRODUCTION_SVG", "V2_NEW_VISUAL_FIRST", "vec2026_backwall_full_3000x2500mm.svg"),
