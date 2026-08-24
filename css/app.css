@@ -612,25 +612,25 @@ input:checked + .slider:before {
   display: none;
 }
 
-/* --- ZEN / FOCUS MODE (When panels are toggled OFF) --- */
-body.zen-mode .left-controls {
-  transform: translateX(calc(-100% - 30px)) !important;
-  opacity: 0 !important;
-  pointer-events: none !important;
-}
+/* --- ZEN / FOCUS MODE (Subtle Opacity Fade - Zero Flying Glitches) --- */
+body.zen-mode .left-controls,
 body.zen-mode .right-inspector {
-  transform: translateX(calc(100% + 30px)) !important;
   opacity: 0 !important;
+  visibility: hidden !important;
   pointer-events: none !important;
+  transition: opacity 0.2s ease, visibility 0.2s !important;
 }
+
 body.zen-mode .camera-quickbar {
-  transform: translateX(-50%) translateY(-60px) !important;
   opacity: 0 !important;
+  visibility: hidden !important;
   pointer-events: none !important;
+  transition: opacity 0.2s ease, visibility 0.2s !important;
 }
+
 body.zen-mode .action-btn.toggle-ui {
-  background: rgba(226, 0, 26, 0.2);
-  border-color: rgba(226, 0, 26, 0.5);
+  background: rgba(226, 0, 26, 0.25);
+  border-color: rgba(226, 0, 26, 0.55);
   color: #fff;
 }
 
@@ -867,42 +867,78 @@ body.zen-mode .action-btn.toggle-ui {
 
 /* --- RESPONSIVE ADAPTATION (Mobile & Tablet <= 1024px) --- */
 @media (max-width: 1024px) {
+  .desktop-only-shortcut {
+    display: none !important;
+  }
+
   .top-bar {
-    top: var(--safe-top);
+    top: max(8px, env(safe-area-inset-top));
     left: 8px;
     right: 8px;
-  }
-  .brand-badge {
-    padding: 4px 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     gap: 6px;
-    max-width: calc(100vw - 110px);
   }
+
+  .brand-badge {
+    padding: 3px 6px;
+    gap: 4px;
+    max-width: calc(100vw - 120px);
+    border-radius: 8px;
+  }
+
+  .brand-tt-pill, .brand-murr-pill {
+    font-size: 8.5px;
+    padding: 2px 5px;
+    border-radius: 4px;
+  }
+
+  .brand-cross {
+    font-size: 8px;
+  }
+
   .brand-title {
-    font-size: 11px;
+    font-size: 9.5px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
   }
+
   .brand-subtitle {
     display: none;
   }
+
   .booth-tag {
-    font-size: 9.5px;
-    padding: 4px 6px;
+    font-size: 9px;
+    padding: 3px 6px;
+    gap: 4px;
+    border-radius: 8px;
   }
 
   .camera-quickbar {
     display: flex;
-    top: 46px;
+    top: 40px;
     left: 8px;
     right: 8px;
     transform: none;
     overflow-x: auto;
-    border-radius: 12px;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
+    border-radius: 10px;
+    padding: 3px 4px;
+    gap: 4px;
   }
   .camera-quickbar::-webkit-scrollbar {
     display: none;
+  }
+
+  .cam-chip {
+    padding: 3px 8px;
+    font-size: 9.5px;
+    gap: 3px;
+    border-radius: 14px;
   }
 
   /* Mobile Bottom Sheet Drawer for Left Controls */
@@ -916,8 +952,8 @@ body.zen-mode .action-btn.toggle-ui {
     max-height: 75vh;
     border-radius: 18px 18px 0 0;
     padding: 12px 16px max(20px, env(safe-area-inset-bottom)) 16px;
-    transform: translateY(115%);
-    transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    transform: translateY(105%);
+    transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s ease;
     z-index: 100;
     background: rgba(13, 16, 23, 0.98);
   }
@@ -944,46 +980,55 @@ body.zen-mode .action-btn.toggle-ui {
     padding: 12px 16px max(20px, env(safe-area-inset-bottom)) 16px;
     z-index: 120;
     background: rgba(13, 16, 23, 0.98);
-    transform: translateY(115%);
-    transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    transform: translateY(105%);
+    transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s ease;
   }
   .right-inspector.open {
     transform: translateY(0%);
   }
 
-  /* Mobile Bottom Bar Layout */
+  /* Mobile Bottom Bar Layout - Compact 5-Button Touch Bar */
   .bottom-bar {
-    bottom: var(--safe-bottom);
+    bottom: max(8px, env(safe-area-inset-bottom));
     width: calc(100% - 16px);
     left: 8px;
     transform: none;
-    padding: 4px 6px;
-    gap: 4px;
+    padding: 4px 5px;
+    gap: 3px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 10px;
   }
 
   .btn-mobile-menu {
     display: flex;
     align-items: center;
-    gap: 4px;
+    gap: 3px;
     background: rgba(255,255,255,0.06);
     border: 1px solid var(--panel-border);
     color: #fff;
-    border-radius: 16px;
-    padding: 6px 9px;
-    font-size: 10.5px;
+    border-radius: 6px;
+    padding: 5px 6px;
+    font-size: 10px;
     font-weight: 500;
-    min-height: 30px;
+    min-height: 28px;
     flex-shrink: 0;
   }
 
   .action-btn {
-    padding: 6px 9px;
-    font-size: 10.5px;
-    min-height: 30px;
+    padding: 5px 5px;
+    font-size: 9.5px;
+    min-height: 28px;
+    border-radius: 6px;
+    gap: 3px;
+    flex: 1;
+    justify-content: center;
   }
 
   .action-btn.screenshot {
-    flex: 1;
+    flex: 1.2;
+    padding: 5px 6px;
     text-align: center;
   }
 }
