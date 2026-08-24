@@ -1074,13 +1074,6 @@
         </label>
       </div>
       <div class="toggle-row">
-        <span>Bàn lễ tân &amp; ghế</span>
-        <label class="toggle-switch">
-          <input type="checkbox" id="toggle-desk" checked onchange="toggleDesk(this.checked)">
-          <span class="slider"></span>
-        </label>
-      </div>
-      <div class="toggle-row">
         <span>📺 Giá TV di động E2050 + TV 65"</span>
         <label class="toggle-switch">
           <input type="checkbox" id="toggle-tv" checked onchange="toggleTVStand(this.checked)">
@@ -1159,11 +1152,10 @@
       <div style="font-size: 10px; color: #94a3b8; margin-bottom: 4px;">Chọn đồ vật để kéo / xoay trên sàn:</div>
       <div class="component-chips-grid" style="grid-template-columns: 1fr 1fr; gap: 4px;">
         <button class="comp-chip-btn active" id="chip-eq-tvStand" onclick="selectEquipment('tvStand')">📺 Giá TV 65"</button>
-        <button class="comp-chip-btn" id="chip-eq-demo1" onclick="selectEquipment('demo1')">🔬 Bàn Laser</button>
-        <button class="comp-chip-btn" id="chip-eq-demo2" onclick="selectEquipment('demo2')">🤖 Bàn R-Tec</button>
+        <button class="comp-chip-btn" id="chip-eq-demo1" onclick="selectEquipment('demo1')">🔬 Bàn Laser + Ghế</button>
+        <button class="comp-chip-btn" id="chip-eq-demo2" onclick="selectEquipment('demo2')">🤖 Bàn R-Tec + Ghế</button>
         <button class="comp-chip-btn" id="chip-eq-pipeRack" onclick="selectEquipment('pipeRack')">🏗️ Kệ ống 3x3</button>
-        <button class="comp-chip-btn" id="chip-eq-roundTable" onclick="selectEquipment('roundTable')">☕ Bàn tròn</button>
-        <button class="comp-chip-btn" id="chip-eq-desk" onclick="selectEquipment('desk')">🛎️ Bàn lễ tân</button>
+        <button class="comp-chip-btn" id="chip-eq-roundTable" style="grid-column: span 2;" onclick="selectEquipment('roundTable')">☕ Bàn tròn tiếp khách (4 Ghế)</button>
       </div>
 
       <!-- Transform Controls Mode -->
@@ -1417,17 +1409,14 @@
       // 5. Scene Groups
       boothGroup = new THREE.Group();
       frameGroup = new THREE.Group();
-      deskGroup = new THREE.Group();
       scene.add(boothGroup);
       boothGroup.add(frameGroup);
-      boothGroup.add(deskGroup);
 
       // 6. Build Models
       setupLighting();
       buildEnvironment();
       buildBoothWalls();
       buildAluminumFrame();
-      buildReceptionDesk();
       buildTVStandAnd65TV();
       buildDemoTable1Laser();
       buildDemoTable2RTec();
@@ -1754,60 +1743,34 @@
       frameGroup.add(topLeftBeam);
     }
 
-    // --- RECEPTION DESK (ORTHOGONAL) & STOOLS ---
-    function buildReceptionDesk() {
-      const deskGeo = new THREE.BoxGeometry(1.1, 0.96, 0.5);
-      const deskMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.2, metalness: 0.1 });
-      const desk = new THREE.Mesh(deskGeo, deskMat);
-      desk.position.set(0.5, 0.48, 0.85);
-      desk.rotation.y = 0;
-      desk.castShadow = true;
-      desk.receiveShadow = true;
-      deskGroup.add(desk);
-
-      const topGeo = new THREE.BoxGeometry(1.16, 0.04, 0.56);
-      const topMat = new THREE.MeshStandardMaterial({ color: 0x1c1f26, roughness: 0.3, metalness: 0.4 });
-      const countertop = new THREE.Mesh(topGeo, topMat);
-      countertop.position.set(0, 0.5, 0);
-      countertop.castShadow = true;
-      desk.add(countertop);
-
-      const stripeGeo = new THREE.PlaneGeometry(1.0, 0.22);
-      const stripeMat = new THREE.MeshBasicMaterial({ color: 0xC8442A });
-      const stripe = new THREE.Mesh(stripeGeo, stripeMat);
-      stripe.position.set(0, 0.18, 0.251);
-      desk.add(stripe);
-
-      const stool1 = createBarStool();
-      stool1.position.set(0.25, 0, 0.42);
-      deskGroup.add(stool1);
-
-      const stool2 = createBarStool();
-      stool2.position.set(0.75, 0, 0.42);
-      deskGroup.add(stool2);
-    }
-
-    function createBarStool() {
-      const stool = new THREE.Group();
+    // --- REUSABLE MODERN OFFICE / GUEST CHAIR ---
+    function createModernChair(seatColor = 0x22262e) {
+      const chair = new THREE.Group();
+      const chairMat = new THREE.MeshStandardMaterial({ color: seatColor, roughness: 0.6 });
       const chromeMat = new THREE.MeshStandardMaterial({ color: 0xd8d8d8, metalness: 0.95, roughness: 0.1 });
-      const seatMat = new THREE.MeshStandardMaterial({ color: 0x1a1a1a, roughness: 0.7 });
 
-      const base = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.2, 0.02, 24), chromeMat);
-      base.position.y = 0.01;
-      base.castShadow = true;
-      stool.add(base);
-
-      const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.025, 0.025, 0.7, 16), chromeMat);
-      pole.position.y = 0.36;
-      pole.castShadow = true;
-      stool.add(pole);
-
-      const seat = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.18, 0.06, 24), seatMat);
-      seat.position.y = 0.72;
+      // Seat Cushion
+      const seat = new THREE.Mesh(new THREE.BoxGeometry(0.38, 0.04, 0.38), chairMat);
+      seat.position.y = 0.44;
       seat.castShadow = true;
-      stool.add(seat);
+      chair.add(seat);
 
-      return stool;
+      // Backrest
+      const back = new THREE.Mesh(new THREE.BoxGeometry(0.38, 0.36, 0.03), chairMat);
+      back.position.set(0, 0.62, -0.17);
+      back.castShadow = true;
+      chair.add(back);
+
+      // 4 Chrome Legs
+      const chLegGeo = new THREE.CylinderGeometry(0.012, 0.012, 0.43);
+      [[-0.15, -0.15], [0.15, -0.15], [-0.15, 0.15], [0.15, 0.15]].forEach(([lx, lz]) => {
+        const leg = new THREE.Mesh(chLegGeo, chromeMat);
+        leg.position.set(lx, 0.215, lz);
+        leg.castShadow = true;
+        chair.add(leg);
+      });
+
+      return chair;
     }
 
     // --- 1. GIÁ TREO TV DI ĐỘNG I-BRACKET E2050 + SMART TV 65 INCH ---
@@ -2007,13 +1970,24 @@
       cat2.position.set(0.20, 0.773, -0.12);
       cat2.rotation.y = 0.05;
       demoTable1Group.add(cat2);
+
+      // 2 Ghế cho Bàn Demo 1 (Ghế kỹ thuật viên & Ghế khách)
+      const chairD1_1 = createModernChair(0x1e293b);
+      chairD1_1.position.set(0.22, 0, 0.38);
+      chairD1_1.rotation.y = Math.PI;
+      demoTable1Group.add(chairD1_1);
+
+      const chairD1_2 = createModernChair(0x1e293b);
+      chairD1_2.position.set(-0.25, 0, 0.38);
+      chairD1_2.rotation.y = Math.PI;
+      demoTable1Group.add(chairD1_2);
       
       // Position Demo Table 1 perpendicular to Backwall (X = -0.45, Z = -1.15)
       demoTable1Group.position.set(-0.45, 0, -1.15);
       boothGroup.add(demoTable1Group);
     }
 
-    // --- 3. BÀN DEMO 2 (ROBOT R-TEC BOX + 2 CATALOGS) ---
+    // --- 3. BÀN DEMO 2 (ROBOT R-TEC BOX + 2 CATALOGS + 2 GHẾ) ---
     function buildDemoTable2RTec() {
       demoTable2Group = new THREE.Group();
       
@@ -2074,6 +2048,17 @@
       cat1.position.set(0.28, 0.758, 0);
       cat1.rotation.y = -0.10;
       demoTable2Group.add(cat1);
+
+      // 2 Ghế cho Bàn Demo 2
+      const chairD2_1 = createModernChair(0x1e293b);
+      chairD2_1.position.set(0.25, 0, 0.38);
+      chairD2_1.rotation.y = Math.PI;
+      demoTable2Group.add(chairD2_1);
+
+      const chairD2_2 = createModernChair(0x1e293b);
+      chairD2_2.position.set(-0.25, 0, 0.38);
+      chairD2_2.rotation.y = Math.PI;
+      demoTable2Group.add(chairD2_2);
       
       // Position Demo Table 2 perpendicular to Sidewall center post (X = -1.15, Z = 0.0)
       demoTable2Group.position.set(-1.15, 0, 0.0);
@@ -2185,7 +2170,7 @@
       boothGroup.add(pipeRackGroup);
     }
 
-    // --- 5. BÀN TRÒN TIẾP KHÁCH & ĐĨA HOA QUẢ TRUNG TÂM ---
+    // --- 5. BÀN TRÒN TIẾP KHÁCH & ĐĨA HOA QUẢ TRUNG TÂM (4 GHẾ) ---
     function buildRoundTableCenter() {
       roundTableGroup = new THREE.Group();
       
@@ -2227,28 +2212,17 @@
       fruit3.position.set(0.01, 0.83, 0.02);
       roundTableGroup.add(fruit3);
       
-      // 2 Ghế tiếp khách
-      const chairMat = new THREE.MeshStandardMaterial({ color: 0x22262e, roughness: 0.6 });
-      [-0.45, 0.45].forEach((cx, idx) => {
-        const chair = new THREE.Group();
-        
-        const seat = new THREE.Mesh(new THREE.BoxGeometry(0.38, 0.04, 0.38), chairMat);
-        seat.position.y = 0.44;
-        chair.add(seat);
-        
-        const back = new THREE.Mesh(new THREE.BoxGeometry(0.38, 0.38, 0.03), chairMat);
-        back.position.set(0, 0.63, idx === 0 ? -0.17 : 0.17);
-        chair.add(back);
-        
-        const chLegGeo = new THREE.CylinderGeometry(0.012, 0.012, 0.43);
-        [[-0.16, -0.16], [0.16, -0.16], [-0.16, 0.16], [0.16, 0.16]].forEach(([lx, lz]) => {
-          const leg = new THREE.Mesh(chLegGeo, chromeMat);
-          leg.position.set(lx, 0.215, lz);
-          chair.add(leg);
-        });
-        
-        chair.position.set(cx, 0, idx === 0 ? -0.10 : 0.10);
-        chair.rotation.y = idx === 0 ? Math.PI / 4 : -3 * Math.PI / 4;
+      // 4 Ghế tiếp khách xung quanh bàn tròn
+      const chairAngles = [0, Math.PI / 2, Math.PI, 3 * Math.PI / 2];
+      const chairRadius = 0.50;
+      chairAngles.forEach((angle) => {
+        const chair = createModernChair(0x1f242d);
+        chair.position.set(
+          Math.sin(angle) * chairRadius,
+          0,
+          Math.cos(angle) * chairRadius
+        );
+        chair.rotation.y = angle; // Face the round table center
         roundTableGroup.add(chair);
       });
       
@@ -2395,8 +2369,7 @@
         { key: 'demo1', grp: demoTable1Group },
         { key: 'demo2', grp: demoTable2Group },
         { key: 'pipeRack', grp: pipeRackGroup },
-        { key: 'roundTable', grp: roundTableGroup },
-        { key: 'desk', grp: deskGroup }
+        { key: 'roundTable', grp: roundTableGroup }
       ];
 
       for (const eq of equipmentItems) {
@@ -2714,15 +2687,9 @@
         defaultRotY: Math.PI / 2
       },
       roundTable: {
-        name: 'Bàn tròn tiếp khách & hoa quả',
+        name: 'Bàn tròn tiếp khách & hoa quả (4 ghế)',
         getGroup: () => roundTableGroup,
         defaultPos: [0.15, 0, 0.15],
-        defaultRotY: 0
-      },
-      desk: {
-        name: 'Bàn lễ tân & ghế bar',
-        getGroup: () => deskGroup,
-        defaultPos: [0.5, 0, 0.85],
         defaultRotY: 0
       }
     };
