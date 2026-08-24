@@ -404,8 +404,8 @@
       display: none;
     }
 
-    /* Dimension Label in 3D View */
-    .dimension-badge {
+    /* Static Footprint Card (Desktop only) */
+    .booth-footprint-card {
       position: absolute;
       bottom: var(--safe-bottom);
       right: 16px;
@@ -420,7 +420,7 @@
       color: var(--text-muted);
       pointer-events: none;
     }
-    .dimension-badge strong {
+    .booth-footprint-card strong {
       color: #fff;
       font-size: 12px;
       display: block;
@@ -455,37 +455,39 @@
     /* Toast Notification */
     #toast {
       position: absolute;
-      top: 20px;
+      top: 24px;
       left: 50%;
-      transform: translateX(-50%) translateY(-20px);
-      background: rgba(16, 185, 129, 0.95);
-      color: white;
-      padding: 9px 18px;
+      transform: translateX(-50%) translateY(-100px);
+      z-index: 200;
+      background: rgba(30, 34, 42, 0.95);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #fff;
+      padding: 10px 20px;
       border-radius: 30px;
       font-size: 12.5px;
       font-weight: 600;
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-      box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
       opacity: 0;
       pointer-events: none;
-      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-      z-index: 150;
       white-space: nowrap;
     }
     #toast.show {
-      opacity: 1;
       transform: translateX(-50%) translateY(0);
+      opacity: 1;
     }
 
-    /* Drawer Backdrop for Mobile */
+    /* Drawer Backdrop (Mobile) */
     #drawer-backdrop {
       display: none;
       position: fixed;
       top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(0,0,0,0.6);
+      background: rgba(0,0,0,0.65);
       backdrop-filter: blur(4px);
-      z-index: 80;
+      -webkit-backdrop-filter: blur(4px);
+      z-index: 90;
       opacity: 0;
       transition: opacity 0.3s ease;
     }
@@ -494,116 +496,13 @@
       opacity: 1;
     }
 
-    /* --- MOBILE RESPONSIVE TWEAKS (< 768px) --- */
-    @media (max-width: 768px) {
-      .top-bar {
-        top: var(--safe-top);
-        left: 8px;
-        right: 8px;
-      }
-      .brand-badge {
-        padding: 5px 8px;
-        gap: 6px;
-      }
-      .brand-title {
-        font-size: 11px;
-      }
-      .brand-subtitle {
-        display: none;
-      }
-      .booth-tag {
-        font-size: 9.5px;
-        padding: 4px 6px;
-      }
-
-      .camera-quickbar {
-        top: 48px;
-        left: 8px;
-        right: 8px;
-      }
-      .cam-chip {
-        padding: 5px 10px;
-        font-size: 10.5px;
-        min-height: 32px;
-      }
-
-      /* Transform Left Sidebar into Mobile Bottom Sheet Drawer */
-      .left-controls {
-        position: fixed;
-        top: auto;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        width: 100%;
-        max-height: 75vh;
-        border-radius: 20px 20px 0 0;
-        padding: 12px 16px max(20px, env(safe-area-inset-bottom)) 16px;
-        transform: translateY(115%);
-        transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
-        z-index: 100;
-        background: rgba(18, 20, 24, 0.98);
-        box-shadow: 0 -10px 40px rgba(0,0,0,0.8);
-      }
-      .left-controls.open {
-        transform: translateY(0%);
-      }
-      .drawer-handle {
-        display: block;
-      }
-      .btn-close-drawer {
-        display: flex;
-      }
-
-      .dimension-badge {
-        display: none;
-      }
-
-      /* Mobile Bottom Bar Layout */
-      .bottom-bar {
-        bottom: var(--safe-bottom);
-        width: calc(100% - 16px);
-        left: 8px;
-        transform: none;
-        padding: 5px 8px;
-        gap: 6px;
-      }
-
-      .btn-mobile-menu {
-        display: flex;
-        align-items: center;
-        gap: 4px;
-        background: rgba(255,255,255,0.08);
-        border: 1px solid var(--border);
-        color: #fff;
-        border-radius: 20px;
-        padding: 7px 10px;
-        font-size: 11px;
-        font-weight: 600;
-        min-height: 36px;
-        flex-shrink: 0;
-      }
-
-      .action-btn {
-        padding: 7px 10px;
-        font-size: 11px;
-        min-height: 36px;
-        flex-shrink: 0;
-      }
-
-      .action-btn.screenshot {
-        flex: 1;
-        text-align: center;
-        justify-content: center;
-      }
-    }
-
-    /* Interactive Dimension Floating Card */
+    /* --- DESKTOP INTERACTIVE DIMENSION CARD --- */
     .dimension-overlay {
       position: absolute;
       bottom: 76px;
       right: 16px;
-      z-index: 30;
-      background: var(--panel-bg);
+      z-index: 40;
+      background: rgba(18, 20, 26, 0.95);
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
       border: 1px solid rgba(226, 0, 26, 0.5);
@@ -636,7 +535,7 @@
       line-height: 1.3;
     }
 
-    .dimension-badge {
+    .dim-pill-badge {
       display: inline-block;
       background: #E2001A;
       color: #fff;
@@ -686,7 +585,7 @@
       background: #E2001A;
     }
 
-    /* Click Hint Tag */
+    /* Click Hint Tag (Desktop) */
     .click-hint-tag {
       position: absolute;
       top: 96px;
@@ -706,17 +605,143 @@
       gap: 6px;
       box-shadow: 0 4px 12px rgba(0,0,0,0.3);
     }
+
+    /* --- MOBILE RESPONSIVE TWEAKS (< 768px) --- */
     @media (max-width: 768px) {
+      .top-bar {
+        top: var(--safe-top);
+        left: 8px;
+        right: 8px;
+      }
+      .brand-badge {
+        padding: 4px 8px;
+        gap: 6px;
+        max-width: calc(100vw - 115px);
+      }
+      .brand-title {
+        font-size: 11px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .brand-subtitle {
+        display: none;
+      }
+      .booth-tag {
+        font-size: 9.5px;
+        padding: 4px 6px;
+      }
+
+      .camera-quickbar {
+        top: 46px;
+        left: 8px;
+        right: 8px;
+      }
+      .cam-chip {
+        padding: 5px 10px;
+        font-size: 10.5px;
+        min-height: 32px;
+      }
+
       .click-hint-tag {
-        top: 90px;
+        top: 86px;
+        left: 50%;
+        right: auto;
+        transform: translateX(-50%);
         font-size: 10px;
         padding: 4px 10px;
+        white-space: nowrap;
       }
+
+      /* Hide static desktop footprint badge on mobile */
+      .booth-footprint-card {
+        display: none !important;
+      }
+
+      /* Mobile Bottom Sheet for Dimension Details */
       .dimension-overlay {
-        bottom: 70px;
-        right: 12px;
-        left: 12px;
-        width: auto;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        width: 100%;
+        max-width: 100%;
+        border-radius: 20px 20px 0 0;
+        padding: 16px 20px max(24px, env(safe-area-inset-bottom)) 20px;
+        z-index: 120;
+        background: rgba(16, 18, 24, 0.98);
+        backdrop-filter: blur(25px);
+        -webkit-backdrop-filter: blur(25px);
+        border-top: 1px solid rgba(226, 0, 26, 0.5);
+        border-left: none;
+        border-right: none;
+        border-bottom: none;
+        box-shadow: 0 -10px 40px rgba(0,0,0,0.85);
+      }
+
+      /* Transform Left Sidebar into Mobile Bottom Sheet Drawer */
+      .left-controls {
+        position: fixed;
+        top: auto;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        width: 100%;
+        max-height: 75vh;
+        border-radius: 20px 20px 0 0;
+        padding: 12px 16px max(20px, env(safe-area-inset-bottom)) 16px;
+        transform: translateY(115%);
+        transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+        z-index: 100;
+        background: rgba(18, 20, 24, 0.98);
+        box-shadow: 0 -10px 40px rgba(0,0,0,0.8);
+      }
+      .left-controls.open {
+        transform: translateY(0%);
+      }
+      .drawer-handle {
+        display: block;
+      }
+      .btn-close-drawer {
+        display: flex;
+      }
+
+      /* Mobile Bottom Bar Layout */
+      .bottom-bar {
+        bottom: var(--safe-bottom);
+        width: calc(100% - 16px);
+        left: 8px;
+        transform: none;
+        padding: 5px 8px;
+        gap: 6px;
+      }
+
+      .btn-mobile-menu {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        background: rgba(255,255,255,0.08);
+        border: 1px solid var(--border);
+        color: #fff;
+        border-radius: 20px;
+        padding: 7px 10px;
+        font-size: 11px;
+        font-weight: 600;
+        min-height: 36px;
+        flex-shrink: 0;
+      }
+
+      .action-btn {
+        padding: 7px 10px;
+        font-size: 11px;
+        min-height: 36px;
+        flex-shrink: 0;
+      }
+
+      .action-btn.screenshot {
+        flex: 1;
+        text-align: center;
+        justify-content: center;
       }
     }
   </style>
@@ -757,8 +782,8 @@
     <div class="cam-chip" id="chip-top" onclick="setCameraView('top')">📐 Mặt Bằng (Top)</div>
   </div>
 
-  <!-- Dimension Badge (Desktop only) -->
-  <div class="dimension-badge">
+  <!-- Static Footprint Card (Desktop only) -->
+  <div class="booth-footprint-card">
     <strong>📐 Kích thước gian hàng</strong>
     Mặt bằng: 3.000 × 3.000 mm<br>
     Chiều cao vách: 2.500 mm<br>
@@ -776,7 +801,7 @@
       <div class="dimension-title" id="dim-title">BIỂN TRÁN MẶT TIỀN CHÍNH</div>
       <button class="btn-close-dim" onclick="closeDimensionCard()">✕</button>
     </div>
-    <div class="dimension-badge" id="dim-badge">📏 2.950 × 400 mm</div>
+    <div class="dim-pill-badge" id="dim-badge">📏 2.950 × 400 mm</div>
     <div class="dimension-row">
       <div class="dimension-label">Quy cách:</div>
       <div class="dimension-val" id="dim-panels">01 Tấm liền</div>
@@ -963,10 +988,11 @@
       renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true, powerPreference: "high-performance" });
       renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
       renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.outputEncoding = THREE.sRGBEncoding;
       renderer.shadowMap.enabled = true;
       renderer.shadowMap.type = THREE.PCFSoftShadowMap;
       renderer.toneMapping = THREE.ACESFilmicToneMapping;
-      renderer.toneMappingExposure = 1.1;
+      renderer.toneMappingExposure = 1.0;
       container.appendChild(renderer.domElement);
 
       // 4. OrbitControls
@@ -1022,10 +1048,10 @@
       lightsGroup = new THREE.Group();
       scene.add(lightsGroup);
 
-      ambientLight = new THREE.AmbientLight(0xffffff, 0.72);
+      ambientLight = new THREE.AmbientLight(0xffffff, 0.68);
       lightsGroup.add(ambientLight);
 
-      dirLight = new THREE.DirectionalLight(0xfff6ec, 0.95);
+      dirLight = new THREE.DirectionalLight(0xffffff, 0.85);
       dirLight.position.set(5, 8, 5);
       dirLight.castShadow = true;
       dirLight.shadow.mapSize.width = 2048;
@@ -1039,7 +1065,7 @@
       dirLight.shadow.bias = -0.0005;
       lightsGroup.add(dirLight);
 
-      const fillLight = new THREE.DirectionalLight(0x90b0ff, 0.35);
+      const fillLight = new THREE.DirectionalLight(0xffffff, 0.28);
       fillLight.position.set(-5, 4, -4);
       lightsGroup.add(fillLight);
 
@@ -1054,7 +1080,7 @@
     }
 
     function createSpotlight(x, y, z, tx, ty, tz) {
-      const spot = new THREE.SpotLight(0xfff8ee, 1.8);
+      const spot = new THREE.SpotLight(0xfff8ee, 1.6);
       spot.position.set(x, y, z);
       spot.target.position.set(tx, ty, tz);
       spot.angle = Math.PI / 4.5;
@@ -1118,8 +1144,8 @@
     function buildBoothWalls() {
       const wallMatDefault = new THREE.MeshStandardMaterial({
         color: 0xffffff,
-        roughness: 0.35,
-        metalness: 0.05,
+        roughness: 0.92,
+        metalness: 0.0,
         side: THREE.DoubleSide
       });
 
@@ -1293,6 +1319,7 @@
       textureLoader.load(
         srcUrlOrB64,
         (texture) => {
+          texture.encoding = THREE.sRGBEncoding;
           texture.anisotropy = renderer.capabilities.getMaxAnisotropy();
           texture.minFilter = THREE.LinearMipmapLinearFilter;
           texture.magFilter = THREE.LinearFilter;
@@ -1573,13 +1600,13 @@
       document.getElementById('env-studio').classList.toggle('active', mode === 'studio');
 
       if (mode === 'hall') {
-        ambientLight.intensity = 0.72;
-        dirLight.intensity = 0.95;
+        ambientLight.intensity = 0.68;
+        dirLight.intensity = 0.85;
         scene.background.setHex(0x14161a);
       } else {
-        ambientLight.intensity = 0.95;
-        dirLight.intensity = 1.25;
-        scene.background.setHex(0x282c34);
+        ambientLight.intensity = 0.85;
+        dirLight.intensity = 1.05;
+        scene.background.setHex(0x22262e);
       }
     }
 
