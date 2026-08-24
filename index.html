@@ -912,7 +912,7 @@
 
     <!-- Display Options -->
     <div class="panel-section">
-      <div class="section-title">📦 Trang thiết bị gian hàng</div>
+      <div class="section-title">📦 Trang thiết bị &amp; Đồ đạc gian hàng</div>
       <div class="toggle-row">
         <span>Khung nhôm Octanorm</span>
         <label class="toggle-switch">
@@ -928,9 +928,37 @@
         </label>
       </div>
       <div class="toggle-row">
-        <span>Sọt rác góc gian hàng</span>
+        <span>📺 Giá TV di động E2050 + TV 65"</span>
         <label class="toggle-switch">
-          <input type="checkbox" id="toggle-bin" checked onchange="toggleBin(this.checked)">
+          <input type="checkbox" id="toggle-tv" checked onchange="toggleTVStand(this.checked)">
+          <span class="slider"></span>
+        </label>
+      </div>
+      <div class="toggle-row">
+        <span>🔬 Bàn Demo 1 (Máy Laser + Laptop)</span>
+        <label class="toggle-switch">
+          <input type="checkbox" id="toggle-demo1" checked onchange="toggleDemo1(this.checked)">
+          <span class="slider"></span>
+        </label>
+      </div>
+      <div class="toggle-row">
+        <span>🤖 Bàn Demo 2 (Robot R-Tec Box)</span>
+        <label class="toggle-switch">
+          <input type="checkbox" id="toggle-demo2" checked onchange="toggleDemo2(this.checked)">
+          <span class="slider"></span>
+        </label>
+      </div>
+      <div class="toggle-row">
+        <span>🏗️ Kệ ống modular 3x3 + 3 Thùng Murr</span>
+        <label class="toggle-switch">
+          <input type="checkbox" id="toggle-piperack" checked onchange="togglePipeRack(this.checked)">
+          <span class="slider"></span>
+        </label>
+      </div>
+      <div class="toggle-row">
+        <span>☕ Bàn tròn tiếp khách &amp; hoa quả</span>
+        <label class="toggle-switch">
+          <input type="checkbox" id="toggle-roundtable" checked onchange="toggleRoundTable(this.checked)">
           <span class="slider"></span>
         </label>
       </div>
@@ -1056,7 +1084,8 @@
     const POST_RADIUS = 0.025; // 50mm diameter
 
     let scene, camera, renderer, controls;
-    let boothGroup, frameGroup, deskGroup, binGroup, lightsGroup;
+    let boothGroup, frameGroup, deskGroup, lightsGroup;
+    let tvStandGroup, demoTable1Group, demoTable2Group, pipeRackGroup, roundTableGroup;
     let backwallMesh, sidewallMesh, valanceFrontMesh, valanceSideMesh;
     let spotLight1, spotLight2, spotLight3, ambientLight, dirLight;
     let currentVersion = 'v3';
@@ -1153,11 +1182,9 @@
       boothGroup = new THREE.Group();
       frameGroup = new THREE.Group();
       deskGroup = new THREE.Group();
-      binGroup = new THREE.Group();
       scene.add(boothGroup);
       boothGroup.add(frameGroup);
       boothGroup.add(deskGroup);
-      boothGroup.add(binGroup);
 
       // 6. Build Models
       setupLighting();
@@ -1165,7 +1192,11 @@
       buildBoothWalls();
       buildAluminumFrame();
       buildReceptionDesk();
-      buildTrashBin();
+      buildTVStandAnd65TV();
+      buildDemoTable1Laser();
+      buildDemoTable2RTec();
+      buildModularPipeRack();
+      buildRoundTableCenter();
 
       // 7. Load Textures
       loadBoothTextures(currentVersion);
@@ -1435,27 +1466,450 @@
       return stool;
     }
 
-    // --- TRASH BIN IN CORNER ---
-    function buildTrashBin() {
-      const binMeshGroup = new THREE.Group();
-      const binBodyMat = new THREE.MeshStandardMaterial({ color: 0x24272d, metalness: 0.6, roughness: 0.4 });
-      const chromeRingMat = new THREE.MeshStandardMaterial({ color: 0xcccccc, metalness: 0.95, roughness: 0.1 });
+    // --- 1. GIÁ TREO TV DI ĐỘNG I-BRACKET E2050 + SMART TV 65 INCH ---
+    function buildTVStandAnd65TV() {
+      tvStandGroup = new THREE.Group();
+      
+      const steelMat = new THREE.MeshStandardMaterial({ color: 0x181a1f, metalness: 0.85, roughness: 0.25 });
+      const chromeMat = new THREE.MeshStandardMaterial({ color: 0xd0d0d0, metalness: 0.95, roughness: 0.1 });
+      const plasticMat = new THREE.MeshStandardMaterial({ color: 0x111111, roughness: 0.4 });
+      
+      // Mobile Cart Base (I-Bracket E2050 - 70cm x 50cm)
+      const baseFrame = new THREE.Group();
+      const baseBar1 = new THREE.Mesh(new THREE.BoxGeometry(0.70, 0.04, 0.06), steelMat);
+      baseBar1.position.set(0, 0.05, 0.22);
+      baseFrame.add(baseBar1);
+      
+      const baseBar2 = new THREE.Mesh(new THREE.BoxGeometry(0.70, 0.04, 0.06), steelMat);
+      baseBar2.position.set(0, 0.05, -0.22);
+      baseFrame.add(baseBar2);
+      
+      const centerConnect = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.04, 0.50), steelMat);
+      centerConnect.position.set(0, 0.05, 0);
+      baseFrame.add(centerConnect);
+      
+      // 4 Wheels
+      const wheelGeo = new THREE.CylinderGeometry(0.025, 0.025, 0.02, 16);
+      [[-0.32, 0.22], [0.32, 0.22], [-0.32, -0.22], [0.32, -0.22]].forEach(([wx, wz]) => {
+        const wh = new THREE.Mesh(wheelGeo, plasticMat);
+        wh.rotation.z = Math.PI / 2;
+        wh.position.set(wx, 0.025, wz);
+        baseFrame.add(wh);
+      });
+      tvStandGroup.add(baseFrame);
+      
+      // Dual Vertical Columns (H = 1.85m)
+      const poleGeo = new THREE.CylinderGeometry(0.025, 0.025, 1.80, 16);
+      const poleL = new THREE.Mesh(poleGeo, steelMat);
+      poleL.position.set(-0.15, 0.95, 0);
+      poleL.castShadow = true;
+      tvStandGroup.add(poleL);
+      
+      const poleR = new THREE.Mesh(poleGeo, steelMat);
+      poleR.position.set(0.15, 0.95, 0);
+      poleR.castShadow = true;
+      tvStandGroup.add(poleR);
+      
+      // AV Shelf (H = 0.75m)
+      const shelf = new THREE.Mesh(new THREE.BoxGeometry(0.48, 0.02, 0.30), steelMat);
+      shelf.position.set(0, 0.75, 0.12);
+      tvStandGroup.add(shelf);
+      
+      // Smart TV Xiaomi Redmi 65" (1.45m W x 0.84m H x 0.06m D, span 0.96m - 1.80m)
+      const tvBody = new THREE.Group();
+      tvBody.position.set(0, 1.38, 0.06);
+      
+      const tvChassis = new THREE.Mesh(new THREE.BoxGeometry(1.45, 0.84, 0.04), plasticMat);
+      tvChassis.castShadow = true;
+      tvBody.add(tvChassis);
+      
+      const bezelMat = new THREE.MeshStandardMaterial({ color: 0x050505, metalness: 0.9, roughness: 0.2 });
+      const bezel = new THREE.Mesh(new THREE.BoxGeometry(1.454, 0.844, 0.005), bezelMat);
+      bezel.position.z = 0.019;
+      tvBody.add(bezel);
+      
+      // TV Display Screen (Video Canvas Texture)
+      const tvCanvas = document.createElement('canvas');
+      tvCanvas.width = 1024;
+      tvCanvas.height = 576;
+      const ctx = tvCanvas.getContext('2d');
+      ctx.fillStyle = '#0f172a';
+      ctx.fillRect(0, 0, 1024, 576);
+      
+      ctx.fillStyle = '#E2001A';
+      ctx.fillRect(0, 0, 1024, 60);
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 26px Arial';
+      ctx.fillText('MURRPLASTIK SYSTEMTECHNIK — SMART AUTOMATION SOLUTIONS', 40, 42);
+      
+      const grad = ctx.createLinearGradient(0, 60, 1024, 500);
+      grad.addColorStop(0, '#002536');
+      grad.addColorStop(1, '#0b132b');
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 60, 1024, 450);
+      
+      ctx.fillStyle = '#38bdf8';
+      ctx.font = 'bold 36px Arial';
+      ctx.fillText('▶ TUẦN LỄ CÔNG NGHIỆP VITW 2026', 60, 140);
+      
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 44px Arial';
+      ctx.fillText('HỆ THỐNG QUẢN LÝ CÁP CHO ROBOT & MÁY CNC', 60, 210);
+      
+      ctx.fillStyle = '#cbd5e1';
+      ctx.font = '24px Arial';
+      ctx.fillText('• Hộp thu hồi cáp R-Tec Box & R-Tec Liner 2.0', 60, 270);
+      ctx.fillText('• Máy in tem nhãn Laser mp-LM 1M siêu tốc', 60, 310);
+      ctx.fillText('• Tấm luồn cáp KDP kín nước IP68/IP69K chuẩn FDA', 60, 350);
+      
+      ctx.fillStyle = '#1e293b';
+      ctx.fillRect(0, 510, 1024, 66);
+      ctx.fillStyle = '#f59e0b';
+      ctx.font = 'bold 26px Arial';
+      ctx.fillText('CÔNG TY TNHH CÔNG NGHIỆP T&T VINA — GIAN HÀNG A (H1-15)', 40, 552);
+      
+      const screenTex = new THREE.CanvasTexture(tvCanvas);
+      screenTex.encoding = THREE.sRGBEncoding;
+      const screenMat = new THREE.MeshBasicMaterial({ map: screenTex });
+      const screenMesh = new THREE.Mesh(new THREE.PlaneGeometry(1.43, 0.82), screenMat);
+      screenMesh.position.set(0, 0, 0.022);
+      tvBody.add(screenMesh);
+      
+      tvStandGroup.add(tvBody);
+      
+      // Position TV Cart at Inner Corner (-1.15, 0, -1.15), rotated 45 deg facing out (+X, +Z)
+      tvStandGroup.position.set(-1.12, 0, -1.12);
+      tvStandGroup.rotation.y = Math.PI / 4;
+      boothGroup.add(tvStandGroup);
+    }
 
-      const binGeo = new THREE.CylinderGeometry(0.12, 0.10, 0.35, 24);
-      const bin = new THREE.Mesh(binGeo, binBodyMat);
-      bin.position.y = 0.175;
-      bin.castShadow = true;
-      bin.receiveShadow = true;
-      binMeshGroup.add(bin);
+    // --- 2. BÀN DEMO 1 (MÁY LASER MP-LM 1M + LAPTOP + 2 CATALOGS) ---
+    function buildDemoTable1Laser() {
+      demoTable1Group = new THREE.Group();
+      
+      const tableMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.25, metalness: 0.1 });
+      const legMat = new THREE.MeshStandardMaterial({ color: 0x1f242d, roughness: 0.4, metalness: 0.8 });
+      
+      const topMesh = new THREE.Mesh(new THREE.BoxGeometry(1.0, 0.04, 0.55), tableMat);
+      topMesh.position.set(0, 0.73, 0);
+      topMesh.castShadow = true;
+      demoTable1Group.add(topMesh);
+      
+      const legGeo = new THREE.BoxGeometry(0.04, 0.71, 0.04);
+      [[-0.45, -0.22], [0.45, -0.22], [-0.45, 0.22], [0.45, 0.22]].forEach(([lx, lz]) => {
+        const leg = new THREE.Mesh(legGeo, legMat);
+        leg.position.set(lx, 0.355, lz);
+        leg.castShadow = true;
+        demoTable1Group.add(leg);
+      });
+      
+      const panel = new THREE.Mesh(new THREE.BoxGeometry(0.92, 0.35, 0.02), tableMat);
+      panel.position.set(0, 0.50, -0.22);
+      demoTable1Group.add(panel);
+      
+      // Máy In Laser mp-LM 1M (Red & White Body)
+      const laserGroup = new THREE.Group();
+      const laserBodyMat = new THREE.MeshStandardMaterial({ color: 0xf4f4f4, roughness: 0.3 });
+      const laserRedMat = new THREE.MeshStandardMaterial({ color: 0xE2001A, roughness: 0.3 });
+      const laserDarkMat = new THREE.MeshStandardMaterial({ color: 0x1a1a1a, roughness: 0.5 });
+      
+      const laserChassis = new THREE.Mesh(new THREE.BoxGeometry(0.28, 0.52, 0.38), laserBodyMat);
+      laserChassis.position.y = 0.26;
+      laserChassis.castShadow = true;
+      laserGroup.add(laserChassis);
+      
+      const laserFront = new THREE.Mesh(new THREE.BoxGeometry(0.26, 0.50, 0.02), laserRedMat);
+      laserFront.position.set(0, 0.26, 0.191);
+      laserGroup.add(laserFront);
+      
+      const laserScreen = new THREE.Mesh(new THREE.PlaneGeometry(0.14, 0.18), new THREE.MeshBasicMaterial({ color: 0x38bdf8 }));
+      laserScreen.position.set(0, 0.34, 0.202);
+      laserGroup.add(laserScreen);
+      
+      const laserTray = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.03, 0.12), laserDarkMat);
+      laserTray.position.set(0, 0.08, 0.22);
+      laserGroup.add(laserTray);
+      
+      laserGroup.position.set(-0.25, 0.75, 0.02);
+      demoTable1Group.add(laserGroup);
+      
+      // Laptop
+      const laptop = new THREE.Group();
+      const laptopMat = new THREE.MeshStandardMaterial({ color: 0xc8ccd2, metalness: 0.8, roughness: 0.2 });
+      const baseLap = new THREE.Mesh(new THREE.BoxGeometry(0.32, 0.012, 0.22), laptopMat);
+      laptop.add(baseLap);
+      
+      const screenLap = new THREE.Mesh(new THREE.BoxGeometry(0.32, 0.22, 0.01), laptopMat);
+      screenLap.position.set(0, 0.10, -0.10);
+      screenLap.rotation.x = -Math.PI / 10;
+      laptop.add(screenLap);
+      
+      const lapDisplay = new THREE.Mesh(new THREE.PlaneGeometry(0.30, 0.19), new THREE.MeshBasicMaterial({ color: 0x0284c7 }));
+      lapDisplay.position.set(0, 0.10, -0.094);
+      lapDisplay.rotation.x = -Math.PI / 10;
+      laptop.add(lapDisplay);
+      
+      laptop.position.set(0.22, 0.756, 0.05);
+      demoTable1Group.add(laptop);
+      
+      // 2 Catalogs
+      const catMat = new THREE.MeshStandardMaterial({ color: 0xE2001A, roughness: 0.5 });
+      const cat1 = new THREE.Mesh(new THREE.BoxGeometry(0.21, 0.015, 0.297), catMat);
+      cat1.position.set(0.18, 0.758, -0.12);
+      cat1.rotation.y = 0.15;
+      demoTable1Group.add(cat1);
+      
+      const cat2 = new THREE.Mesh(new THREE.BoxGeometry(0.21, 0.015, 0.297), new THREE.MeshStandardMaterial({ color: 0x0284C7 }));
+      cat2.position.set(0.20, 0.773, -0.12);
+      cat2.rotation.y = 0.05;
+      demoTable1Group.add(cat2);
+      
+      // Position Demo Table 1 perpendicular to Backwall (X = -0.45, Z = -1.15)
+      demoTable1Group.position.set(-0.45, 0, -1.15);
+      boothGroup.add(demoTable1Group);
+    }
 
-      const topRimGeo = new THREE.TorusGeometry(0.12, 0.012, 16, 32);
-      const topRim = new THREE.Mesh(topRimGeo, chromeRingMat);
-      topRim.position.y = 0.35;
-      topRim.rotation.x = Math.PI / 2;
-      binMeshGroup.add(topRim);
+    // --- 3. BÀN DEMO 2 (ROBOT R-TEC BOX + 2 CATALOGS) ---
+    function buildDemoTable2RTec() {
+      demoTable2Group = new THREE.Group();
+      
+      const tableMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.25, metalness: 0.1 });
+      const legMat = new THREE.MeshStandardMaterial({ color: 0x1f242d, roughness: 0.4, metalness: 0.8 });
+      
+      const topMesh = new THREE.Mesh(new THREE.BoxGeometry(1.0, 0.04, 0.55), tableMat);
+      topMesh.position.set(0, 0.73, 0);
+      topMesh.castShadow = true;
+      demoTable2Group.add(topMesh);
+      
+      const legGeo = new THREE.BoxGeometry(0.04, 0.71, 0.04);
+      [[-0.45, -0.22], [0.45, -0.22], [-0.45, 0.22], [0.45, 0.22]].forEach(([lx, lz]) => {
+        const leg = new THREE.Mesh(legGeo, legMat);
+        leg.position.set(lx, 0.355, lz);
+        leg.castShadow = true;
+        demoTable2Group.add(leg);
+      });
+      
+      const panel = new THREE.Mesh(new THREE.BoxGeometry(0.92, 0.35, 0.02), tableMat);
+      panel.position.set(0, 0.50, -0.22);
+      demoTable2Group.add(panel);
+      
+      // R-Tec Box Robot Cable Retraction System
+      const rtecGroup = new THREE.Group();
+      const rtecHousingMat = new THREE.MeshStandardMaterial({ color: 0x18181b, roughness: 0.4, metalness: 0.6 });
+      const rtecRedMat = new THREE.MeshStandardMaterial({ color: 0xE2001A, roughness: 0.3 });
+      
+      const housing = new THREE.Mesh(new THREE.BoxGeometry(0.48, 0.16, 0.24), rtecHousingMat);
+      housing.position.y = 0.08;
+      housing.castShadow = true;
+      rtecGroup.add(housing);
+      
+      const slider = new THREE.Mesh(new THREE.BoxGeometry(0.44, 0.04, 0.08), rtecRedMat);
+      slider.position.set(0, 0.16, 0.06);
+      rtecGroup.add(slider);
+      
+      const tubeRing = new THREE.Mesh(new THREE.TorusGeometry(0.06, 0.02, 16, 24), rtecHousingMat);
+      tubeRing.position.set(0.24, 0.08, 0);
+      tubeRing.rotation.y = Math.PI / 2;
+      rtecGroup.add(tubeRing);
+      
+      const curve = new THREE.QuadraticBezierCurve3(
+        new THREE.Vector3(0.24, 0.08, 0),
+        new THREE.Vector3(0.40, 0.22, 0.10),
+        new THREE.Vector3(0.48, 0.35, 0.05)
+      );
+      const hoseGeo = new THREE.TubeGeometry(curve, 20, 0.035, 12, false);
+      const hoseMat = new THREE.MeshStandardMaterial({ color: 0x111111, roughness: 0.7 });
+      const hose = new THREE.Mesh(hoseGeo, hoseMat);
+      rtecGroup.add(hose);
+      
+      rtecGroup.position.set(-0.15, 0.75, 0);
+      demoTable2Group.add(rtecGroup);
+      
+      const catMat = new THREE.MeshStandardMaterial({ color: 0xE2001A, roughness: 0.5 });
+      const cat1 = new THREE.Mesh(new THREE.BoxGeometry(0.21, 0.015, 0.297), catMat);
+      cat1.position.set(0.28, 0.758, 0);
+      cat1.rotation.y = -0.10;
+      demoTable2Group.add(cat1);
+      
+      // Position Demo Table 2 perpendicular to Sidewall center post (X = -1.15, Z = 0.0)
+      demoTable2Group.position.set(-1.15, 0, 0.0);
+      demoTable2Group.rotation.y = Math.PI / 2;
+      boothGroup.add(demoTable2Group);
+    }
 
-      binMeshGroup.position.set(-1.25, 0, -1.25);
-      binGroup.add(binMeshGroup);
+    // --- 4. KỆ KHUNG ỐNG MODULAR 3x3 (1.6M) + 3 THÙNG CARTON MURRPLASTIK ---
+    function buildModularPipeRack() {
+      pipeRackGroup = new THREE.Group();
+      
+      const pipeMat = new THREE.MeshStandardMaterial({ color: 0xf5f0d8, roughness: 0.35, metalness: 0.1 });
+      const jointMat = new THREE.MeshStandardMaterial({ color: 0xc4c8ce, metalness: 0.9, roughness: 0.15 });
+      const shelfMat = new THREE.MeshStandardMaterial({ color: 0x272b33, roughness: 0.6 });
+      
+      const W = 1.15;
+      const D = 0.42;
+      const H = 1.60;
+      
+      const postGeo = new THREE.CylinderGeometry(0.014, 0.014, H, 16);
+      const postOffsets = [
+        [-W/2, -D/2], [W/2, -D/2], [-W/2, D/2], [W/2, D/2],
+        [-W/6, -D/2], [W/6, -D/2], [-W/6, D/2], [W/6, D/2]
+      ];
+      
+      postOffsets.forEach(([px, pz]) => {
+        const post = new THREE.Mesh(postGeo, pipeMat);
+        post.position.set(px, H/2, pz);
+        post.castShadow = true;
+        pipeRackGroup.add(post);
+      });
+      
+      const tierHeights = [0.15, 0.85, 1.55];
+      tierHeights.forEach((th) => {
+        const shelf = new THREE.Mesh(new THREE.BoxGeometry(W + 0.02, 0.015, D + 0.02), shelfMat);
+        shelf.position.set(0, th, 0);
+        shelf.castShadow = true;
+        pipeRackGroup.add(shelf);
+        
+        postOffsets.forEach(([px, pz]) => {
+          const joint = new THREE.Mesh(new THREE.BoxGeometry(0.038, 0.038, 0.038), jointMat);
+          joint.position.set(px, th, pz);
+          pipeRackGroup.add(joint);
+        });
+      });
+      
+      // 3 Thùng Carton Murrplastik ở tầng đáy (0.15m)
+      const boxCanvas = document.createElement('canvas');
+      boxCanvas.width = 512;
+      boxCanvas.height = 384;
+      const bctx = boxCanvas.getContext('2d');
+      bctx.fillStyle = '#c89d66';
+      bctx.fillRect(0, 0, 512, 384);
+      
+      bctx.fillStyle = '#E2001A';
+      bctx.fillRect(40, 60, 432, 80);
+      bctx.fillStyle = '#ffffff';
+      bctx.font = 'bold 36px Arial';
+      bctx.fillText('murrplastik', 60, 116);
+      
+      bctx.fillStyle = '#1e293b';
+      bctx.font = 'bold 20px Arial';
+      bctx.fillText('MADE IN GERMANY • T&T VINA', 60, 200);
+      bctx.font = '18px Arial';
+      bctx.fillText('CABLE MANAGEMENT SYSTEMS', 60, 235);
+      
+      const boxTex = new THREE.CanvasTexture(boxCanvas);
+      boxTex.encoding = THREE.sRGBEncoding;
+      const boxMat = new THREE.MeshStandardMaterial({ map: boxTex, roughness: 0.8 });
+      const boxMatPlain = new THREE.MeshStandardMaterial({ color: 0xc89d66, roughness: 0.85 });
+      
+      const boxGeo = new THREE.BoxGeometry(0.36, 0.42, 0.38);
+      const boxMaterials = [boxMatPlain, boxMatPlain, boxMatPlain, boxMatPlain, boxMat, boxMatPlain];
+      
+      [-0.36, 0.0, 0.36].forEach((bx) => {
+        const box = new THREE.Mesh(boxGeo, boxMaterials);
+        box.position.set(bx, 0.15 + 0.21, 0);
+        box.castShadow = true;
+        pipeRackGroup.add(box);
+      });
+      
+      // Tầng 2 (0.85m): Ống ruột gà cuộn & Máng xích demo
+      const conduitCoil = new THREE.Mesh(
+        new THREE.TorusGeometry(0.15, 0.04, 16, 24),
+        new THREE.MeshStandardMaterial({ color: 0x1a1a1a, roughness: 0.6 })
+      );
+      conduitCoil.position.set(-0.35, 0.85 + 0.05, 0);
+      conduitCoil.rotation.x = Math.PI / 2;
+      pipeRackGroup.add(conduitCoil);
+      
+      const chainDemo = new THREE.Mesh(
+        new THREE.BoxGeometry(0.35, 0.08, 0.14),
+        new THREE.MeshStandardMaterial({ color: 0x222222, roughness: 0.5 })
+      );
+      chainDemo.position.set(0.15, 0.85 + 0.05, 0);
+      pipeRackGroup.add(chainDemo);
+      
+      // Tầng 3 (1.55m): Kệ mẫu đĩa & tài liệu Catalogue
+      const catStack = new THREE.Mesh(
+        new THREE.BoxGeometry(0.25, 0.04, 0.32),
+        new THREE.MeshStandardMaterial({ color: 0xE2001A, roughness: 0.4 })
+      );
+      catStack.position.set(-0.25, 1.55 + 0.025, 0);
+      pipeRackGroup.add(catStack);
+      
+      // Position Pipe Rack perpendicular to Sidewall at Z = 1.05 (Panel 3 edge)
+      pipeRackGroup.position.set(-1.25, 0, 1.05);
+      pipeRackGroup.rotation.y = Math.PI / 2;
+      boothGroup.add(pipeRackGroup);
+    }
+
+    // --- 5. BÀN TRÒN TIẾP KHÁCH & ĐĨA HOA QUẢ TRUNG TÂM ---
+    function buildRoundTableCenter() {
+      roundTableGroup = new THREE.Group();
+      
+      const marbleMat = new THREE.MeshStandardMaterial({ color: 0xfafafa, roughness: 0.15, metalness: 0.1 });
+      const chromeMat = new THREE.MeshStandardMaterial({ color: 0xd8d8d8, metalness: 0.95, roughness: 0.1 });
+      
+      const topMesh = new THREE.Mesh(new THREE.CylinderGeometry(0.325, 0.325, 0.03, 32), marbleMat);
+      topMesh.position.y = 0.735;
+      topMesh.castShadow = true;
+      roundTableGroup.add(topMesh);
+      
+      const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.03, 0.71, 16), chromeMat);
+      pole.position.y = 0.365;
+      roundTableGroup.add(pole);
+      
+      const base = new THREE.Mesh(new THREE.CylinderGeometry(0.24, 0.24, 0.02, 32), chromeMat);
+      base.position.y = 0.01;
+      base.castShadow = true;
+      roundTableGroup.add(base);
+      
+      // Đĩa hoa quả
+      const bowlMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.1, metalness: 0.2, transparent: true, opacity: 0.85 });
+      const bowl = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.06, 0.06, 24), bowlMat);
+      bowl.position.set(0, 0.78, 0);
+      roundTableGroup.add(bowl);
+      
+      const appleMat = new THREE.MeshStandardMaterial({ color: 0xd91e18, roughness: 0.3 });
+      const orangeMat = new THREE.MeshStandardMaterial({ color: 0xf39c12, roughness: 0.4 });
+      
+      const fruit1 = new THREE.Mesh(new THREE.SphereGeometry(0.032, 16, 16), appleMat);
+      fruit1.position.set(-0.03, 0.81, 0.02);
+      roundTableGroup.add(fruit1);
+      
+      const fruit2 = new THREE.Mesh(new THREE.SphereGeometry(0.032, 16, 16), orangeMat);
+      fruit2.position.set(0.03, 0.81, -0.02);
+      roundTableGroup.add(fruit2);
+      
+      const fruit3 = new THREE.Mesh(new THREE.SphereGeometry(0.032, 16, 16), appleMat);
+      fruit3.position.set(0.01, 0.83, 0.02);
+      roundTableGroup.add(fruit3);
+      
+      // 2 Ghế tiếp khách
+      const chairMat = new THREE.MeshStandardMaterial({ color: 0x22262e, roughness: 0.6 });
+      [-0.45, 0.45].forEach((cx, idx) => {
+        const chair = new THREE.Group();
+        
+        const seat = new THREE.Mesh(new THREE.BoxGeometry(0.38, 0.04, 0.38), chairMat);
+        seat.position.y = 0.44;
+        chair.add(seat);
+        
+        const back = new THREE.Mesh(new THREE.BoxGeometry(0.38, 0.38, 0.03), chairMat);
+        back.position.set(0, 0.63, idx === 0 ? -0.17 : 0.17);
+        chair.add(back);
+        
+        const chLegGeo = new THREE.CylinderGeometry(0.012, 0.012, 0.43);
+        [[-0.16, -0.16], [0.16, -0.16], [-0.16, 0.16], [0.16, 0.16]].forEach(([lx, lz]) => {
+          const leg = new THREE.Mesh(chLegGeo, chromeMat);
+          leg.position.set(lx, 0.215, lz);
+          chair.add(leg);
+        });
+        
+        chair.position.set(cx, 0, idx === 0 ? -0.10 : 0.10);
+        chair.rotation.y = idx === 0 ? Math.PI / 4 : -3 * Math.PI / 4;
+        roundTableGroup.add(chair);
+      });
+      
+      roundTableGroup.position.set(0.15, 0, 0.15);
+      boothGroup.add(roundTableGroup);
     }
 
     // --- TEXTURE LOADER ---
@@ -1783,8 +2237,24 @@
       deskGroup.visible = visible;
     }
 
-    function toggleBin(visible) {
-      binGroup.visible = visible;
+    function toggleTVStand(visible) {
+      if (tvStandGroup) tvStandGroup.visible = visible;
+    }
+
+    function toggleDemo1(visible) {
+      if (demoTable1Group) demoTable1Group.visible = visible;
+    }
+
+    function toggleDemo2(visible) {
+      if (demoTable2Group) demoTable2Group.visible = visible;
+    }
+
+    function togglePipeRack(visible) {
+      if (pipeRackGroup) pipeRackGroup.visible = visible;
+    }
+
+    function toggleRoundTable(visible) {
+      if (roundTableGroup) roundTableGroup.visible = visible;
     }
 
     function toggleSpotlights(enabled) {
