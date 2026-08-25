@@ -85,11 +85,11 @@ const CONCEPT_PRESETS = [
     name: 'Concept 4: Zero-G Lab (5 Hệ sinh thái)',
     desc: 'Tối ưu 85% diện tích sàn, Hero R-Tec Box góc mở, Trạm Laser quà tặng & Sàn thoáng',
     layout: {
-      tvStand: { pos: [-1.16, 0, -0.20], rotDeg: 90 },
-      demo1: { pos: [-1.05, 0, -1.00], rotDeg: 90 },
-      demo2: { pos: [0.85, 0, 1.15], rotDeg: 135 },
-      pipeRack: { pos: [-0.95, 0, 1.25], rotDeg: 0 },
-      roundTable: { pos: [0.15, 0, -0.65], rotDeg: 0 }
+      tvStand: { pos: [-1.22, 0, 0.25], rotDeg: 90 },
+      demo1: { pos: [-0.60, 0, -1.20], rotDeg: 0 },
+      demo2: { pos: [0.92, 0, 0.95], rotDeg: 160 },
+      pipeRack: { pos: [0.85, 0, -1.22], rotDeg: 0 },
+      roundTable: { pos: [-0.85, 0, -0.65], rotDeg: 0 }
     }
   }
 ];
@@ -230,11 +230,19 @@ function initTransformControls() {
   transformControls.showY = false; // Lock translation on floor plane
   transformControls.setMode('translate');
 
-  transformControls.addEventListener('change', () => {
+  transformControls.addEventListener('dragging-changed', function (event) {
+    if (controls) controls.enabled = !event.value;
+    if (event.value) {
+      pushHistoryState('Drag start');
+    } else {
+      pushHistoryState('Drag end');
+    }
+  });
+
+  transformControls.addEventListener('change', function () {
     if (activeEquipmentKey && EQUIPMENT[activeEquipmentKey]) {
       const grp = EQUIPMENT[activeEquipmentKey].getGroup();
       if (grp) {
-        grp.position.y = 0; // enforce floor grounding
         updateInspectorInputsFromObject(grp);
         if (typeof updateClearanceVisuals === 'function') {
           updateClearanceVisuals();
@@ -243,15 +251,7 @@ function initTransformControls() {
     }
   });
 
-  transformControls.addEventListener('dragging-changed', (event) => {
-    controls.enabled = !event.value;
-    // When drag ends, push state to Undo history
-    if (!event.value) {
-      pushHistoryState('Gizmo drag');
-    }
-  });
-
-  scene.add(transformControls);
+  boothGroup.add(transformControls);
 
   // Load saved slots from LocalStorage
   loadSavedConceptSlots();
@@ -273,7 +273,7 @@ function loadSavedConceptSlots() {
     if (saved) {
       const parsed = JSON.parse(saved);
       if (Array.isArray(parsed)) {
-        userCustomSlots = CONCEPT_PRESETS.map((def, i) => parsed[i] || def);
+        userCustomSlots = CONCEPT_PRESETS.map((def, i) => (parsed[i] && i < 3 ? parsed[i] : def));
       }
     }
   } catch (e) {
@@ -288,6 +288,23 @@ function selectConceptSlot(slotIdx) {
   document.querySelectorAll('.slot-btn').forEach((b, i) => {
     b.classList.toggle('active', i === slotIdx);
   });
+
+  const isZeroG = (slotIdx === 3);
+
+  // In Zero-G mode: hide bulky chairs to achieve true >80% open floor as planned in Strategy
+  if (typeof setConceptChairsVisibility === 'function') {
+    setConceptChairsVisibility(!isZeroG);
+  }
+
+  // In Zero-G mode: hide the round table to open the entire center
+  const roundToggle = document.getElementById('toggle-roundtable');
+  if (isZeroG) {
+    if (typeof toggleRoundTable === 'function') toggleRoundTable(false);
+    if (roundToggle) roundToggle.checked = false;
+  } else {
+    if (typeof toggleRoundTable === 'function') toggleRoundTable(true);
+    if (roundToggle) roundToggle.checked = true;
+  }
 
   const slots = userCustomSlots || CONCEPT_PRESETS;
   const targetSlot = slots[slotIdx] || CONCEPT_PRESETS[slotIdx];

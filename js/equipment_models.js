@@ -4,6 +4,16 @@
  */
 
 // --- REUSABLE MODERN OFFICE / GUEST CHAIR ---
+let demo1Chairs = [];
+let demo2Chairs = [];
+let roundTableChairs = [];
+
+function setConceptChairsVisibility(showAllChairs) {
+  demo1Chairs.forEach(c => { if (c) c.visible = showAllChairs; });
+  demo2Chairs.forEach(c => { if (c) c.visible = showAllChairs; });
+  roundTableChairs.forEach(c => { if (c) c.visible = showAllChairs; });
+}
+
 function createModernChair(seatColor = 0x22262e) {
   const chair = new THREE.Group();
   const chairMat = new THREE.MeshStandardMaterial({ color: seatColor, roughness: 0.6 });
@@ -336,6 +346,8 @@ function buildDemoTable1Laser() {
   chairD1_2.position.set(-0.25, 0, 0.38);
   chairD1_2.rotation.y = Math.PI;
   demoTable1Group.add(chairD1_2);
+
+  demo1Chairs = [chairD1_1, chairD1_2];
   
   // Official Concept Position: X = 0.99, Z = -0.56, RotY = 180 deg
   demoTable1Group.position.set(0.99, 0, -0.56);
@@ -415,6 +427,8 @@ function buildDemoTable2RTec() {
   chairD2_2.position.set(-0.25, 0, 0.38);
   chairD2_2.rotation.y = Math.PI;
   demoTable2Group.add(chairD2_2);
+
+  demo2Chairs = [chairD2_1, chairD2_2];
   
   // Official Concept Position: X = 0.95, Z = 1.27, RotY = 180 deg
   demoTable2Group.position.set(0.95, 0, 1.27);
@@ -569,6 +583,7 @@ function buildRoundTableCenter() {
   roundTableGroup.add(fruit3);
   
   // 4 Ghế tiếp khách xung quanh bàn tròn (quay mặt hướng vào trung tâm bàn)
+  roundTableChairs = [];
   const chairAngles = [0, Math.PI / 2, Math.PI, 3 * Math.PI / 2];
   const chairRadius = 0.50;
   chairAngles.forEach((angle) => {
@@ -580,6 +595,7 @@ function buildRoundTableCenter() {
     );
     chair.rotation.y = angle + Math.PI; // Face directly inward toward table center
     roundTableGroup.add(chair);
+    roundTableChairs.push(chair);
   });
   
   // Official Concept Position: X = -0.08, Z = -0.49, RotY = 0 deg
