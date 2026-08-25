@@ -79,6 +79,18 @@ const CONCEPT_PRESETS = [
       pipeRack: { pos: [0.95, 0, 1.25], rotDeg: 180 },
       roundTable: { pos: [-0.35, 0, -0.55], rotDeg: 0 }
     }
+  },
+  {
+    id: 4,
+    name: 'Concept 4: Zero-G Lab (5 Hệ sinh thái)',
+    desc: 'Tối ưu 85% diện tích sàn, Hero R-Tec Box góc mở, Trạm Laser quà tặng & Sàn thoáng',
+    layout: {
+      tvStand: { pos: [-1.16, 0, -0.20], rotDeg: 90 },
+      demo1: { pos: [-1.05, 0, -1.00], rotDeg: 90 },
+      demo2: { pos: [0.85, 0, 1.15], rotDeg: 135 },
+      pipeRack: { pos: [-0.95, 0, 1.25], rotDeg: 0 },
+      roundTable: { pos: [0.15, 0, -0.65], rotDeg: 0 }
+    }
   }
 ];
 
@@ -259,7 +271,10 @@ function loadSavedConceptSlots() {
   try {
     const saved = localStorage.getItem('vec2026_concept_slots');
     if (saved) {
-      userCustomSlots = JSON.parse(saved);
+      const parsed = JSON.parse(saved);
+      if (Array.isArray(parsed)) {
+        userCustomSlots = CONCEPT_PRESETS.map((def, i) => parsed[i] || def);
+      }
     }
   } catch (e) {
     console.warn('LocalStorage unavailable, using preset defaults');

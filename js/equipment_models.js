@@ -33,6 +33,46 @@ function createModernChair(seatColor = 0x22262e) {
   return chair;
 }
 
+// --- REUSABLE SLIM MINIMALIST BAR STOOL (GHẾ ĐÔN CAO DÁNG MẢNH) ---
+function createBarStool(seatColor = 0x1e293b) {
+  const stool = new THREE.Group();
+  const seatMat = new THREE.MeshStandardMaterial({ color: seatColor, roughness: 0.5 });
+  const chromeMat = new THREE.MeshStandardMaterial({ color: 0xd8d8d8, metalness: 0.95, roughness: 0.1 });
+
+  // Circular Seat Cushion (Diameter 32cm, Height 5cm, at height 0.72m)
+  const seat = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.16, 0.05, 24), seatMat);
+  seat.position.y = 0.72;
+  seat.castShadow = true;
+  stool.add(seat);
+
+  // Minimal low lumbar backrest
+  const lowBack = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.16, 0.16, 0.08, 24, 1, true, -Math.PI / 3, (2 * Math.PI) / 3),
+    seatMat
+  );
+  lowBack.position.set(0, 0.78, 0);
+  stool.add(lowBack);
+
+  // Central Chrome Pole & Disc Base
+  const centerPole = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.02, 0.68, 16), chromeMat);
+  centerPole.position.y = 0.35;
+  centerPole.castShadow = true;
+  stool.add(centerPole);
+
+  const baseDisc = new THREE.Mesh(new THREE.CylinderGeometry(0.19, 0.20, 0.02, 32), chromeMat);
+  baseDisc.position.y = 0.01;
+  baseDisc.castShadow = true;
+  stool.add(baseDisc);
+
+  // Footrest Ring
+  const footRing = new THREE.Mesh(new THREE.TorusGeometry(0.12, 0.008, 12, 24), chromeMat);
+  footRing.rotation.x = Math.PI / 2;
+  footRing.position.y = 0.28;
+  stool.add(footRing);
+
+  return stool;
+}
+
 // --- 1. GIÁ TREO TV DI ĐỘNG I-BRACKET E2050 + SMART TV 65 INCH ---
 function buildTVStandAnd65TV() {
   tvStandGroup = new THREE.Group();
@@ -214,6 +254,77 @@ function buildDemoTable1Laser() {
   cat2.position.set(0.20, 0.773, -0.12);
   cat2.rotation.y = 0.05;
   demoTable1Group.add(cat2);
+
+  // --- KHAY 3 LOẠI PHÔI QUÀ TẶNG KHẮC LASER MP-LM 1M ---
+  const specimenTrayGroup = new THREE.Group();
+  
+  // Khay mica acrylic đen mờ chứa phôi (0.28m x 0.16m x 0.015m)
+  const trayBase = new THREE.Mesh(
+    new THREE.BoxGeometry(0.28, 0.012, 0.16),
+    new THREE.MeshStandardMaterial({ color: 0x111827, roughness: 0.3, metalness: 0.5 })
+  );
+  trayBase.position.y = 0.006;
+  trayBase.castShadow = true;
+  specimenTrayGroup.add(trayBase);
+
+  // 1. Phôi Thẻ Nhôm Anodized Kim Loại (Silver Anodized Aluminum Tags)
+  const aluMat = new THREE.MeshStandardMaterial({ color: 0xe2e8f0, metalness: 0.95, roughness: 0.15 });
+  const aluTag1 = new THREE.Mesh(new THREE.BoxGeometry(0.065, 0.004, 0.04), aluMat);
+  aluTag1.position.set(-0.085, 0.014, -0.04);
+  aluTag1.castShadow = true;
+  specimenTrayGroup.add(aluTag1);
+
+  const aluTag2 = new THREE.Mesh(new THREE.BoxGeometry(0.065, 0.004, 0.04), aluMat);
+  aluTag2.position.set(-0.085, 0.018, 0.03);
+  aluTag2.castShadow = true;
+  specimenTrayGroup.add(aluTag2);
+
+  // 2. Phôi Thẻ Nhựa Kỹ Thuật 2 Lớp (Dual-Layer Engineering Plastic: Đỏ/Trắng)
+  const plasticBaseMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.3 });
+  const plasticRedMat = new THREE.MeshStandardMaterial({ color: 0xe2001a, roughness: 0.3 });
+  
+  const pTag1 = new THREE.Group();
+  const pBase1 = new THREE.Mesh(new THREE.BoxGeometry(0.065, 0.003, 0.04), plasticBaseMat);
+  const pTop1 = new THREE.Mesh(new THREE.BoxGeometry(0.063, 0.002, 0.038), plasticRedMat);
+  pTop1.position.y = 0.002;
+  pTag1.add(pBase1);
+  pTag1.add(pTop1);
+  pTag1.position.set(0.00, 0.014, -0.04);
+  pTag1.castShadow = true;
+  specimenTrayGroup.add(pTag1);
+
+  const pTag2 = new THREE.Group();
+  const pBase2 = new THREE.Mesh(new THREE.BoxGeometry(0.065, 0.003, 0.04), plasticBaseMat);
+  const pTop2 = new THREE.Mesh(new THREE.BoxGeometry(0.063, 0.002, 0.038), plasticRedMat);
+  pTop2.position.y = 0.002;
+  pTag2.add(pBase2);
+  pTag2.add(pTop2);
+  pTag2.position.set(0.00, 0.014, 0.03);
+  pTag2.castShadow = true;
+  specimenTrayGroup.add(pTag2);
+
+  // 3. Móc Khóa Kỹ Thuật Gắn Nhãn Murrplastik (Technical Keychain)
+  const chromeRingMat = new THREE.MeshStandardMaterial({ color: 0xd4d4d8, metalness: 0.95, roughness: 0.1 });
+  const keyTagMat = new THREE.MeshStandardMaterial({ color: 0x0284c7, roughness: 0.4 });
+  
+  const keychainGroup = new THREE.Group();
+  const keyRing = new THREE.Mesh(new THREE.TorusGeometry(0.012, 0.002, 8, 16), chromeRingMat);
+  keyRing.rotation.x = Math.PI / 2;
+  keyRing.position.set(-0.025, 0.004, 0);
+  keychainGroup.add(keyRing);
+
+  const keyBody = new THREE.Mesh(new THREE.BoxGeometry(0.055, 0.005, 0.03), keyTagMat);
+  keyBody.position.set(0.015, 0.004, 0);
+  keyBody.castShadow = true;
+  keychainGroup.add(keyBody);
+
+  keychainGroup.position.set(0.085, 0.012, -0.005);
+  keychainGroup.rotation.y = 0.1;
+  specimenTrayGroup.add(keychainGroup);
+
+  // Đặt khay phôi lên mặt bàn gần trạm Laser
+  specimenTrayGroup.position.set(-0.02, 0.752, -0.15);
+  demoTable1Group.add(specimenTrayGroup);
 
   // 2 Ghế cho Bàn Demo 1 (Ghế kỹ thuật viên & Ghế khách)
   const chairD1_1 = createModernChair(0x1e293b);

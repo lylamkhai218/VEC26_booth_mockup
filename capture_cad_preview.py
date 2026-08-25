@@ -12,6 +12,7 @@ cmd_desktop = [
     '--headless',
     '--disable-gpu',
     '--run-all-compositor-stages-before-draw',
+    '--virtual-time-budget=3000',
     '--window-size=1440,900',
     f'--screenshot={out_desktop}',
     url
@@ -23,6 +24,7 @@ cmd_mobile = [
     '--headless',
     '--disable-gpu',
     '--run-all-compositor-stages-before-draw',
+    '--virtual-time-budget=3000',
     '--window-size=390,844',
     f'--screenshot={out_mobile}',
     url
