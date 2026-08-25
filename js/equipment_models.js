@@ -7,11 +7,13 @@
 let demo1Chairs = [];
 let demo2Chairs = [];
 let roundTableChairs = [];
+let zeroGStools = [];
 
 function setConceptChairsVisibility(showAllChairs) {
   demo1Chairs.forEach(c => { if (c) c.visible = showAllChairs; });
   demo2Chairs.forEach(c => { if (c) c.visible = showAllChairs; });
   roundTableChairs.forEach(c => { if (c) c.visible = showAllChairs; });
+  zeroGStools.forEach(s => { if (s) s.visible = !showAllChairs; });
 }
 
 function createModernChair(seatColor = 0x22262e) {
@@ -336,7 +338,7 @@ function buildDemoTable1Laser() {
   specimenTrayGroup.position.set(-0.02, 0.752, -0.15);
   demoTable1Group.add(specimenTrayGroup);
 
-  // 2 Ghế cho Bàn Demo 1 (Ghế kỹ thuật viên & Ghế khách)
+  // 2 Ghế cho Bàn Demo 1 (Ghế kỹ thuật viên & Ghế khách kiểu truyền thống)
   const chairD1_1 = createModernChair(0x1e293b);
   chairD1_1.position.set(0.22, 0, 0.38);
   chairD1_1.rotation.y = Math.PI;
@@ -348,6 +350,21 @@ function buildDemoTable1Laser() {
   demoTable1Group.add(chairD1_2);
 
   demo1Chairs = [chairD1_1, chairD1_2];
+
+  // 2 Ghế đôn cao Bar Stool dáng mảnh (Sử dụng riêng cho chế độ Zero-G / Concept 4)
+  const stoolTech = createBarStool(0x1e293b);
+  stoolTech.position.set(0.22, 0, 0.30);
+  stoolTech.rotation.y = Math.PI;
+  stoolTech.visible = false;
+  demoTable1Group.add(stoolTech);
+
+  const stoolGuest = createBarStool(0x1e293b);
+  stoolGuest.position.set(-0.25, 0, 0.30);
+  stoolGuest.rotation.y = Math.PI;
+  stoolGuest.visible = false;
+  demoTable1Group.add(stoolGuest);
+
+  zeroGStools = [stoolTech, stoolGuest];
   
   // Official Concept Position: X = 0.99, Z = -0.56, RotY = 180 deg
   demoTable1Group.position.set(0.99, 0, -0.56);
